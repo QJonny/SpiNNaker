@@ -41,11 +41,10 @@ fixed_float ff_add_(fixed_float a, fixed_float b) {
 
 fixed_float ff_sub_(fixed_float a, fixed_float b) {
 	fixed_float r;
-	//int frac_init = b.full & 0x0000FFFF;	
+	int frac_init = b.full & 0x0000FFFF;	
 
-	//r.full = a.full + FIXED_FLOAT((b.full >> DECIMAL_SIZE), (float)frac_init / (1 << DECIMAL_SIZE)).full;
-	r.full = a.full - b.full;	
-
+	r.full = a.full + FIXED_FLOAT(b.full >> DECIMAL_SIZE, (float)frac_init / (1 << DECIMAL_SIZE)).full;
+	
 	return r;
 }
 

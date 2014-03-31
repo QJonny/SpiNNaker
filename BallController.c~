@@ -140,7 +140,7 @@ void c_main (void)
 	// end of networks init
 	
 	fixed_float f, v;
-	f = FIXED_FLOAT(-12, 0.65);
+	f = FIXED_FLOAT(12, 0.65);
 	v = FIXED_FLOAT(-6, 0.9);
 	fixed_float r = ff_add_(f, v);
 	

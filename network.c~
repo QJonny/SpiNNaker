@@ -96,7 +96,6 @@ float V() {
 		total_a += a_V(i);
 	}
 
-	io_printf(IO_STD,"total_a is %d\n", (int)(total_a*10000.0));
 
 	for(i = 0; i < N_V; i++) {
 		getInput_V(i, &w_i, &phi_i);
