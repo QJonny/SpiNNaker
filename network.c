@@ -1,5 +1,7 @@
 #include "network.h"
 
+void raise() {}
+
 static float old_V = 0.5;
 static float error = 0.0;
 static uint x_pos_ = 0;
@@ -21,7 +23,7 @@ float r_pos() {
 }
 
 float r_tan(int x, int y){
-	return (2.0 / PI_) * arctan_( (PI_/2.0) * norm_(x, y) );
+	return (2.0 / PI_) * atan( (PI_/2.0) * norm_(x, y) );
 }
 
 float R(int x_speed, int y_speed, int x_acc, int y_acc){
@@ -60,8 +62,8 @@ void init_V_(uint chipID, uint coreID){
 	float r = sqrt_(p1);
 	float theta = ((PI_/2.0) * p2) + ((PI_/2.0)*(chipX + 2*chipY)); // + base theta
 
-	float x = (r*cos_(theta))*(-BALL_POS_CENTER) + BALL_POS_CENTER;
-	float y = (r*sin_(theta))*(-BALL_POS_CENTER) + BALL_POS_CENTER;
+	float x = (r*cos(theta))*(-BALL_POS_CENTER) + BALL_POS_CENTER;
+	float y = (r*sin(theta))*(-BALL_POS_CENTER) + BALL_POS_CENTER;
 
 	// TODO: has to change when parallelized
 	center_x[32*chipY + 16*chipX + coreID] = (uint)x;
@@ -128,7 +130,7 @@ float phi_V(uint index){
 }
 
 float a_V(uint index){
-	return exp_(-( pow_((x_pos_-center_x[index])/GAUSSIAN_SPREAD, 2) +  pow_((y_pos_-center_y[index])/GAUSSIAN_SPREAD, 2) ));
+	return exp(-( pow((x_pos_-center_x[index])/GAUSSIAN_SPREAD, 2) +  pow((y_pos_-center_y[index])/GAUSSIAN_SPREAD, 2) ));
 }
 
 

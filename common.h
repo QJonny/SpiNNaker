@@ -5,7 +5,10 @@
 #include "spinn_io.h"
 #include "spinn_sdp.h"
 
+#include "spin1_math.h"
 #include "math.h"
+
+void raise();
 
 // simulation constants
 #define PRINT_DLY          200
