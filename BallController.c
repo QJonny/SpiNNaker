@@ -20,10 +20,6 @@ uint old_x_pos = 0;
 uint old_y_pos = 0;
 int x_speed = 0;
 int y_speed = 0;
-int old_x_speed = 0;
-int old_y_speed = 0;
-int x_acceleration = 0;
-int y_acceleration = 0;
 // end of ball parameters
 
 // motors comands
@@ -62,17 +58,6 @@ void compute_speed()
         old_y_pos = y_pos;
 }
 
-// call every tick (0.1s)
-void compute_acceleration()
-{
-        x_acceleration = (x_speed - old_x_speed) * INV_DELTA_TIME;
-        y_acceleration = (y_speed - old_y_speed) * INV_DELTA_TIME;
-
-        old_x_speed = x_speed;
-        old_y_speed = y_speed;
-}
-
-
 void cameraEvent(uint key, uint payload){
 	// raw position extraction
 	uint x_cur = ((key & 0x7F));
@@ -93,11 +78,10 @@ void update(uint sim_time, uint none)
 {
 	// ball params update
 	compute_speed();
-	compute_acceleration();
 	// end of ball params update
 
 	// networks update
-	updateError(x_pos, y_pos, x_speed, y_speed, x_acceleration, y_acceleration);
+	updateError(x_pos, y_pos, x_speed, y_speed);
 	update_V();
 	// TODO: actor network updating 
 	// TODO: actor network motor commands retrieval
@@ -123,7 +107,7 @@ void c_main (void)
 
 	// events setting
 	spin1_callback_on(MC_PACKET_RECEIVED,cameraEvent,1);
-	//spin1_callback_on(TIMER_TICK, update, 1);	
+	spin1_callback_on(TIMER_TICK, update, 1);	
 	
 	if(chipID == 0) {
 		initIO();
@@ -138,17 +122,6 @@ void c_main (void)
 	init_V(chipID, coreID);
 	// TODO: actor network init
 	// end of networks init
-	
-	fixed_float f, v;
-	f = FIXED_FLOAT(-12, 0.65);
-	v = FIXED_FLOAT(-6, 0.9);
-	fixed_float r = ff_add_(f, v);
-	
-	int integer = 0;
-	uint fraction = 0;
-	print_fixed_float(r, &integer, &fraction);
-
-	io_printf(IO_STD,"%d.%d\n", integer, fraction);
 	
 	spin1_start();
 

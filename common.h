@@ -6,7 +6,6 @@
 #include "spinn_sdp.h"
 
 #include "spin1_math.h"
-#include "math.h"
 
 void raise();
 

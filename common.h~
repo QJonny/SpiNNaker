@@ -8,7 +8,7 @@
 #include "spin1_math.h"
 #include "math.h"
 
-void raise() {};
+void raise();
 
 // simulation constants
 #define PRINT_DLY          200
