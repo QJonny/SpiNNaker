@@ -9,6 +9,7 @@ static uint y_pos_ = 0;
 // TODO: has to change when parallelized
 static float e_array[N_V] = {0.0};
 static float w_V_array[N_V] = {0.0};
+static float w_A_array[N_A] = {0.0};
 static uint center_x[N_V] = {63};
 static uint center_y[N_V] = {63};
 
@@ -52,6 +53,8 @@ void updateError(uint x_pos, uint y_pos, int x_speed, int y_speed) {
 
 	old_V = curr_V;
 
+
+	// TODO: (when parallelized) spread new error to every node
 
 	//io_printf(IO_STD,"error %d, r %d, V(t) %d\n", (int)(error*1000.0), (int)(r*1000.0), (int)(v*1000.0));
 }
@@ -108,6 +111,8 @@ float V() {
 	for(i = 0; i < N_V; i++) {
 		v += w_V(i) * phi_V(i);
 	}
+
+	// TODO: (when parallelized) replacer multiplication by received values 
 
 	return v;
 }
@@ -167,7 +172,7 @@ float mfm_V(uint index){
 	F[index] = F[index] + dv;
 
 	
-	io_printf(IO_STD,"f %ld\n", F[index]);
+	io_printf(IO_STD,"f %d\n", F[index]);
 	return (float)F[index];
 }
 
@@ -203,11 +208,60 @@ void update_V() { // TODO: has to change when it will be parallelized
 	
 	for(i = 0; i < N_V; i++) {
 		e_array[i] = LAMBDA*e_array[i] + delta_V_wi(i);
-		w_V_array[i] += LEARNING_RATE*error*e_array[i];
+		w_V_array[i] += LEARNING_RATE_V*error*e_array[i];
 	}
+
+	// TODO: (when parallelized) remove loop and send new values (w_v * phi_V) to master node
 }
 
 float delta_V_wi(uint index) {
 	return phi_V(index); // TODO: maybe has to change
 }
+
+
+
+
+// Actor neural network
+void move(uint &theta, uint &phi) {
+	float v = 0;
+	int i = 0;
+
+	for(i = 0; i < N_V; i++) {
+		v += w_A_array(i) * phi_A(i);
+	}
+
+	v += sigma()*noise();
+
+	// TODO: (when parallelized) replacer multiplication by received values 
+
+	// TODO: perform motor coord extraction
+}
+
+
+void update_A() { // TODO: has to change when it will be parallelized
+	int i = 0;
+	
+	for(i = 0; i < N_A; i++) {
+		w_A_array[i] += LEARNING_RATE_A*error*noise()*delta_A_wi(i);
+	}
+
+	// TODO: (when parallelized) remove loop and send new values (w_a * phi_A) to master node
+}
+
+float delta_A_wi(uint index) {
+	return phi_A(index); // TODO: maybe has to change
+}
+
+float phi_A(uint index){
+	return 0.0; // TODO: to change (into what???)
+}
+
+float sigma(){
+	return SIGMA_0 * min(K, max(0, 1-V()));
+}
+
+float noise(){
+	return 0.0; // TODO: implement Poisson noise
+}
+
 
