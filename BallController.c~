@@ -83,8 +83,11 @@ void update(uint sim_time, uint none)
 	// networks update
 	updateError(x_pos, y_pos, x_speed, y_speed);
 	update_V();
-	// TODO: actor network updating 
+
+	// TODO: actor network updating
+	update_A();
 	// TODO: actor network motor commands retrieval
+	move();
 	// end of networks update
 }
 
@@ -107,7 +110,7 @@ void c_main (void)
 
 	// events setting
 	spin1_callback_on(MC_PACKET_RECEIVED,cameraEvent,1);
-	//spin1_callback_on(TIMER_TICK, update, 1);	
+	spin1_callback_on(TIMER_TICK, update, 1);	
 	
 	if(chipID == 0) {
 		initIO();

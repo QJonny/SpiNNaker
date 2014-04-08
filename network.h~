@@ -23,7 +23,7 @@
 #define BALL_POS_CENTER 63
 #define N_V 64 // number of neurons in the critic network
 #define N_A 64 // number of neurons in the actor network
-#define sigma_0 0.5
+#define SIGMA_0 0.5
 
 // reward
 float r_pos();
@@ -54,12 +54,12 @@ float delta_V_wi(uint index);
 
 
 // actor network
-void move(uint &theta, uint &phi); // perform the next movement
-void update_A();
+vector2d get_motor_coord(uint time); // perform the next movement (returns the values vector)
+void update_A(uint time);
 float delta_A_wi(uint index);
 float phi_A(uint index); // corresponds to the feature vector (unparallelized version)
 float sigma();
-float noise();
+vector2d noise(uint t);
 
 
 #endif

@@ -208,7 +208,7 @@ void update_V() { // TODO: has to change when it will be parallelized
 	
 	for(i = 0; i < N_V; i++) {
 		e_array[i] = LAMBDA*e_array[i] + delta_V_wi(i);
-		w_V_array[i] += LEARNING_RATE_V*error*e_array[i];
+		w_V_array[i] -= LEARNING_RATE_V*error*e_array[i];
 	}
 
 	// TODO: (when parallelized) remove loop and send new values (w_v * phi_V) to master node
@@ -222,27 +222,47 @@ float delta_V_wi(uint index) {
 
 
 // Actor neural network
-void move(uint &theta, uint &phi) {
-	float v = 0;
+void move(uint time) {
 	int i = 0;
+	float x_ = 0.0;
+	float y_ = 0.0;
+	vector2d n = noise(time);
 
-	for(i = 0; i < N_V; i++) {
-		v += w_A_array(i) * phi_A(i);
+	for(i = 0; i < N_A; i++) {
+		if(i < N_A/2) { // x component
+			x_ += w_A_array[i] * phi_A(i);
+		}
+		else { // y component
+			y_ += w_A_array[i] * phi_A(i);
+		}
 	}
 
-	v += sigma()*noise();
+	x_ += sigma() * n.x;
+	y_ += sigma() * n.y;
+
 
 	// TODO: (when parallelized) replacer multiplication by received values 
 
 	// TODO: perform motor coord extraction
+
+	
+	// Motor command sending
+	sendMotorCommand((uint)x_, (uint)y_);
 }
 
 
-void update_A() { // TODO: has to change when it will be parallelized
+void update_A(uint time) { // TODO: has to change when it will be parallelized
 	int i = 0;
+	vector2d n = noise(time);
 	
 	for(i = 0; i < N_A; i++) {
-		w_A_array[i] += LEARNING_RATE_A*error*noise()*delta_A_wi(i);
+		if(i < N_A/2) { // x component
+			w_A_array[i] -= LEARNING_RATE_A*error*n.x*delta_A_wi(i);
+		}
+		else { // y component
+			w_A_array[i] -= LEARNING_RATE_A*error*n.y*delta_A_wi(i);
+		}
+
 	}
 
 	// TODO: (when parallelized) remove loop and send new values (w_a * phi_A) to master node
@@ -253,15 +273,21 @@ float delta_A_wi(uint index) {
 }
 
 float phi_A(uint index){
-	return 0.0; // TODO: to change (into what??? ball position??)
+	if(index < N_A/2) { // x component
+		return (float) x_pos_;
+	}
+	else { // y component
+		return (float) y_pos_;
+	}
 }
 
 float sigma(){
 	return SIGMA_0 * min(K, max(0, 1-V()));
 }
 
-float noise(){
-	return 0.0; // TODO: implement Poisson noise
+vector2d noise(uint t){
+	vector2d r = new_vector();
+	return r; // TODO: implement Poisson noise
 }
 
 

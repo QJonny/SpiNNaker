@@ -26,6 +26,6 @@ void initIO();
 void startDevices();
 void stopDevices();
 
-void sendMotorCommand(uint motor_x, uint motor_y);
+
 
 #endif

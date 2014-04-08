@@ -83,8 +83,11 @@ void update(uint sim_time, uint none)
 	// networks update
 	updateError(x_pos, y_pos, x_speed, y_speed);
 	update_V();
-	// TODO: actor network updating 
+
+	// TODO: actor network updating
+	update_A( spin1_get_simulation_time() );
 	// TODO: actor network motor commands retrieval
+	move( spin1_get_simulation_time() );
 	// end of networks update
 }
 
