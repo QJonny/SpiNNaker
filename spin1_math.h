@@ -19,7 +19,8 @@ struct vector2d {
 
 typedef struct vector2d vector2d;
 
-vector2d new_vector();
+vector2d empty_vector();
+vector2d vector(float x, float y);
 
 float norm(int x, int y);
 float v_norm(vector2d v);

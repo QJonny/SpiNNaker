@@ -18,9 +18,14 @@
 #define LOG_P1 16
 #define V_DECAY (40)
 
-#define BALL_POS_MAX 127
-#define BALL_POS_MIN 0
-#define BALL_POS_CENTER 63
+#define BALL_POS_Y_MAX 115
+#define BALL_POS_Y_MIN 5
+#define BALL_POS_Y_CENTER (int)((BALL_POS_Y_MAX - BALL_POS_Y_MIN) / 2)
+
+#define BALL_POS_X_MAX 125
+#define BALL_POS_X_MIN 20
+#define BALL_POS_X_CENTER (int)((BALL_POS_X_MAX - BALL_POS_X_MIN) / 2)
+
 #define N_V 64 // number of neurons in the critic network
 #define N_A 64 // number of neurons in the actor network
 #define SIGMA_0 0.5
@@ -29,7 +34,7 @@
 float r_pos();
 float r_tan(int x, int y);
 float R(int x_speed, int y_speed);
-void updateError(uint x_pos, uint y_pos, int x_speed, int y_speed);
+void updateError(int x_pos, int y_pos, int x_speed, int y_speed);
 
 
 // critic network
@@ -38,28 +43,28 @@ float V(); // returns the critic network value
 
 
 // unparallelized
-float w_V(uint index); // unparallelized version
-float phi_V(uint index); // corresponds to the feature vector (unparallelized version)
+float w_V(int index); // unparallelized version
+float phi_V(int index); // corresponds to the feature vector (unparallelized version)
 
 
-float mfm_V(uint index); // unparallelized, used for mean field model
+float mfm_V(int index); // unparallelized, used for mean field model
 long IFfct(long long input);
 
-float a_V(uint index); // unparallelized, used for gaussian
+float a_V(int index); // unparallelized, used for gaussian
 int updateTotal_a();
 
 // critic network updating
 void update_V();
-float delta_V_wi(uint index);
+float delta_V_wi(int index);
 
 
 // actor network
-vector2d get_motor_coord(uint time); // perform the next movement (returns the values vector)
-void update_A(uint time);
-float delta_A_wi(uint index);
-float phi_A(uint index); // corresponds to the feature vector (unparallelized version)
+void move(int time); // perform the next movement
+void update_A(int time);
+float delta_A_wi(int index);
+float phi_A(int index); // corresponds to the feature vector (unparallelized version)
 float sigma();
-vector2d noise(uint t);
+vector2d noise(int t);
 
 
 #endif

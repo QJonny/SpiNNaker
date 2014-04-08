@@ -17,10 +17,19 @@ float max(float v1, float v2){
 
 
 // vectors
-vector2d new_vector() {
+vector2d empty_vector() {
 	vector2d r;
 
 	r.x = r.y = 0.0;
+
+	return r;
+}
+
+vector2d vector(float x, float y) {
+	vector2d r;
+
+	r.x = x;
+	r.y = y;
 
 	return r;
 }

@@ -1,8 +1,23 @@
 #include "spin1_math.h"
 
 
+
+
+// comparision
+float min(float v1, float v2){
+	return (v1 > v2) ? v2:v1;
+}
+
+float max(float v1, float v2){
+	return (v1 > v2) ? v1:v2;
+}
+
+
+
+
+
 // vectors
-vector2d new_vector() {
+vector2d empty_vector() {
 	vector2d r;
 
 	r.x = r.y = 0.0;
@@ -10,6 +25,14 @@ vector2d new_vector() {
 	return r;
 }
 
+vector2d vector(float x, float y) {
+	vector2d r;
+
+	r.x = x;
+	r.y = y;
+
+	return r;
+}
 
 
 float norm(int x, int y){

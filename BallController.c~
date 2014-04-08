@@ -5,21 +5,22 @@
 
 
 // ball tracking
-uint x_buffer[16] = {0};
-uint y_buffer[16] = {0};
-uint total_sum_x = 0;
-uint total_sum_y = 0;
-uint curr_index = 0;
+int x_buffer[16] = {0};
+int y_buffer[16] = {0};
+int total_sum_x = 0;
+int total_sum_y = 0;
+int curr_index = 0;
+int old_time = -1;
 // end of ball tracking
 
 
 // ball parameters
-uint x_pos = 0;
-uint y_pos = 0;
-uint old_x_pos = 0;
-uint old_y_pos = 0;
-int x_speed = 0;
-int y_speed = 0;
+int x_pos = 0;
+int y_pos = 0;
+int old_x_pos = 0;
+int old_y_pos = 0;
+int x_speed = 1;
+int y_speed = 1;
 // end of ball parameters
 
 // motors comands
@@ -27,31 +28,39 @@ int x_command = 0;
 int y_command = 0;
 // end of motors commands
 
-
+int pos_computed = 0;
 
 
 
 // ball tracking
 
-void compute_pos(uint x_cur, uint y_cur)
+void compute_pos(int x_cur, int y_cur, int sim_time)
 {
-        total_sum_x = total_sum_x - x_buffer[curr_index] + x_cur;
-        x_buffer[curr_index] = x_cur;
-        total_sum_y = total_sum_y - y_buffer[curr_index] + y_cur;
-        y_buffer[curr_index] = y_cur;
+	if((pos_computed == 0 || norm(x_pos - x_cur, y_pos - y_cur) < 100) && (old_time == -1 || sim_time - old_time < 60) ) {
 
-        x_pos = total_sum_x >> 4; // division by 16
-        y_pos = total_sum_y >> 4; // division by 16
+		total_sum_x = total_sum_x - x_buffer[curr_index] + x_cur;
+		x_buffer[curr_index] = x_cur;
+		total_sum_y = total_sum_y - y_buffer[curr_index] + y_cur;
+		y_buffer[curr_index] = y_cur;
 
+		x_pos = total_sum_x >> 4; // division by 16
+		y_pos = total_sum_y >> 4; // division by 16
 
-        curr_index = (curr_index + 1) % 16;
+		if(pos_computed == 0 && curr_index == 15) {
+			pos_computed = 1;
+		}
+
+		curr_index = (curr_index + 1) % 16;
+
+		old_time = sim_time;
+	}
 }
 
 // call every tick (0.1s)
 void compute_speed()
 {
-        x_speed = ((int)x_pos - (int)old_x_pos) * INV_DELTA_TIME;
-        y_speed = ((int)y_pos - (int)old_y_pos) * INV_DELTA_TIME;
+        x_speed = (x_pos - old_x_pos) * INV_DELTA_TIME;
+        y_speed = (y_pos - old_y_pos) * INV_DELTA_TIME;
 
 
         old_x_pos = x_pos;
@@ -60,14 +69,16 @@ void compute_speed()
 
 void cameraEvent(uint key, uint payload){
 	// raw position extraction
-	uint x_cur = ((key & 0x7F));
-	uint y_cur = (((key >> 8) & 0x7F));
+	int y_cur = ((key & 0x7F));
+	int x_cur = (((key >> 8) & 0x7F));
 	int pol = (key >> 7) & 0x01;
 	int check = (key >> 15) & 0x01;
 
 	if(pol == 1) {
-		compute_pos(x_cur, y_cur);
-		//io_printf (IO_STD, "(%d, %d)\n", x_pos, y_pos);	
+		compute_pos(x_cur, y_cur, spin1_get_simulation_time());
+		//vector2d v = vector((float)(x_pos - BALL_POS_X_CENTER), (float)(y_pos - BALL_POS_Y_CENTER));
+		//io_printf (IO_STD, "distance from center : (%d)\n", (int)v_norm(v));
+		io_printf (IO_STD, "%d,%d\n", x_pos, y_pos);
 	}
 }
 
@@ -85,9 +96,9 @@ void update(uint sim_time, uint none)
 	update_V();
 
 	// TODO: actor network updating
-	update_A();
+	update_A( sim_time );
 	// TODO: actor network motor commands retrieval
-	move();
+	move( sim_time );
 	// end of networks update
 }
 
@@ -112,11 +123,10 @@ void c_main (void)
 	spin1_callback_on(MC_PACKET_RECEIVED,cameraEvent,1);
 	spin1_callback_on(TIMER_TICK, update, 1);	
 	
-	if(chipID == 0) {
+
+	if(chipID == 0 && coreID == 1) { // master core
 		initIO();
-		if(coreID == 1) {
-			startDevices();
-		}
+		startDevices();
 	}
 
 	// end of events setting

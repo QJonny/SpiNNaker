@@ -6,6 +6,11 @@
 #define PI_ 3.141527
 
 
+// comparision
+float min(float v1, float v2);
+float max(float v1, float v2);
+
+
 // vectors
 struct vector2d {
 	float x;
@@ -15,6 +20,7 @@ struct vector2d {
 typedef struct vector2d vector2d;
 
 vector2d new_vector();
+vector2d new_vector(float x, float y);
 
 float norm(int x, int y);
 float v_norm(vector2d v);

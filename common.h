@@ -12,9 +12,9 @@ void raise();
 // simulation constants
 #define PRINT_DLY          200
 #define MS 1000
-#define TICK_TIME (100*MS) // in ms
-#define DELTA_TIME 0.1 // TICK_TIME in s
-#define INV_DELTA_TIME 10
+#define TICK_TIME (50*MS) // in ms
+#define DELTA_TIME 0.05 // TICK_TIME in s
+#define INV_DELTA_TIME 20
 // end of simulation constants
 
 
