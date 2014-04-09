@@ -5,18 +5,16 @@
 #include "common.h"
 #include "communication.h"
 
-#define TAU 1
-#define KAPPA 1
-#define LAMBDA (1 - DELTA_TIME/KAPPA) / (1 - DELTA_TIME/TAU)
+#define TAU 0.1001
+#define KAPPA 0.1
+#define LAMBDA (1.0 - DELTA_TIME/KAPPA) / (1.0 - DELTA_TIME/TAU)
 #define LEARNING_RATE_V 0.2
 #define LEARNING_RATE_A 0.2
 #define DELTA_TIME_OVER_TAU (DELTA_TIME / TAU)
-#define K 0.5
-
-#define GAUSSIAN_SPREAD 1.0
+#define K 0.1
 
 #define LOG_P1 16
-#define V_DECAY (40)
+#define V_DECAY 0.5
 
 #define BALL_POS_Y_MAX 115
 #define BALL_POS_Y_MIN 5
@@ -54,10 +52,7 @@ float phi_V(int index); // corresponds to the feature vector (unparallelized ver
 
 
 float mfm_V(int index); // unparallelized, used for mean field model
-long IFfct(long long input);
 
-float a_V(int index); // unparallelized, used for gaussian
-int updateTotal_a();
 
 // critic network updating
 void update_V();

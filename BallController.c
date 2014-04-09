@@ -96,9 +96,9 @@ void update(uint sim_time, uint none)
 	update_V();
 
 	// TODO: actor network updating
-	update_A( sim_time );
+	//update_A( sim_time );
 	// TODO: actor network motor commands retrieval
-	move( sim_time );
+	//move( sim_time );
 	// end of networks update
 }
 
@@ -136,12 +136,6 @@ void c_main (void)
 	// TODO: actor network init
 	// end of networks init
 	
-	//spin1_delay_us(100000);
-
-	//float a = atan(-1.0);
-	//io_printf(IO_STD,"a %d, (a+1) %d\n", (int)(a*1000.0), (int)((a+1.0)*1000.0));
-
-
 	spin1_start();
 
 

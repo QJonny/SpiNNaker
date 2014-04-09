@@ -5,17 +5,18 @@ void raise() {}
 static float old_V = 0.0;
 static float error = 0.0;
 static vector2d pos_;
+
 // TODO: has to change when parallelized
 static float e_array[N_V] = {0.0};
 static float w_V_array[N_V] = {0.0};
+static float phi_V_old[N_V] = {0.0};
+
 static float w_A_array[N_A] = {0.0};
 static vector2d center[N_V];
 
-// used only for gaussian (unparallelized)
-static float total_a = 0.0;
 
 // used only for mfm (unparallelized)
-static long F[N_V] = {10};
+static float F[N_V] = {10.0};
 
 
 // normalizes ball position and returns normalized ball speed
@@ -67,15 +68,17 @@ void updateError(int x_pos, int y_pos, int x_speed, int y_speed) {
 	float r = R(speed);
 	float curr_V = V();
 
-	float v = INV_DELTA_TIME * ( (1.0 - DELTA_TIME_OVER_TAU)*curr_V - old_V );
+	float v = 0.01*curr_V - old_V ;
 	error = r + v;
 
 	old_V = curr_V;
 
-	
+	if(error > 1.0) { // control condition, should never happen
+		error = 1.0;
+	}	
 	// TODO: (when parallelized) spread new error to every node
 	
-	io_printf(IO_STD,"error %d, (error + 1) %d\n", (int)(error*1000), (int)((error+1.0)*1000));
+	io_printf(IO_STD,"error %d\n", (int)(error*1000));
 }
 
 
@@ -123,16 +126,19 @@ void init_V(uint chipID, uint coreID){
 	}
 }
 
-
+// V in [0; 1]
 float V() {
 	float v = 0;
 	int i = 0;
+	float phi = 0.0;
 
 	for(i = 0; i < N_V; i++) {
-		v += w_V_array[i] * phi_V(i);
+		phi = phi_V(i);
+		v += w_V_array[i] * phi;
+		phi_V_old[i] = phi;
 	}
 
-	// TODO: (when parallelized) replacer multiplication by received values 
+	// TODO: (when parallelized) replacer multiplication by received values
 	return v;
 }
 
@@ -141,22 +147,24 @@ float V() {
 // For the moment the parameters are unparalelized, but this will be the case in the future
 
 float phi_V(int index){
-	return 0.0;//mfm_V(index);
+	return (2.0 - v_norm(v_sub(pos_, center[index])))/2.0;//mfm_V(index);
 }
 
 
 
 // MFM functions
-long IFfct(long long input){
+
+// From 0.5 to 1, slope 2
+float IF(float input){
 	
-	long long output = 0;
+	float output = 0.0;
 	
-	long long thr1 = 50 ;
-	long long slope = 2;
-	long long thr2 = 100 ;
+	float thr1 = 0.5;
+	float slope = 2.0;
+	float thr2 = 1.0;
 	
 	if(input < thr1){
-		output = 0;
+		output = 0.0;
 	}
 	else{
 		output = slope * (input - thr1);
@@ -167,11 +175,10 @@ long IFfct(long long input){
 	}
 	
 	return output;
-	
 }
 
 float mfm_V(int index){
-	long summ = 0;
+	float summ = 0;
 	// used if presynaptic MFM connections (not yet, TODO)
 	/*int i=0;
 	for(i=0; i<M; ++i){
@@ -180,38 +187,15 @@ float mfm_V(int index){
 
 	}*/
 
-	long Iext = (long)(100*(1.0 - v_norm(v_sub(pos_, center[index]))));
+	float Iext = (2.0 - v_norm(v_sub(pos_, center[index]))) / 2.0; // 0: ball far from population center, 1: ball close to population center
 
-	long dv = (( -F[index] + IFfct( summ + Iext ) ) * V_DECAY );
+	float dv = ( -F[index] + IF( summ + Iext ) ) * V_DECAY ;
 
-	F[index] = F[index] + dv;
+	F[index] += dv;
 
 	
-	//io_printf(IO_STD,"f %d\n", F[index]);
-	return (float)F[index];
-}
-
-
-
-// gaussian functions
-int updateTotal_a(){
-	// TODO: change into unparallelized (maybe not needed since MFM will be used)
-	total_a = 0.0;
-	int i = 0;
-
-	for(i = 0; i < N_V; i++) {
-		total_a += a_V(i);
-	}
-
-	if(total_a == 0.0) {
-		return 0;
-	}
-
-	return 1;
-}
-
-float a_V(int index){
-	return exp(-( pow((pos_.x-center[index].x)/GAUSSIAN_SPREAD, 2) +  pow((pos_.y-center[index].y)/GAUSSIAN_SPREAD, 2) ));
+	//io_printf(IO_STD,"f %d\n", (int)(F[index]*1000));
+	return F[index];
 }
 
 
@@ -222,16 +206,31 @@ void update_V() { // TODO: has to change when it will be parallelized
 	int i = 0;
 	
 	for(i = 0; i < N_V; i++) {
-		e_array[i] = LAMBDA*e_array[i] + delta_V_wi(i);
-		w_V_array[i] -= LEARNING_RATE_V*error*e_array[i];
+		e_array[i] = 0.01*LAMBDA*e_array[i] + delta_V_wi(i);
+		w_V_array[i] += LEARNING_RATE_V*error*e_array[i];
 	}
 
 	// TODO: (when parallelized) remove loop and send new values (w_v * phi_V) to master node
 }
 
 float delta_V_wi(int index) {
-	return phi_V(index); // TODO: maybe has to change
+	return phi_V_old[index];//phi_V(index); // TODO: maybe has to change
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
