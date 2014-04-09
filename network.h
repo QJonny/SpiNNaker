@@ -26,14 +26,21 @@
 #define BALL_POS_X_MIN 20
 #define BALL_POS_X_CENTER (int)((BALL_POS_X_MAX + BALL_POS_X_MIN) / 2)
 
+#define MAX_BALL_SPEED 350
+
+#define A_X -1.0/(BALL_POS_X_MAX - BALL_POS_X_CENTER)
+#define B_X -(A_X)*BALL_POS_X_CENTER
+#define A_Y -1.0/(BALL_POS_Y_MIN - BALL_POS_Y_CENTER)
+#define B_Y -(A_Y)*BALL_POS_Y_CENTER
+
+
 #define N_V 64 // number of neurons in the critic network
 #define N_A 64 // number of neurons in the actor network
 #define SIGMA_0 0.5
 
 // reward
 float r_pos();
-float r_tan(int x, int y);
-float R(int x_speed, int y_speed);
+float R(vector2d speed);
 void updateError(int x_pos, int y_pos, int x_speed, int y_speed);
 
 

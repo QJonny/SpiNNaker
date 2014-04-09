@@ -30,6 +30,8 @@ vector2d v_sub(vector2d v1, vector2d v2);
 vector2d v_mul(float coef, vector2d v1);
 float dot(vector2d v1, vector2d v2);
 
+vector2d normalize(vector2d v);
+
 #endif
 
 

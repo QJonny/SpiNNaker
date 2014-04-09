@@ -18,11 +18,12 @@
 #define EVDS1_ENABLE 0x45
 #define MOTORS_KEY ((252 << 24) | (255 << 16))
 
-#define MOTOR_X_CENTER	2500//2110
-#define MOTOR_Y_CENTER	1970
-
 #define MOTOR_MIN 1500
 #define MOTOR_MAX 2500
+
+#define MOTOR_X_CENTER	2110
+#define MOTOR_Y_CENTER	2300//1970
+
 
 
 void initIO();

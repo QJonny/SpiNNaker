@@ -76,3 +76,11 @@ vector2d v_mul(float coef, vector2d v1) {
 float dot(vector2d v1, vector2d v2) {
 	return (v1.x * v2.x) + (v1.y * v2.y);
 }
+
+
+vector2d normalize(vector2d v) {
+	vector2d out = vector(v.x, v.y);
+	ret
+}
+
+
