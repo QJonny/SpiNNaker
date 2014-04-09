@@ -91,14 +91,16 @@ void update(uint sim_time, uint none)
 	compute_speed();
 	// end of ball params update
 
+	// TODO: actor network updating
+	//update_A( sim_time );
+	// TODO: actor network motor commands retrieval
+	//move( sim_time );
+
 	// networks update
 	updateError(x_pos, y_pos, x_speed, y_speed);
 	update_V();
 
-	// TODO: actor network updating
-	update_A( sim_time );
-	// TODO: actor network motor commands retrieval
-	move( sim_time );
+
 	// end of networks update
 }
 

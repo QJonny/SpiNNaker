@@ -3,8 +3,10 @@
 void raise() {}
 
 static float old_V = 0.0;
-static float error = 0.0;
+static float error = 1.0;
+
 static vector2d pos_;
+static vector2d center[N_V];
 
 // TODO: has to change when parallelized
 static float e_array[N_V] = {0.0};
@@ -12,7 +14,6 @@ static float w_V_array[N_V] = {0.0};
 static float phi_V_old[N_V] = {0.0};
 
 static float w_A_array[N_A] = {0.0};
-static vector2d center[N_V];
 
 
 // used only for mfm (unparallelized)
@@ -86,7 +87,7 @@ void updateError(int x_pos, int y_pos, int x_speed, int y_speed) {
 // critic network
 // compute center position for each neuron (inner, has to change when parallelized)
 void init_V_(uint chipID, uint coreID){
-	pos_ = empty_vector();
+	pos_ = vector(-1.0, 0.0);
 	int chipX = chipID & 0x000000FF;
 	int chipY = chipID >> 8;
 	int coreX = (coreID & 0x00000003); // 0 to 3
