@@ -50,7 +50,6 @@ float V(); // returns the critic network value
 
 
 // unparallelized
-float w_V(int index); // unparallelized version
 float phi_V(int index); // corresponds to the feature vector (unparallelized version)
 
 

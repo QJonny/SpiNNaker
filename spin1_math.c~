@@ -79,8 +79,7 @@ float dot(vector2d v1, vector2d v2) {
 
 
 vector2d normalize(vector2d v) {
-	vector2d out = vector(v.x, v.y);
-	ret
+	return v_mul(1.0/v_norm(v), v);
 }
 
 
