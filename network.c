@@ -10,7 +10,7 @@ static vector2d center[N_V];
 
 // TODO: has to change when parallelized
 static float e_array[N_V] = {0.0};
-static float w_V_array[N_V] = {0.0};
+static float w_V_array[N_V] = {0.01};
 static float phi_V_old[N_V] = {0.0};
 
 static float w_A_array[N_A] = {0.0};
@@ -69,14 +69,11 @@ void updateError(int x_pos, int y_pos, int x_speed, int y_speed) {
 	float r = R(speed);
 	float curr_V = V();
 
-	float v = 0.01*curr_V - old_V ;
-	error = r + v;
+	error = r + GAMMA*curr_V - old_V;
 
 	old_V = curr_V;
 
-	if(error > 1.0) { // control condition, should never happen
-		error = 1.0;
-	}	
+		
 	// TODO: (when parallelized) spread new error to every node
 	
 	io_printf(IO_STD,"error %d\n", (int)(error*1000));
@@ -148,7 +145,7 @@ float V() {
 // For the moment the parameters are unparalelized, but this will be the case in the future
 
 float phi_V(int index){
-	return (2.0 - v_norm(v_sub(pos_, center[index])))/2.0;//mfm_V(index);
+	return mfm_V(index);//(2.0 - v_norm(v_sub(pos_, center[index])))/2.0;
 }
 
 
@@ -207,8 +204,8 @@ void update_V() { // TODO: has to change when it will be parallelized
 	int i = 0;
 	
 	for(i = 0; i < N_V; i++) {
-		e_array[i] = 0.01*LAMBDA*e_array[i] + delta_V_wi(i);
-		w_V_array[i] += LEARNING_RATE_V*error*e_array[i];
+		e_array[i] = GAMMA*LAMBDA*e_array[i] + delta_V_wi(i);
+		w_V_array[i] += LEARNING_RATE_V*error*e_array[i] / N_V;
 	}
 
 	// TODO: (when parallelized) remove loop and send new values (w_v * phi_V) to master node
@@ -273,10 +270,10 @@ void update_A(int time) { // TODO: has to change when it will be parallelized
 	
 	for(i = 0; i < N_A; i++) {
 		if(i < N_A/2) { // x component
-			w_A_array[i] -= LEARNING_RATE_A*error*n.x*delta_A_wi(i);
+			w_A_array[i] -= LEARNING_RATE_A*error*n.x*delta_A_wi(i) / N_A;
 		}
 		else { // y component
-			w_A_array[i] -= LEARNING_RATE_A*error*n.y*delta_A_wi(i);
+			w_A_array[i] -= LEARNING_RATE_A*error*n.y*delta_A_wi(i) / N_A;
 		}
 
 	}
@@ -298,7 +295,7 @@ float phi_A(int index){
 }
 
 float sigma(){
-	return SIGMA_0 * min(K, max(0.0, 1.0-V()));
+	return SIGMA_0 * min(K, max(0.0, 1.0-old_V));
 }
 
 vector2d noise(int t){

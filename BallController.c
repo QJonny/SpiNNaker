@@ -92,8 +92,8 @@ void update(uint sim_time, uint none)
 	// end of ball params update
 
 	// actor network updating and command sending
-	//update_A( sim_time );
-	//move( sim_time );
+	update_A( sim_time );
+	move( sim_time );
 
 	// critic networks update
 	updateError(x_pos, y_pos, x_speed, y_speed);

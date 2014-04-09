@@ -6,11 +6,12 @@
 #include "communication.h"
 
 #define TAU 0.1001
-#define KAPPA 0.1
-#define LAMBDA (1.0 - DELTA_TIME/KAPPA) / (1.0 - DELTA_TIME/TAU)
+#define KAPPA 0.05
+#define LAMBDA 0.1//(1.0 - DELTA_TIME/KAPPA) / (1.0 - DELTA_TIME/TAU)
 #define LEARNING_RATE_V 0.2
 #define LEARNING_RATE_A 0.2
 #define DELTA_TIME_OVER_TAU (DELTA_TIME / TAU)
+#define GAMMA 0.1
 #define K 0.1
 
 #define LOG_P1 16
