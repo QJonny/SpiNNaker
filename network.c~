@@ -76,7 +76,7 @@ void updateError(int x_pos, int y_pos, int x_speed, int y_speed) {
 		
 	// TODO: (when parallelized) spread new error to every node
 	
-	io_printf(IO_STD,"error %d\n", (int)(error*1000));
+	//io_printf(IO_STD,"error %d\n", (int)(error*1000));
 }
 
 
@@ -257,10 +257,11 @@ void move(int time) {
 
 	// TODO: perform motor coord extraction
 	
-
+	spin1_delay_us(100000);
+	//io_printf(IO_STD,"x %d, y %d\n", (int)(x_*1000), (int)(y_*1000));
 	
 	// Motor command sending
-	//sendMotorCommand((uint)x_, (uint)y_);
+	sendMotorCommand((uint)(x_*5000) + 2000, (uint)(y_*5000) + 2000);
 }
 
 
@@ -270,10 +271,10 @@ void update_A(int time) { // TODO: has to change when it will be parallelized
 	
 	for(i = 0; i < N_A; i++) {
 		if(i < N_A/2) { // x component
-			w_A_array[i] -= LEARNING_RATE_A*error*n.x*delta_A_wi(i);
+			w_A_array[i] -= LEARNING_RATE_A*error*n.x*delta_A_wi(i) / N_A;
 		}
 		else { // y component
-			w_A_array[i] -= LEARNING_RATE_A*error*n.y*delta_A_wi(i);
+			w_A_array[i] -= LEARNING_RATE_A*error*n.y*delta_A_wi(i) / N_A;
 		}
 
 	}
@@ -299,8 +300,8 @@ float sigma(){
 }
 
 vector2d noise(int t){
-	vector2d r = empty_vector();
-	return r; // TODO: implement Poisson noise
+	vector2d r = vector(1.0, 1.0);
+	return r; // TODO: implement Gaussian noise
 }
 
 
