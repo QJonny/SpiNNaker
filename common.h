@@ -1,11 +1,14 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include "stdlib.h"
+
 #include "spin1_api.h"
 #include "spinn_io.h"
 #include "spinn_sdp.h"
 
 #include "spin1_math.h"
+
 
 void raise();
 

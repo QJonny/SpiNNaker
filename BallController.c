@@ -77,7 +77,7 @@ void cameraEvent(uint key, uint payload){
 	if(pol == 1) {
 		compute_pos(x_cur, y_cur, spin1_get_simulation_time());
 		//vector2d v = vector((float)(x_pos - BALL_POS_X_CENTER), (float)(y_pos - BALL_POS_Y_CENTER));
-		//io_printf (IO_STD, "distance from center : (%d)\n", (int)v_norm(v));
+		//io_printf (IO_STD, "sim time: %d\n", spin1_get_simulation_time());
 		//io_printf (IO_STD, "%d,%d\n", x_pos, y_pos);
 	}
 }
@@ -134,6 +134,7 @@ void c_main (void)
 
 	// networks init
 	init_V(chipID, coreID);
+	init_A(0);
 	// TODO: actor network init
 	// end of networks init
 	

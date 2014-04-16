@@ -8,10 +8,10 @@
 #define TAU 0.1001
 #define KAPPA 0.05
 #define LAMBDA 0.1//(1.0 - DELTA_TIME/KAPPA) / (1.0 - DELTA_TIME/TAU)
-#define LEARNING_RATE_V 0.2
+#define LEARNING_RATE_V 0.5
 #define LEARNING_RATE_A 0.2
 #define DELTA_TIME_OVER_TAU (DELTA_TIME / TAU)
-#define GAMMA 0.9
+#define GAMMA 0.1
 #define K 0.1
 
 #define LOG_P1 16
@@ -61,6 +61,7 @@ float delta_V_wi(int index);
 
 
 // actor network
+void init_A(uint noise_seed);
 void move(int time); // perform the next movement
 void update_A(int time);
 float delta_A_wi(int index);

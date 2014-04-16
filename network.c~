@@ -6,6 +6,7 @@ static float old_V = 0.0;
 static float error = 1.0;
 
 static vector2d pos_;
+static vector2d speed_;
 static vector2d center[N_V];
 
 // TODO: has to change when parallelized
@@ -13,7 +14,8 @@ static float e_array[N_V] = {0.0};
 static float w_V_array[N_V] = {0.01};
 static float phi_V_old[N_V] = {0.0};
 
-static float w_A_array[N_A] = {0.0};
+static float w_A_array[N_A] = {0.01};
+static vector2d n; // noise
 
 
 // used only for mfm (unparallelized)
@@ -26,14 +28,15 @@ vector2d normalizeBallParams(int x_pos, int y_pos, int x_speed, int y_speed) {
 	vector2d speed = empty_vector();
 	vector2d int_sp = vector((float)x_speed, (float)y_speed);
 
-	float speed_ratio = v_norm(int_sp) / (float)MAX_BALL_SPEED;
+	//float speed_ratio = v_norm(int_sp) / (float)MAX_BALL_SPEED;
 
-	if(speed_ratio > 1.0) {
+	/*if(speed_ratio > 1.0) {
 		speed_ratio = 1.0;
-	}
+	}*/
 
-	speed = normalize(int_sp);
-	speed = v_mul(speed_ratio, speed);
+	speed = v_mul(1.0/64.0, int_sp);
+	//speed = normalize(int_sp);
+	//speed = v_mul(speed_ratio, speed);
 
 
 	// position normalization
@@ -65,8 +68,8 @@ float R(vector2d speed){
 }
 
 void updateError(int x_pos, int y_pos, int x_speed, int y_speed) {
-	vector2d speed = normalizeBallParams(x_pos, y_pos, x_speed, y_speed);
-	float r = R(speed);
+	speed_ = normalizeBallParams(x_pos, y_pos, x_speed, y_speed);
+	float r = R(speed_);
 	float curr_V = V();
 
 	error = r + GAMMA*curr_V - old_V;
@@ -76,7 +79,7 @@ void updateError(int x_pos, int y_pos, int x_speed, int y_speed) {
 		
 	// TODO: (when parallelized) spread new error to every node
 	
-	//io_printf(IO_STD,"error %d\n", (int)(error*1000));
+	//io_printf(IO_STD,"v %d\n", (int)(curr_V*1000));
 }
 
 
@@ -234,11 +237,16 @@ float delta_V_wi(int index) {
 
 
 // Actor neural network
+void init_A(uint noise_seed) {
+	srand(noise_seed);
+}
+
+
+
 void move(int time) {
 	int i = 0;
 	float x_ = 0.0;
 	float y_ = 0.0;
-	vector2d n = noise(time);
 
 	for(i = 0; i < N_A; i++) {
 		if(i < N_A/2) { // x component
@@ -249,32 +257,35 @@ void move(int time) {
 		}
 	}
 
-	x_ += sigma() * n.x;
-	y_ += sigma() * n.y;
+	//x_ += sigma() * n.x;
+	//y_ += sigma() * n.y;
+	float coef = 0.75;
+	
+	x_ = -coef*(x_ + speed_.x);
+	y_ = coef*(y_ + speed_.y);
 
 
 	// TODO: (when parallelized) replacer multiplication by received values 
 
 	// TODO: perform motor coord extraction
 	
-	spin1_delay_us(100000);
 	//io_printf(IO_STD,"x %d, y %d\n", (int)(x_*1000), (int)(y_*1000));
 	
 	// Motor command sending
-	sendMotorCommand((uint)(x_*5000) + 2000, (uint)(y_*5000) + 2000);
+	sendMotorCommand((int)(x_*1000) + 2000, (int)(y_*1000) + 2000);
 }
 
 
 void update_A(int time) { // TODO: has to change when it will be parallelized
 	int i = 0;
-	vector2d n = noise(time);
+	n = vector(1.0, 1.0);//noise(time);
 	
 	for(i = 0; i < N_A; i++) {
 		if(i < N_A/2) { // x component
-			w_A_array[i] -= LEARNING_RATE_A*error*n.x*delta_A_wi(i) / N_A;
+			w_A_array[i] += LEARNING_RATE_A*error*n.x*delta_A_wi(i) / N_A;
 		}
 		else { // y component
-			w_A_array[i] -= LEARNING_RATE_A*error*n.y*delta_A_wi(i) / N_A;
+			w_A_array[i] += LEARNING_RATE_A*error*n.y*delta_A_wi(i) / N_A;
 		}
 
 	}
@@ -283,7 +294,7 @@ void update_A(int time) { // TODO: has to change when it will be parallelized
 }
 
 float delta_A_wi(int index) {
-	return phi_A(index); // TODO: maybe has to change
+	return phi_A(index); 
 }
 
 float phi_A(int index){
@@ -299,9 +310,16 @@ float sigma(){
 	return SIGMA_0 * min(K, max(0.0, 1.0-old_V));
 }
 
+// Gaussian noise (Box-Muller transform)
 vector2d noise(int t){
-	vector2d r = vector(1.0, 1.0);
-	return r; // TODO: implement Gaussian noise
+	float U1 = (float)rand() / RAND_MAX; // uniform number in range [0, 1]
+	float U2 = (float)rand() / RAND_MAX; // ||
+
+	float R = sqrt(-2.0*(logf(U1)/M_LOG10E));
+	float theta = 2.0*PI_*U2;
+
+	vector2d r = vector(R*cos(theta), R*sin(theta));
+	return r;
 }
 
 
