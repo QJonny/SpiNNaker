@@ -1,0 +1,70 @@
+// author: Jonny Quarta
+// Date: March 19st 2014
+
+#include "sinus.h"
+
+#define MC_PAYLOAD 15
+
+void raise() {}
+
+void initIO() {
+	spin1_set_mc_table_entry(0x2, 	MOTORS_KEY, 0xFFFF0000,	EAST);
+
+	spin1_set_mc_table_entry(0x4, 	0x41, 0xFFFFFFFF, WEST);
+
+}
+
+
+void startDevices() {
+	spin1_send_mc_packet(MOTORS_KEY,MOTOR_Y_CENTER | (MOTOR_X_CENTER << 16 ), 1);
+}
+
+
+
+void sendMotorCommand(uint motor_x, uint motor_y) {
+	spin1_send_mc_packet(MOTORS_KEY, motor_y | (motor_x << 16 ), 1);
+}
+
+
+void update(uint sim_time, uint none)
+{
+	float rad = 2.0*3.1415*(sim_time % 360)/360.0;
+
+	float s = sin(rad);
+
+	int x_coord = (int)(500*(s) + 2000);
+
+	sendMotorCommand(x_coord, 2000);
+	io_printf(IO_STD,"x is %d\n", x_coord);
+}
+
+
+// The idea is to set a communication system whose purpose
+// is to exchange data from a virtual master node (situated
+// at core 0, chip 0) and all the other cores situated on all
+// the other chips. From master node to other nodes we use multicast
+// messages, whereas from a node to master node we use sdp messages.
+void c_main (void)
+{		
+	// simulation initialization
+	coreID = spin1_get_core_id();
+	chipID = spin1_get_chip_id();
+
+	//spin1_application_core_map(NUMBER_OF_XCHIPS, NUMBER_OF_YCHIPS, core_map);
+
+	io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
+
+	spin1_set_timer_tick(TICK_TIME);
+	// end of simulation initialization
+
+	spin1_callback_on(TIMER_TICK, update, 1);
+	initIO();
+	startDevices();
+
+
+
+
+	spin1_start();
+}
+
+

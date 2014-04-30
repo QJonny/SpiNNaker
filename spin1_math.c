@@ -12,6 +12,15 @@ float max(float v1, float v2){
 	return (v1 > v2) ? v1:v2;
 }
 
+float range(float value, float upper, float lower) {
+	if(value > upper) {
+		value = upper;
+	} else if(value < lower) {
+		value = lower;
+	}
+
+	return value;
+}
 
 
 

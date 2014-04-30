@@ -17,10 +17,6 @@ int old_time = -1;
 // ball parameters
 int x_pos = 0;
 int y_pos = 0;
-int old_x_pos = 0;
-int old_y_pos = 0;
-int x_speed = 1;
-int y_speed = 1;
 // end of ball parameters
 
 // motors comands
@@ -56,16 +52,7 @@ void compute_pos(int x_cur, int y_cur, int sim_time)
 	}
 }
 
-// call every tick (0.1s)
-void compute_speed()
-{
-        x_speed = (x_pos - old_x_pos) * INV_DELTA_TIME;
-        y_speed = (y_pos - old_y_pos) * INV_DELTA_TIME;
 
-
-        old_x_pos = x_pos;
-        old_y_pos = y_pos;
-}
 
 void cameraEvent(uint key, uint payload){
 	// raw position extraction
@@ -87,16 +74,12 @@ void cameraEvent(uint key, uint payload){
 
 void update(uint sim_time, uint none)
 {
-	// ball params update
-	compute_speed();
-	// end of ball params update
-
 	// actor network updating and command sending
 	update_A( sim_time );
 	move( sim_time );
 
 	// critic networks update
-	updateError(x_pos, y_pos, x_speed, y_speed);
+	updateError(x_pos, y_pos, sim_time);
 	update_V();
 
 

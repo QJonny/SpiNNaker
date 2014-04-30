@@ -20,9 +20,10 @@
 
 #define MOTOR_MIN 1500
 #define MOTOR_MAX 2500
+#define MOTOR_DELTA ((MOTOR_MAX - MOTOR_MIN) / 2)
 
-#define MOTOR_X_CENTER	2110
-#define MOTOR_Y_CENTER	1970
+#define MOTOR_X_CENTER	2150
+#define MOTOR_Y_CENTER	2000//1970
 
 
 
@@ -30,6 +31,7 @@ void initIO();
 void startDevices();
 void stopDevices();
 
+void sendNormMotorCommand(float x, float y);
 void sendMotorCommand(uint motor_x, uint motor_y);
 
 #endif

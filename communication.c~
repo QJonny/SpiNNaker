@@ -14,7 +14,7 @@ void initIO() {
 
 
 void startDevices() {
-	spin1_send_mc_packet(MOTORS_KEY,MOTOR_CENTER | (MOTOR_CENTER << 16 ), 1);
+	spin1_send_mc_packet(MOTORS_KEY,MOTOR_Y_CENTER | (MOTOR_X_CENTER << 16 ), 1);
 
   	spin1_send_mc_packet(EVDS1_ENABLE | MGMT_BIT, 1, 1);
 }
@@ -32,7 +32,9 @@ void sendMotorCommand(uint motor_x, uint motor_y) {
 }
 
 
+void sendNormMotorCommand(float x, float y) {
 
+}
 
 
 

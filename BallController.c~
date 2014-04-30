@@ -56,16 +56,7 @@ void compute_pos(int x_cur, int y_cur, int sim_time)
 	}
 }
 
-// call every tick (0.1s)
-void compute_speed()
-{
-        x_speed = (x_pos - old_x_pos) * INV_DELTA_TIME;
-        y_speed = (y_pos - old_y_pos) * INV_DELTA_TIME;
 
-
-        old_x_pos = x_pos;
-        old_y_pos = y_pos;
-}
 
 void cameraEvent(uint key, uint payload){
 	// raw position extraction
@@ -87,16 +78,12 @@ void cameraEvent(uint key, uint payload){
 
 void update(uint sim_time, uint none)
 {
-	// ball params update
-	compute_speed();
-	// end of ball params update
-
 	// actor network updating and command sending
 	update_A( sim_time );
 	move( sim_time );
 
 	// critic networks update
-	updateError(x_pos, y_pos, x_speed, y_speed);
+	updateError(x_pos, y_pos, sim_time);
 	update_V();
 
 
@@ -115,7 +102,7 @@ void c_main (void)
 
 	io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
 
-	spin1_set_timer_tick(10000);
+	spin1_set_timer_tick(TICK_TIME);
 	// end of simulation initialization
 
 
