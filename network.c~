@@ -7,14 +7,16 @@ static float error = 1.0;
 
 static vector2d pos_;
 static vector2d speed_;
+static vector2d old_pos_;
+
 static vector2d center[N_V];
 
 // TODO: has to change when parallelized
 static float e_array[N_V] = {0.0};
-static float w_V_array[N_V] = {0.01};
+static float w_V_array[N_V] = {0.0};
 static float phi_V_old[N_V] = {0.0};
 
-static float w_A_array[N_A] = {0.01};
+static float w_A_array[N_A] = {0.0};
 static vector2d n; // noise
 
 
@@ -22,28 +24,39 @@ static vector2d n; // noise
 static float F[N_V] = {10.0};
 
 
+// call every tick (0.1s)
+void compute_speed(uint sim_time)
+{
+	if(sim_time % SPEED_AVERAGER_STEP == 0) {
+		speed_.x = (pos_.x - old_pos_.x) * INV_DELTA_TIME * INV_SPEED_AVERAGER_STEP;
+		speed_.y = (pos_.y - old_pos_.y) * INV_DELTA_TIME * INV_SPEED_AVERAGER_STEP;
+
+		old_pos_.x = pos_.x;
+		old_pos_.y = pos_.y;
+	}
+}
+
 // normalizes ball position and returns normalized ball speed
-vector2d normalizeBallParams(int x_pos, int y_pos, int x_speed, int y_speed) {
-	// speed normalization
-	vector2d speed = empty_vector();
-	vector2d int_sp = vector((float)x_speed, (float)y_speed);
-
-	//float speed_ratio = v_norm(int_sp) / (float)MAX_BALL_SPEED;
-
-	/*if(speed_ratio > 1.0) {
-		speed_ratio = 1.0;
-	}*/
-
-	speed = v_mul(1.0/64.0, int_sp);
-	//speed = normalize(int_sp);
-	//speed = v_mul(speed_ratio, speed);
-
-
+void normalizeBallParams(int x_pos, int y_pos, uint sim_time) {
 	// position normalization
 	pos_.x = A_X*x_pos + B_X;
 	pos_.y = A_Y*y_pos + B_Y;
 
-	return speed;
+	compute_speed(sim_time);
+
+	// speed normalization
+
+	/*float speed_ratio = v_norm(int_sp) / (float)MAX_BALL_SPEED;
+
+	if(speed_ratio > 1.0) {
+		speed_ratio = 1.0;
+	}
+
+	speed = normalize(int_sp);
+	speed = v_mul(speed_ratio, speed);*/
+
+	pos_.x = range(pos_.x, 1.0, -1.0);
+	pos_.y = range(pos_.y, 1.0, -1.0);
 }
 
 
@@ -58,17 +71,14 @@ float r_pos() {
 float R(vector2d speed){
 	float r = r_pos() - (2.0 / PI_) * atan(v_norm(speed));
 	
-	if(r < 0.0){
-		r = 0.0;
-	} else if(r > 1.0) {
-		r = 1.0;
-	}
+	r = range(r, 1.0, 0.0);
 
 	return r;
 }
 
-void updateError(int x_pos, int y_pos, int x_speed, int y_speed) {
-	speed_ = normalizeBallParams(x_pos, y_pos, x_speed, y_speed);
+
+void updateError(int x_pos, int y_pos, uint sim_time) {
+	normalizeBallParams(x_pos, y_pos, sim_time);
 	float r = R(speed_);
 	float curr_V = V();
 
@@ -78,8 +88,9 @@ void updateError(int x_pos, int y_pos, int x_speed, int y_speed) {
 
 		
 	// TODO: (when parallelized) spread new error to every node
-	
+
 	//io_printf(IO_STD,"v %d\n", (int)(curr_V*1000));
+	io_printf(IO_STD,"x %d, y %d\n", (int)(pos_.x*1000), (int)(pos_.y*1000));
 }
 
 
@@ -87,7 +98,6 @@ void updateError(int x_pos, int y_pos, int x_speed, int y_speed) {
 // critic network
 // compute center position for each neuron (inner, has to change when parallelized)
 void init_V_(uint chipID, uint coreID){
-	pos_ = vector(-1.0, 0.0);
 	int chipX = chipID & 0x000000FF;
 	int chipY = chipID >> 8;
 	int coreX = (coreID & 0x00000003); // 0 to 3
@@ -113,6 +123,10 @@ void init_V_(uint chipID, uint coreID){
 
 // compute center position for each neuron (outer, has to change when parallelized)
 void init_V(uint chipID, uint coreID){
+	pos_ = vector(-1.0, 0.0);
+	old_pos_ = vector(-1.0, 0.0);
+	speed_ = vector(0.0, 0.0);
+
 	coreID = 0;
 	int i = 0;
 	uint chipsID[4] = {0, 1, 256, 257}; // 0,0  0,1  1,0  1,1
@@ -257,28 +271,31 @@ void move(int time) {
 		}
 	}
 
-	//x_ += sigma() * n.x;
-	//y_ += sigma() * n.y;
-	float coef = 0.75;
-	
-	x_ = -coef*(x_ + speed_.x);
-	y_ = coef*(y_ + speed_.y);
 
+	
+	float coef = 1.5;//0.75;
+
+
+	// range: [-1;1]	
+	x_ = -coef*(x_) + sigma() * n.x;
+	y_ = coef*(y_) + sigma() * n.y;
+	
 
 	// TODO: (when parallelized) replacer multiplication by received values 
-
-	// TODO: perform motor coord extraction
 	
 	//io_printf(IO_STD,"x %d, y %d\n", (int)(x_*1000), (int)(y_*1000));
+	//io_printf(IO_STD,"speed %d, %d, norm %d\n", (int)(speed_.x*1000), (int)(speed_.y*1000), (int)(v_norm(speed_)*1000));
 	
 	// Motor command sending
-	sendMotorCommand((int)(x_*1000) + 2000, (int)(y_*1000) + 2000);
+	//sendNormMotorCommand(0.0, y_);
+	//sendNormMotorCommand(x_, 0.0);
+	sendNormMotorCommand(x_, y_);
 }
 
 
 void update_A(int time) { // TODO: has to change when it will be parallelized
 	int i = 0;
-	n = vector(1.0, 1.0);//noise(time);
+	n = noise(time);
 	
 	for(i = 0; i < N_A; i++) {
 		if(i < N_A/2) { // x component
