@@ -1,11 +1,12 @@
-#ifndef COMM_TEMPLATE_H
-#define COMM_TEMPLATE_H
+#ifndef SINUS_H
+#define SINUS_H
 
 #include "spin1_api.h"
 #include "spinn_io.h"
 #include "spinn_sdp.h"
+#include "math.h"
 
-//void raise();
+void raise();
 
 // simulation constants
 #define PRINT_DLY          200
@@ -25,11 +26,22 @@ typedef unsigned int uint32_t;
 #define NUMBER_OF_YCHIPS 2
 
 
+#define EAST 0x1
+#define N_EAST 0x2
+#define NORTH 0x4
+#define WEST 0x8
+#define S_WEST 0x10
+#define SOUTH 0x20
+
+#define CORE(n) (1<< (n+6))
+
+
+
 
 
 uint core_map [ NUMBER_OF_XCHIPS ][ NUMBER_OF_YCHIPS ] =
 {
-	{0x3 , 0x3 } , // ( 0 , 0 ) , (0 , 1)
+	{0x2 , 0x0 } , // ( 0 , 0 ) , (0 , 1)
 	{0x0 , 0x0 }   // ( 1 , 0 ) , (1 , 1)
 };
 

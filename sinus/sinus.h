@@ -1,11 +1,12 @@
-#ifndef COMM_TEMPLATE_H
-#define COMM_TEMPLATE_H
+#ifndef SINUS_H
+#define SINUS_H
 
 #include "spin1_api.h"
 #include "spinn_io.h"
 #include "spinn_sdp.h"
+#include "math.h"
 
-//void raise();
+void raise();
 
 // simulation constants
 #define PRINT_DLY          200
@@ -34,13 +35,19 @@ typedef unsigned int uint32_t;
 
 #define CORE(n) (1<< (n+6))
 
+#define MOTORS_KEY ((252 << 24) | (255 << 16))
 
+#define MOTOR_MIN 1500
+#define MOTOR_MAX 2500
+
+#define MOTOR_X_CENTER	2110
+#define MOTOR_Y_CENTER	1970
 
 
 
 uint core_map [ NUMBER_OF_XCHIPS ][ NUMBER_OF_YCHIPS ] =
 {
-	{0x3 , 0x3 } , // ( 0 , 0 ) , (0 , 1)
+	{0x2 , 0x0 } , // ( 0 , 0 ) , (0 , 1)
 	{0x0 , 0x0 }   // ( 1 , 0 ) , (1 , 1)
 };
 

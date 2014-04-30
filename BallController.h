@@ -14,7 +14,6 @@
 
 
 
-
 uint core_map [ NUMBER_OF_XCHIPS ][ NUMBER_OF_YCHIPS ] =
 {
 	{0x3 , 0x3 } , // ( 0 , 0 ) , (0 , 1)

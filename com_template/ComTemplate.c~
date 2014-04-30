@@ -9,7 +9,7 @@ void updateMaster(uint sim_time, uint none)
 {
         io_printf (IO_STD, "Master: sending MC packet to slave nodes\n");
 
-        uint res = spin1_send_mc_packet(0 /* key???*/, MC_PAYLOAD, WITH_PAYLOAD);
+        uint res = spin1_send_mc_packet(0x2, MC_PAYLOAD, WITH_PAYLOAD);
 
         if(res == 0) {
                 io_printf (IO_STD, "Master: error in sending MC packet to slave nodes\n");
@@ -72,18 +72,21 @@ void c_main (void)
 
 
 	
-	if(chipID == 0 && coreID == 0) { // Master node
-		spin1_callback_on(SDP_PACKET_RX, sdpRecMaster, 2);
+	if(chipID == 0 && coreID == 1) { // Master node
+		//spin1_callback_on(SDP_PACKET_RX, sdpRecMaster, 2);
 	        spin1_callback_on(TIMER_TICK, updateMaster, 1);
                 // fill multicast table
-	        spin1_set_mc_table_entry(0x3, 	0x0,	0x0, CORE(1));
+	        spin1_set_mc_table_entry(0x3, 	0x2,	0xffff, CORE(2)|CORE(3));
+		spin1_set_mc_table_entry(0x3, 	0x2,	0xffff, CORE(2)|CORE(3));
 	}
         else { // Slave node
-	        spin1_callback_on(TIMER_TICK, updateSlave, 1);
+	        //spin1_callback_on(TIMER_TICK, updateSlave, 1);
                 spin1_callback_on(MC_PACKET_RECEIVED, mcRecSlave, 2);
                 // fill multicast table
-	        spin1_set_mc_table_entry(0x3, 	0x0,	0x0, CORE(1));
+	        //spin1_set_mc_table_entry(0x3, 	0x0,	0x0, CORE(1));
         }
 
 	spin1_start();
 }
+
+

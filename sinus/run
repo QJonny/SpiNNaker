@@ -1,4 +1,4 @@
-make -f gnu.make EXAMPLE=ComTemplate
+make -f gnu.make EXAMPLE=sinus
 
 ../../../../../tools/ybug 192.168.0.11 << EOF
 
@@ -10,12 +10,8 @@ p2pc 2 2
 
 
 sp 0 0
-sload ComTemplate.aplx f5000000
-as f5000000 E
-
-sp 1 1
-sload ComTemplate.aplx f5000000
-as f5000000 E
+sload sinus.aplx f5000000
+as f5000000 2
 
 
 sleep 1

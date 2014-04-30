@@ -40,8 +40,8 @@ typedef unsigned int uint32_t;
 
 uint core_map [ NUMBER_OF_XCHIPS ][ NUMBER_OF_YCHIPS ] =
 {
-	{0x3 , 0x3 } , // ( 0 , 0 ) , (0 , 1)
-	{0x0 , 0x0 }   // ( 1 , 0 ) , (1 , 1)
+	{0xfffe , 0x0 } , // ( 0 , 0 ) , (0 , 1)
+	{0x0 , 0xfffe }   // ( 1 , 0 ) , (1 , 1)
 };
 
 
