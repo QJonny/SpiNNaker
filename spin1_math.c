@@ -96,4 +96,14 @@ vector2d normalize(vector2d v) {
 	}
 }
 
+vector2d perp(vector2d v) {
+	return vector(-v.y, v.x);
+}
+
+
+vector2d project(vector2d a, vector2d b) {
+	float coef = dot(a, b)/v_norm(b);
+	
+	return v_mul(coef, normalize(b));
+}
 

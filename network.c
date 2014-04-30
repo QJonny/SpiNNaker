@@ -89,8 +89,7 @@ void updateError(int x_pos, int y_pos, uint sim_time) {
 		
 	// TODO: (when parallelized) spread new error to every node
 
-	//io_printf(IO_STD,"v %d\n", (int)(curr_V*1000));
-	io_printf(IO_STD,"x %d, y %d\n", (int)(pos_.x*1000), (int)(pos_.y*1000));
+	//io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
 }
 
 
@@ -257,7 +256,7 @@ void init_A(uint noise_seed) {
 
 
 
-void move(int time) {
+void move(uint sim_time) {
 	int i = 0;
 	float x_ = 0.0;
 	float y_ = 0.0;
@@ -277,8 +276,13 @@ void move(int time) {
 
 
 	// range: [-1;1]	
-	x_ = -coef*(x_) + sigma() * n.x;
-	y_ = coef*(y_) + sigma() * n.y;
+	x_ = -coef*(x_) ;//+ sigma() * n.x;
+	y_ = coef*(y_) ;//+ sigma() * n.y;
+
+	vector2d force = project(speed_, v_mul(-10.0, pos_));
+
+	x_ = range(x_ + force.x, 1.0, -1.0);
+	y_ = range(y_ + force.y, 1.0, -1.0);
 	
 
 	// TODO: (when parallelized) replacer multiplication by received values 
@@ -289,13 +293,19 @@ void move(int time) {
 	// Motor command sending
 	//sendNormMotorCommand(0.0, y_);
 	//sendNormMotorCommand(x_, 0.0);
-	sendNormMotorCommand(x_, y_);
+
+	if(sim_time % RESET_STEP == 0) {
+		sendNormMotorCommand(-1.0, 0.0);
+	}
+	else {	
+		sendNormMotorCommand(x_, y_);
+	}
 }
 
 
-void update_A(int time) { // TODO: has to change when it will be parallelized
+void update_A() { // TODO: has to change when it will be parallelized
 	int i = 0;
-	n = noise(time);
+	n = noise();
 	
 	for(i = 0; i < N_A; i++) {
 		if(i < N_A/2) { // x component
@@ -328,7 +338,7 @@ float sigma(){
 }
 
 // Gaussian noise (Box-Muller transform)
-vector2d noise(int t){
+vector2d noise(){
 	float U1 = (float)rand() / RAND_MAX; // uniform number in range [0, 1]
 	float U2 = (float)rand() / RAND_MAX; // ||
 

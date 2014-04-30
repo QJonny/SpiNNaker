@@ -17,10 +17,6 @@ int old_time = -1;
 // ball parameters
 int x_pos = 0;
 int y_pos = 0;
-int old_x_pos = 0;
-int old_y_pos = 0;
-int x_speed = 1;
-int y_speed = 1;
 // end of ball parameters
 
 // motors comands
@@ -79,7 +75,7 @@ void cameraEvent(uint key, uint payload){
 void update(uint sim_time, uint none)
 {
 	// actor network updating and command sending
-	update_A( sim_time );
+	//update_A( sim_time );
 	move( sim_time );
 
 	// critic networks update

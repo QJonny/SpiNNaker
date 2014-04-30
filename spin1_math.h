@@ -31,6 +31,10 @@ vector2d v_mul(float coef, vector2d v1);
 float dot(vector2d v1, vector2d v2);
 
 vector2d normalize(vector2d v);
+vector2d perp(vector2d v);
+
+// projects a on b
+vector2d project(vector2d a, vector2d b);
 
 #endif
 

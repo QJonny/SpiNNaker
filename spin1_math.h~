@@ -9,7 +9,7 @@
 // comparision
 float min(float v1, float v2);
 float max(float v1, float v2);
-
+float range(float value, float upper, float lower);
 
 // vectors
 struct vector2d {
@@ -31,6 +31,7 @@ vector2d v_mul(float coef, vector2d v1);
 float dot(vector2d v1, vector2d v2);
 
 vector2d normalize(vector2d v);
+vector2d perp(vector2d v);
 
 #endif
 

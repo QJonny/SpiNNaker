@@ -12,7 +12,6 @@
 #define LEARNING_RATE_A 0.5
 #define DELTA_TIME_OVER_TAU (DELTA_TIME / TAU)
 #define GAMMA 0.1
-#define K 0.1
 
 #define LOG_P1 16
 #define V_DECAY 0.5
@@ -34,11 +33,13 @@
 
 #define N_V 64 // number of neurons in the critic network
 #define N_A 64 // number of neurons in the actor network
-#define SIGMA_0 0.5
+#define K 0.4
+#define SIGMA_0 0.1
 
 
 #define SPEED_AVERAGER_STEP 10
 #define INV_SPEED_AVERAGER_STEP (1.0 / SPEED_AVERAGER_STEP)
+#define RESET_STEP 30000
 
 
 // reward
@@ -66,12 +67,12 @@ float delta_V_wi(int index);
 
 // actor network
 void init_A(uint noise_seed);
-void move(int time); // perform the next movement
-void update_A(int time);
+void move(uint sim_time); // perform the next movement
+void update_A();
 float delta_A_wi(int index);
 float phi_A(int index); // corresponds to the feature vector (unparallelized version)
 float sigma();
-vector2d noise(int t);
+vector2d noise();
 
 
 #endif
