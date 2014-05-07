@@ -13,6 +13,9 @@
 #define DELTA_TIME_OVER_TAU (DELTA_TIME / TAU)
 #define GAMMA 0.1
 
+#define CENTER_THRESHOLD 0.9
+
+
 #define LOG_P1 16
 #define V_DECAY 0.5
 
