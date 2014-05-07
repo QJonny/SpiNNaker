@@ -54,6 +54,25 @@ void compute_pos(int x_cur, int y_cur, int sim_time)
 
 
 
+
+
+void update(uint sim_time, uint none)
+{
+	// actor network updating and command sending
+	update_A( sim_time );
+	move( sim_time );
+
+	// critic networks update
+	updateError(x_pos, y_pos, sim_time);
+	update_V();
+
+
+	// end of networks update
+}
+
+
+
+
 void cameraEvent(uint key, uint payload){
 	// raw position extraction
 	int y_cur = ((key & 0x7F));
@@ -66,24 +85,8 @@ void cameraEvent(uint key, uint payload){
 		//vector2d v = vector((float)(x_pos - BALL_POS_X_CENTER), (float)(y_pos - BALL_POS_Y_CENTER));
 		//io_printf (IO_STD, "sim time: %d\n", spin1_get_simulation_time());
 		//io_printf (IO_STD, "%d,%d\n", x_pos, y_pos);
+		//update(spin1_get_simulation_time(), 0);
 	}
-}
-
-
-
-
-void update(uint sim_time, uint none)
-{
-	// actor network updating and command sending
-	//update_A( sim_time );
-	move( sim_time );
-
-	// critic networks update
-	updateError(x_pos, y_pos, sim_time);
-	update_V();
-
-
-	// end of networks update
 }
 
 

@@ -34,7 +34,7 @@
 #define N_V 64 // number of neurons in the critic network
 #define N_A 64 // number of neurons in the actor network
 #define K 0.5
-#define SIGMA_0 0.05
+#define SIGMA_0 0.02
 
 
 #define SPEED_AVERAGER_STEP 10

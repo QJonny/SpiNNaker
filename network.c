@@ -272,17 +272,16 @@ void move(uint sim_time) {
 
 
 	
-	float coef = 5.0;//0.75;
+	float coef = 1.0;//0.75;
 
 
 	// range: [-1;1]	
-	x_ = -coef*(x_) ;//+ sigma() * n.x;
-	y_ = coef*(y_) ;//+ sigma() * n.y;
+	x_ = coef*(x_) + sigma() * n.x;
+	y_ = coef*(y_) + sigma() * n.y;
 
-	vector2d force = project(speed_, v_mul(-10.0, pos_));
 
-	x_ = range(x_ + force.x, 1.0, -1.0);
-	y_ = range(y_ + force.y, 1.0, -1.0);
+	//x_ = -sin(pos_.x);//range(x_, 1.0, -1.0);
+	//y_ = -sin(pos_.y);//range(y_, 1.0, -1.0);
 	
 
 	// TODO: (when parallelized) replacer multiplication by received values 
@@ -309,10 +308,10 @@ void update_A() { // TODO: has to change when it will be parallelized
 	
 	for(i = 0; i < N_A; i++) {
 		if(i < N_A/2) { // x component
-			w_A_array[i] += LEARNING_RATE_A*error*n.x*delta_A_wi(i) / N_A;
+			w_A_array[i] -= LEARNING_RATE_A*error*n.x*delta_A_wi(i) / N_A;
 		}
 		else { // y component
-			w_A_array[i] += LEARNING_RATE_A*error*n.y*delta_A_wi(i) / N_A;
+			w_A_array[i] -= LEARNING_RATE_A*error*n.y*delta_A_wi(i) / N_A;
 		}
 
 	}

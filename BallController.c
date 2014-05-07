@@ -54,22 +54,6 @@ void compute_pos(int x_cur, int y_cur, int sim_time)
 
 
 
-void cameraEvent(uint key, uint payload){
-	// raw position extraction
-	int y_cur = ((key & 0x7F));
-	int x_cur = (((key >> 8) & 0x7F));
-	int pol = (key >> 7) & 0x01;
-	int check = (key >> 15) & 0x01;
-
-	if(pol == 1) {
-		compute_pos(x_cur, y_cur, spin1_get_simulation_time());
-		//vector2d v = vector((float)(x_pos - BALL_POS_X_CENTER), (float)(y_pos - BALL_POS_Y_CENTER));
-		//io_printf (IO_STD, "sim time: %d\n", spin1_get_simulation_time());
-		//io_printf (IO_STD, "%d,%d\n", x_pos, y_pos);
-	}
-}
-
-
 
 
 void update(uint sim_time, uint none)
@@ -84,6 +68,25 @@ void update(uint sim_time, uint none)
 
 
 	// end of networks update
+}
+
+
+
+
+void cameraEvent(uint key, uint payload){
+	// raw position extraction
+	int y_cur = ((key & 0x7F));
+	int x_cur = (((key >> 8) & 0x7F));
+	int pol = (key >> 7) & 0x01;
+	int check = (key >> 15) & 0x01;
+
+	if(pol == 1 && spin1_get_simulation_time()) {
+		compute_pos(x_cur, y_cur, spin1_get_simulation_time());
+		//vector2d v = vector((float)(x_pos - BALL_POS_X_CENTER), (float)(y_pos - BALL_POS_Y_CENTER));
+		//io_printf (IO_STD, "sim time: %d\n", spin1_get_simulation_time());
+		//io_printf (IO_STD, "%d,%d\n", x_pos, y_pos);
+		//update(spin1_get_simulation_time(), 0);
+	}
 }
 
 
