@@ -5,6 +5,7 @@
 #include "common.h"
 #include "communication.h"
 
+// have been tuned for DELTA_TIME = 0.1
 #define TAU 0.101
 #define KAPPA 0.101
 #define GAMMA 0.01

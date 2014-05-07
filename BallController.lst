@@ -5011,7 +5011,7 @@ Disassembly of section RO_DATA:
     3c4c:	e1a02000 	mov	r2, r0
     3c50:	e1a03001 	mov	r3, r1
     3c54:	e1cd00d0 	ldrd	r0, [sp]
-    3c58:	eb000ad6 	bl	67b8 <__aeabi_dsub>
+    3c58:	eb000ad7 	bl	67bc <__adddf3>
     3c5c:	eb000d3f 	bl	7160 <__aeabi_d2f>
     3c60:	e7870009 	str	r0, [r7, r9]
     3c64:	ea000024 	b	3cfc <update_A+0x17c>
@@ -5049,7 +5049,7 @@ Disassembly of section RO_DATA:
     3ce4:	e1a02000 	mov	r2, r0
     3ce8:	e1a03001 	mov	r3, r1
     3cec:	e1cd00d0 	ldrd	r0, [sp]
-    3cf0:	eb000ab0 	bl	67b8 <__aeabi_dsub>
+    3cf0:	eb000ab1 	bl	67bc <__adddf3>
     3cf4:	eb000d19 	bl	7160 <__aeabi_d2f>
     3cf8:	e7870009 	str	r0, [r7, r9]
     3cfc:	e2888001 	add	r8, r8, #1

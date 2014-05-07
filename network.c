@@ -89,7 +89,7 @@ void updateError(int x_pos, int y_pos, uint sim_time) {
 		
 	// TODO: (when parallelized) spread new error to every node
 
-	io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
+	//io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
 }
 
 
@@ -220,7 +220,6 @@ void update_V() { // TODO: has to change when it will be parallelized
 	int i = 0;
 	
 	for(i = 0; i < N_V; i++) {
-		// GAMMA*LAMBDA = -1
 		e_array[i] = LAMBDA*GAMMA*e_array[i] + delta_V_wi(i);
 		w_V_array[i] += LEARNING_RATE_V*error*e_array[i];
 	}
@@ -310,10 +309,10 @@ void update_A() { // TODO: has to change when it will be parallelized
 	
 	for(i = 0; i < N_A; i++) {
 		if(i < N_A/2) { // x component
-			w_A_array[i] -= LEARNING_RATE_A*error*n.x*delta_A_wi(i);
+			w_A_array[i] += LEARNING_RATE_A*error*n.x*delta_A_wi(i);
 		}
 		else { // y component
-			w_A_array[i] -= LEARNING_RATE_A*error*n.y*delta_A_wi(i);
+			w_A_array[i] += LEARNING_RATE_A*error*n.y*delta_A_wi(i);
 		}
 
 	}
