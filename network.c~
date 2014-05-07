@@ -17,8 +17,12 @@ static float w_V_array[N_V] = {0.0};
 static float phi_V_old[N_V] = {0.0};
 
 static float w_A_array[N_A] = {0.0};
-static vector2d n; // noise
+static vector2d n_pos; // noise
+static vector2d n_sp; // noise
 
+
+static float x_coef = 0.0;
+static float y_coef = 0.0;
 
 // used only for mfm (unparallelized)
 static float F[N_V] = {10.0};
@@ -60,6 +64,10 @@ void normalizeBallParams(int x_pos, int y_pos, uint sim_time) {
 }
 
 
+int failure() {
+	
+}
+
 
 // reward
 float r_pos() {
@@ -89,7 +97,7 @@ void updateError(int x_pos, int y_pos, uint sim_time) {
 		
 	// TODO: (when parallelized) spread new error to every node
 
-	//io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
+	io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
 }
 
 
@@ -258,31 +266,54 @@ void init_A(uint noise_seed) {
 
 void move(uint sim_time) {
 	int i = 0;
+	float x_pos = 0.0;
+	float y_pos = 0.0;
+	float x_sp = 0.0;
+	float y_sp = 0.0;
 	float x_ = 0.0;
 	float y_ = 0.0;
+	float* p = NULL;
+
 
 	for(i = 0; i < N_A; i++) {
-		if(i < N_A/2) { // x component
-			x_ += w_A_array[i] * phi_A(i);
+		if(i < N_A/4) { // x pos component
+			p = &x_pos;
 		}
-		else { // y component
-			y_ += w_A_array[i] * phi_A(i);
+		else if(i >= N_A/4 && i < N_A/2) { // y pos component
+			p = &y_pos;
 		}
+		else if(i >= N_A/2 && (N_A*3)/4) { // x speed component
+			p = &x_sp;
+		}
+		else { // y speed component
+			p = &y_sp;
+		}
+
+		*p += w_A_array[i] * phi_A(i);
 	}
 
+	x_coef = (x_pos + x_sp) + pos_.x + speed_.x / fabs((x_pos + x_sp) + pos_.x + speed_.x);
+	y_coef = (y_pos + y_sp) + pos_.y + speed_.y / fabs((y_pos + y_sp) + pos_.y + speed_.y);
 
 	
-	float coef = 5.0;//0.75;
+	/*float coef = 5.0;//0.75;
 
 
-	// range: [-1;1]	
-	x_ = -coef*(x_) + sigma() * n.x;
-	y_ = coef*(y_) + sigma() * n.y;
+	// range: [-1;1]
+	x_pos = -coef*(x_pos) + sigma() * n_pos.x;
+	y_pos = coef*(y_pos) + sigma() * n_pos.y;
+	x_sp = -coef*(x_sp) + sigma() * n_sp.x;
+	y_sp = coef*(y_sp) + sigma() * n_sp.y;
 
-	vector2d force = project(speed_, v_mul(-10.0, pos_));
+	//vector2d force = project(speed_, v_mul(-10.0, pos_));
+	//x_ += force.x;
+	//y_ += force.y;
 
-	x_ = range(x_ + force.x, 1.0, -1.0);
-	y_ = range(y_ + force.y, 1.0, -1.0);
+	x_ = x_pos - x_sp;
+	y_ = y_pos - y_sp;*/
+
+	x_ = range(x_pos + x_sp, 1.0, -1.0);
+	y_ = range(y_pos + y_sp, 1.0, -1.0);
 	
 
 	// TODO: (when parallelized) replacer multiplication by received values 
@@ -305,16 +336,32 @@ void move(uint sim_time) {
 
 void update_A() { // TODO: has to change when it will be parallelized
 	int i = 0;
-	n = noise();
-	
+	n_pos = noise();
+	n_sp = noise();
+
+	float n;
+	float c;
+
 	for(i = 0; i < N_A; i++) {
-		if(i < N_A/2) { // x component
-			w_A_array[i] += LEARNING_RATE_A*error*n.x*delta_A_wi(i) / N_A;
+		if(i < N_A/4) { // x pos component
+			n = n_pos.x;
+			c = x_coef;
 		}
-		else { // y component
-			w_A_array[i] += LEARNING_RATE_A*error*n.y*delta_A_wi(i) / N_A;
+		else if(i >= N_A/4 && i < N_A/2) { // y pos component
+			n = n_pos.y;
+			c = y_coef;
+		}
+		else if(i >= N_A/2 && (N_A*3)/4) { // x speed component
+			n = n_sp.x;
+			c = x_coef;
+		}
+		else { // y speed component
+			n = n_sp.y;
+			c = y_coef;
 		}
 
+		//w_A_array[i] += LEARNING_RATE_A*error*n*delta_A_wi(i) / N_A;
+		w_A_array[i] += LEARNING_RATE_A*delta_A_wi(i)*c;
 	}
 
 	// TODO: (when parallelized) remove loop and send new values (w_a * phi_A) to master node
@@ -324,12 +371,18 @@ float delta_A_wi(int index) {
 	return phi_A(index); 
 }
 
-float phi_A(int index){
-	if(index < N_A/2) { // x component
+float phi_A(int i){
+	if(i < N_A/4) { // x pos component
 		return pos_.x;
 	}
-	else { // y component
+	else if(i >= N_A/4 && i < N_A/2) { // y pos component
 		return pos_.y;
+	}
+	else if(i >= N_A/2 && (N_A*3)/4) { // x speed component
+		return speed_.x;
+	}
+	else { // y speed component
+		return speed_.y;
 	}
 }
 

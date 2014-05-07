@@ -44,6 +44,9 @@
 #define INV_SPEED_AVERAGER_STEP (1.0 / SPEED_AVERAGER_STEP)
 #define RESET_STEP 30000
 
+#define CENTER_RANGE 0.9
+#define MAX_SPEED 0.01
+
 
 // reward
 float r_pos();

@@ -36,6 +36,24 @@ vector2d perp(vector2d v);
 // projects a on b
 vector2d project(vector2d a, vector2d b);
 
+
+
+// matrices
+struct matrix {
+	float* data;
+	uint rows;
+	uint cols;
+};
+
+typedef struct matrix matrix;
+
+void new_matrix(*matrix m, uint rows, uint cols, float value);
+float m_get(*matrix m, uint i, uint j);
+void m_set(*matrix m, uint i, uint j, float value);
+void m_add(*matrix m_res, *matrix m1, *matrix m2);
+void m_mul(*matrix m_res, float coef, *matrix m);
+void dispose_matrix(*matrix m);
+
 #endif
 
 

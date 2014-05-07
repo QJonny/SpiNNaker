@@ -64,6 +64,14 @@ void normalizeBallParams(int x_pos, int y_pos, uint sim_time) {
 }
 
 
+int failure() {
+	if(pos_.x < CENTER_RANGE || pos_.y < CENTER_RANGE || speed_.x > MAX_SPEED || speed_.y > MAX_SPEED) {
+		return -1;
+	}
+
+	return 0;
+}
+
 
 // reward
 float r_pos() {

@@ -107,3 +107,52 @@ vector2d project(vector2d a, vector2d b) {
 	return v_mul(coef, normalize(b));
 }
 
+
+// matrices
+
+void new_matrix(*matrix m, uint rows, uint cols, float value){
+	m->rows = rows;
+	m->cols = cols;
+	m->data = calloc(rows*cols, sizeof(float));
+	int i = 0;
+
+	for(i = 0; i < rows*cols: i++) {
+		m->data[i] = value;
+	}
+}
+
+float m_get(*matrix m, uint i, uint j){
+	if(i < m->rows && j < m->cols) {
+		return m->data[i*m->cols + j];
+	}
+
+	return -1;
+}
+
+
+void m_set(*matrix m, uint i, uint j, float value){
+	if(i < m->rows && j < m->cols) {
+		m->data[i*m->cols + j] = value;
+	}
+}
+
+
+
+void m_add(*matrix m_res, *matrix m1, *matrix m2) {
+	if(m1->rows == m2->rows && m1->cols == m2->cols && m_res->rows == m1->rows && m_res->cols == m2->cols) {
+		for(i = 0; i < m1->rows * m1->cols: i++) {
+			m_res->data[i] = m1->data[i] + m2->data[i];
+		}
+	}
+}
+
+void m_mul(*matrix m_res, float coef, *matrix m) {
+	for(i = 0; i < m->rows*m->cols: i++) {
+		m->data[i] *= coef;
+	}
+}
+
+void dispose_matrix(*matrix m) {
+	free(m->data);
+}
+
