@@ -80,7 +80,7 @@ float R(vector2d speed){
 void updateError(int x_pos, int y_pos, uint sim_time) {
 	normalizeBallParams(x_pos, y_pos, sim_time);
 	float r = R(speed_);
-	float curr_V = V();
+	float curr_V = INV_DELTA_TIME*V();
 
 	error = r + GAMMA*curr_V - old_V;
 
@@ -89,7 +89,7 @@ void updateError(int x_pos, int y_pos, uint sim_time) {
 		
 	// TODO: (when parallelized) spread new error to every node
 
-	//io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
+	io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
 }
 
 
@@ -153,7 +153,7 @@ float V() {
 	}
 
 	// TODO: (when parallelized) replacer multiplication by received values
-	return v;
+	return v/ N_V;
 }
 
 
@@ -220,8 +220,9 @@ void update_V() { // TODO: has to change when it will be parallelized
 	int i = 0;
 	
 	for(i = 0; i < N_V; i++) {
-		e_array[i] = GAMMA*LAMBDA*e_array[i] + delta_V_wi(i);
-		w_V_array[i] += LEARNING_RATE_V*error*e_array[i] / N_V;
+		// GAMMA*LAMBDA = -1
+		e_array[i] = LAMBDA*GAMMA*e_array[i] + delta_V_wi(i);
+		w_V_array[i] += LEARNING_RATE_V*error*e_array[i];
 	}
 
 	// TODO: (when parallelized) remove loop and send new values (w_v * phi_V) to master node
@@ -270,14 +271,15 @@ void move(uint sim_time) {
 		}
 	}
 
-
+	x_ /= N_A;
+	y_ /= N_A;
 	
 	float coef = 1.0;//0.75;
 
 
 	// range: [-1;1]	
-	x_ = coef*(x_) + sigma() * n.x;
-	y_ = coef*(y_) + sigma() * n.y;
+	x_ = coef*(x_ + sigma() * n.x);
+	y_ = coef*(y_ + sigma() * n.y);
 
 
 	//x_ = -sin(pos_.x);//range(x_, 1.0, -1.0);
@@ -308,10 +310,10 @@ void update_A() { // TODO: has to change when it will be parallelized
 	
 	for(i = 0; i < N_A; i++) {
 		if(i < N_A/2) { // x component
-			w_A_array[i] -= LEARNING_RATE_A*error*n.x*delta_A_wi(i) / N_A;
+			w_A_array[i] -= LEARNING_RATE_A*error*n.x*delta_A_wi(i);
 		}
 		else { // y component
-			w_A_array[i] -= LEARNING_RATE_A*error*n.y*delta_A_wi(i) / N_A;
+			w_A_array[i] -= LEARNING_RATE_A*error*n.y*delta_A_wi(i);
 		}
 
 	}
