@@ -99,6 +99,9 @@ void updateError(int x_pos, int y_pos, uint sim_time) {
 void init_V_(uint chipID, uint coreID){
 	int chipX = chipID & 0x000000FF;
 	int chipY = chipID >> 8;
+
+	// Equidistant disc
+	/*
 	int coreX = (coreID & 0x00000003); // 0 to 3
 	int coreY = (coreID >> 2); // 0 to 3
 
@@ -113,7 +116,19 @@ void init_V_(uint chipID, uint coreID){
 	float theta = ((PI_/2.0) * p2) + ((PI_/2.0)*(chipX + 2.0*chipY)); // + base theta
 
 	float x = r*cos(theta);
-	float y = r*sin(theta);
+	float y = r*sin(theta);*/
+
+	// archimedean spiral
+	float a = 0.0;
+	float b = 0.05;
+	float coreNb = (float)(32*chipY + 16*chipX + coreID);
+	float theta = (coreNb / 64.0) * 7.5 * PI_;
+
+	float x = (a+b*theta)*cos(theta);
+	float y = (a+b*theta)*sin(theta);
+
+
+	io_printf(IO_STD,"%d,%d\n", (int)(x*1000), (int)(y*1000));
 
 	// TODO: has to change when parallelized
 	center[32*chipY + 16*chipX + coreID].x = x;
@@ -173,7 +188,7 @@ float IF(float input){
 	
 	float output = 0.0;
 	
-	float thr1 = 0.5;
+	float thr1 = 0.9;
 	float slope = 2.0;
 	float thr2 = 1.0;
 	
@@ -192,18 +207,10 @@ float IF(float input){
 }
 
 float mfm_V(int index){
-	float summ = 0;
-	// used if presynaptic MFM connections (not yet, TODO)
-	/*int i=0;
-	for(i=0; i<M; ++i){
+	// 0: ball far from population center, 1: ball close to population center
+	float Iext = (2.0 - v_norm(v_sub(pos_, center[index])));
 
-		summ += (((J[i]*Fpre[i]) >> LOG_P1) );
-
-	}*/
-
-	float Iext = (2.0 - v_norm(v_sub(pos_, center[index]))) / 2.0; // 0: ball far from population center, 1: ball close to population center
-
-	float dv = ( -F[index] + IF( summ + Iext ) ) * V_DECAY ;
+	float dv = ( -F[index] + IF( Iext ) ) * V_DECAY ;
 
 	F[index] += dv;
 
@@ -277,8 +284,8 @@ void move(uint sim_time) {
 
 
 	// range: [-1;1]	
-	x_ = coef*(x_ + sigma() * n.x);
-	y_ = coef*(y_ + sigma() * n.y);
+	x_ = -coef*(x_ + sigma() * n.x);
+	y_ = -coef*(y_ + sigma() * n.y);
 
 
 	//x_ = -sin(pos_.x);//range(x_, 1.0, -1.0);
