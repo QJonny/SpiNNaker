@@ -5,6 +5,7 @@
 #include "common.h"
 #include "communication.h"
 
+// have been tuned for DELTA_TIME = 0.1
 #define TAU 0.101
 #define KAPPA 0.101
 #define GAMMA 0.01
@@ -49,8 +50,9 @@ float R(vector2d speed);
 void updateError(int x_pos, int y_pos, uint sim_time);
 
 
+void init_network(uint chipID, uint coreID, uint noise_seed);
+
 // critic network
-void init_V(uint chipID, uint coreID);
 float V(); // returns the critic network value
 
 
@@ -67,7 +69,6 @@ float delta_V_wi(int index);
 
 
 // actor network
-void init_A(uint noise_seed);
 void move(uint sim_time); // perform the next movement
 void update_A();
 float delta_A_wi(int index);

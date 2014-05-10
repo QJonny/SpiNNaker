@@ -50,8 +50,9 @@ float R(vector2d speed);
 void updateError(int x_pos, int y_pos, uint sim_time);
 
 
+void init_network(uint chipID, uint coreID, uint noise_seed);
+
 // critic network
-void init_V(uint chipID, uint coreID);
 float V(); // returns the critic network value
 
 
@@ -59,7 +60,7 @@ float V(); // returns the critic network value
 float phi_V(int index); // corresponds to the feature vector (unparallelized version)
 
 
-float mfm_V(int index); // unparallelized, used for mean field model
+float mfm_(int index); // unparallelized, used for mean field model
 
 
 // critic network updating
@@ -68,7 +69,6 @@ float delta_V_wi(int index);
 
 
 // actor network
-void init_A(uint noise_seed);
 void move(uint sim_time); // perform the next movement
 void update_A();
 float delta_A_wi(int index);

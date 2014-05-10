@@ -13,10 +13,11 @@ static vector2d center[N_V];
 
 // TODO: has to change when parallelized
 static float e_array[N_V] = {0.0};
-static float w_V_array[N_V] = {0.0};
+static float w_V_array[N_V] = {0.5};
 static float phi_V_old[N_V] = {0.0};
 
-static float w_A_array[N_A] = {0.0};
+static float w_A_theta_array[N_A] = {0.5};
+static float w_A_phi_array[N_A] = {0.5};
 static vector2d n; // noise
 
 
@@ -96,7 +97,7 @@ void updateError(int x_pos, int y_pos, uint sim_time) {
 
 // critic network
 // compute center position for each neuron (inner, has to change when parallelized)
-void init_V_(uint chipID, uint coreID){
+void init_MFM(uint chipID, uint coreID){
 	int chipX = chipID & 0x000000FF;
 	int chipY = chipID >> 8;
 
@@ -118,7 +119,7 @@ void init_V_(uint chipID, uint coreID){
 	float x = r*cos(theta);
 	float y = r*sin(theta);*/
 
-	// logarithmic spiral
+	// archimedean spiral
 	float a = 0.0;
 	float b = 0.05;
 	float coreNb = (float)(32*chipY + 16*chipX + coreID);
@@ -136,10 +137,12 @@ void init_V_(uint chipID, uint coreID){
 }
 
 // compute center position for each neuron (outer, has to change when parallelized)
-void init_V(uint chipID, uint coreID){
+void init_network(uint chipID, uint coreID, uint noise_seed){
 	pos_ = vector(-1.0, 0.0);
 	old_pos_ = vector(-1.0, 0.0);
 	speed_ = vector(0.0, 0.0);
+
+	srand(noise_seed);
 
 	coreID = 0;
 	int i = 0;
@@ -150,7 +153,7 @@ void init_V(uint chipID, uint coreID){
 		chipID = chipsID[chipIndex];
 
 		for(coreID = 0; coreID < 16; coreID++) {
-			init_V_(chipID, coreID);
+			init_MFM(chipID, coreID);
 		}
 	}
 }
@@ -176,21 +179,21 @@ float V() {
 // For the moment the parameters are unparalelized, but this will be the case in the future
 
 float phi_V(int index){
-	return mfm_V(index);//(2.0 - v_norm(v_sub(pos_, center[index])))/2.0;
+	return mfm_(index);//(2.0 - v_norm(v_sub(pos_, center[index])))/2.0;
 }
 
 
 
 // MFM functions
 
-// From 0.5 to 1, slope 2
+// From 0.9 to 10, slope 100
 float IF(float input){
 	
 	float output = 0.0;
 	
 	float thr1 = 0.9;
-	float slope = 2.0;
-	float thr2 = 1.0;
+	float slope = 100.0;
+	float thr2 = 10.0;
 	
 	if(input < thr1){
 		output = 0.0;
@@ -206,9 +209,9 @@ float IF(float input){
 	return output;
 }
 
-float mfm_V(int index){
+float mfm_(int index){
 	// 0: ball far from population center, 1: ball close to population center
-	float Iext = (2.0 - v_norm(v_sub(pos_, center[index])));
+	float Iext = (2.0 - v_norm(v_sub(pos_, center[index]))) / 2.0;
 
 	float dv = ( -F[index] + IF( Iext ) ) * V_DECAY ;
 
@@ -257,35 +260,25 @@ float delta_V_wi(int index) {
 
 
 // Actor neural network
-void init_A(uint noise_seed) {
-	srand(noise_seed);
-}
-
-
-
 void move(uint sim_time) {
 	int i = 0;
-	float x_ = 0.0;
-	float y_ = 0.0;
+	float theta = 0.0;
+	float phi = 0.0;
 
 	for(i = 0; i < N_A; i++) {
-		if(i < N_A/2) { // x component
-			x_ += w_A_array[i] * phi_A(i);
-		}
-		else { // y component
-			y_ += w_A_array[i] * phi_A(i);
-		}
+		theta += w_A_theta_array[i] * phi_A(i);
+		phi += w_A_phi_array[i] * phi_A(i);
 	}
 
-	x_ /= N_A;
-	y_ /= N_A;
+	theta /= N_A;
+	phi /= N_A;
 	
 	float coef = 1.0;//0.75;
 
 
 	// range: [-1;1]	
-	x_ = -coef*(x_ + sigma() * n.x);
-	y_ = -coef*(y_ + sigma() * n.y);
+	theta = -coef*(theta + sigma() * n.x);
+	phi = -coef*(phi + sigma() * n.y);
 
 
 	//x_ = -sin(pos_.x);//range(x_, 1.0, -1.0);
@@ -305,7 +298,7 @@ void move(uint sim_time) {
 		sendNormMotorCommand(-1.0, 0.0);
 	}
 	else {	
-		sendNormMotorCommand(x_, y_);
+		sendNormMotorCommand(theta, phi);
 	}
 }
 
@@ -315,29 +308,19 @@ void update_A() { // TODO: has to change when it will be parallelized
 	n = noise();
 	
 	for(i = 0; i < N_A; i++) {
-		if(i < N_A/2) { // x component
-			w_A_array[i] += LEARNING_RATE_A*error*n.x*delta_A_wi(i);
-		}
-		else { // y component
-			w_A_array[i] += LEARNING_RATE_A*error*n.y*delta_A_wi(i);
-		}
-
+		w_A_theta_array[i] += LEARNING_RATE_A*error*n.x*delta_A_wi(i);
+		w_A_phi_array[i] += LEARNING_RATE_A*error*n.y*delta_A_wi(i);
 	}
 
 	// TODO: (when parallelized) remove loop and send new values (w_a * phi_A) to master node
 }
 
 float delta_A_wi(int index) {
-	return phi_A(index); 
+	return phi_A(index);
 }
 
 float phi_A(int index){
-	if(index < N_A/2) { // x component
-		return pos_.x;
-	}
-	else { // y component
-		return pos_.y;
-	}
+	return mfm_(index);
 }
 
 float sigma(){

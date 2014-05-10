@@ -80,7 +80,7 @@ void cameraEvent(uint key, uint payload){
 	int pol = (key >> 7) & 0x01;
 	int check = (key >> 15) & 0x01;
 
-	if(pol == 1) {
+	if(pol == 1 && spin1_get_simulation_time()) {
 		compute_pos(x_cur, y_cur, spin1_get_simulation_time());
 		//vector2d v = vector((float)(x_pos - BALL_POS_X_CENTER), (float)(y_pos - BALL_POS_Y_CENTER));
 		//io_printf (IO_STD, "sim time: %d\n", spin1_get_simulation_time());
@@ -119,8 +119,7 @@ void c_main (void)
 	// end of events setting
 
 	// networks init
-	init_V(chipID, coreID);
-	init_A(0);
+	init_network(chipID, coreID, 0);
 	// TODO: actor network init
 	// end of networks init
 	

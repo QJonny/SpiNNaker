@@ -119,10 +119,7 @@ void c_main (void)
 	// end of events setting
 
 	// networks init
-	init_V(chipID, coreID);
-	init_A(0);
-	// TODO: actor network init
-	// end of networks init
+	init_network(chipID, coreID, 0);
 	
 	spin1_start();
 
