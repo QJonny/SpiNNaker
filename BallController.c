@@ -59,8 +59,8 @@ void compute_pos(int x_cur, int y_cur, int sim_time)
 void update(uint sim_time, uint none)
 {
 	// actor network updating and command sending
-	update_A( sim_time );
-	move( sim_time );
+	//update_A( sim_time );
+	//move( sim_time );
 
 	// critic networks update
 	updateError(x_pos, y_pos, sim_time);
@@ -111,10 +111,10 @@ void c_main (void)
 	spin1_callback_on(TIMER_TICK, update, 1);	
 	
 
-	if(chipID == 0 && coreID == 1) { // master core
+	//if(chipID == 0 && coreID == 1) { // master core
 		initIO();
 		startDevices();
-	}
+	//}
 
 	// end of events setting
 

@@ -111,17 +111,15 @@ void c_main (void)
 	spin1_callback_on(TIMER_TICK, update, 1);	
 	
 
-	if(chipID == 0 && coreID == 1) { // master core
+	//if(chipID == 0 && coreID == 1) { // master core
 		initIO();
 		startDevices();
-	}
+	//}
 
 	// end of events setting
 
 	// networks init
 	init_network(chipID, coreID, 0);
-	// TODO: actor network init
-	// end of networks init
 	
 	spin1_start();
 
