@@ -56,8 +56,8 @@ void normalizeBallParams(int x_pos, int y_pos, uint sim_time) {
 	speed = normalize(int_sp);
 	speed = v_mul(speed_ratio, speed);*/
 
-	pos_.x = range(pos_.x, 1.0, -1.0);
-	pos_.y = range(pos_.y, 1.0, -1.0);
+	pos_.x = range(pos_.x, -1.0, 1.0);
+	pos_.y = range(pos_.y, -1.0, 1.0);
 }
 
 
@@ -72,7 +72,7 @@ float r_pos() {
 float R(vector2d speed){
 	float r = r_pos() - (2.0 / PI_) * atan(v_norm(speed));
 	
-	r = range(r, 1.0, 0.0);
+	r = range(r, 0.0, 1.0);
 
 	return r;
 }
@@ -101,8 +101,7 @@ void init_MFM(uint chipID, uint coreID){
 	int chipX = chipID & 0x000000FF;
 	int chipY = chipID >> 8;
 
-	// Equidistant disc
-	/*
+	// Homogeneous disk
 	int coreX = (coreID & 0x00000003); // 0 to 3
 	int coreY = (coreID >> 2); // 0 to 3
 
@@ -110,26 +109,26 @@ void init_MFM(uint chipID, uint coreID){
 	float p2 = (float)coreY / 4.0;
 
 	if(p1 == 0.0) {
-		p1 = 0.1;
+		p1 = 0.09;
 	}
 
-	float r = sqrt(p1);
+	float r = 1.15*sqrt(p1 - 0.05);
 	float theta = ((PI_/2.0) * p2) + ((PI_/2.0)*(chipX + 2.0*chipY)); // + base theta
 
 	float x = r*cos(theta);
-	float y = r*sin(theta);*/
+	float y = r*sin(theta);
+
+
 
 	// archimedean spiral
-	float a = 0.0;
+	/*float a = 0.0;
 	float b = 0.05;
 	float coreNb = (float)(32*chipY + 16*chipX + coreID);
 	float theta = (coreNb / 64.0) * 7.5 * PI_;
 
 	float x = (a+b*theta)*cos(theta);
-	float y = (a+b*theta)*sin(theta);
+	float y = (a+b*theta)*sin(theta);*/
 
-
-	io_printf(IO_STD,"%d,%d\n", (int)(x*1000), (int)(y*1000));
 
 	// TODO: has to change when parallelized
 	center[32*chipY + 16*chipX + coreID].x = x;
@@ -179,7 +178,7 @@ float V() {
 // For the moment the parameters are unparalelized, but this will be the case in the future
 
 float phi_V(int index){
-	return mfm_(index);//(2.0 - v_norm(v_sub(pos_, center[index])))/2.0;
+	return mfm_(index);
 }
 
 
