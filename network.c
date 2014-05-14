@@ -14,10 +14,9 @@ static vector2d center[N_MFM];
 // TODO: has to change when parallelized
 static float e_array[N_MFM] = {0.0};
 static float w_V_array[N_MFM] = {0.5};
-static float phi_V_old[N_MFM] = {0.0};
 
 static float w_A_theta_array[N_MFM] = {0.5};
-static float w_A_phi_array[N_MFM] = {0.5};
+static float w_A_psi_array[N_MFM] = {0.5};
 static vector2d n; // noise
 
 
@@ -168,7 +167,6 @@ void mfm_(){
 		F[index] += dv;
 	
 		//io_printf(IO_STD,"f %d\n", (int)(F[index]*1000));
-		//return F[index];
 	}
 }
 
@@ -190,7 +188,7 @@ void updateError(int x_pos, int y_pos, uint sim_time) {
 		
 	// TODO: (when parallelized) spread new error to every node
 
-	io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
+	//io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
 }
 
 
@@ -217,7 +215,7 @@ float V() {
 // For the moment the parameters are unparallelized, but this will be the case in the future
 
 float phi_V(int index){
-	return F[index];//mfm_(index);
+	return F[index];
 }
 
 
@@ -235,7 +233,7 @@ void update_V() { // TODO: has to change when it will be parallelized
 }
 
 float delta_V_wi(int index) {
-	return phi_V(index);//phi_V_old[index];
+	return phi_V(index);
 }
 
 
@@ -250,31 +248,31 @@ float delta_V_wi(int index) {
 void move(uint sim_time) {
 	int i = 0;
 	float theta = 0.0;
-	float phi = 0.0;
+	float psi = 0.0;
 
 	for(i = 0; i < N_MFM; i++) {
 		theta += w_A_theta_array[i] * phi_A(i);
-		phi += w_A_phi_array[i] * phi_A(i);
+		psi += w_A_psi_array[i] * phi_A(i);
 	}
 
 	theta /= N_MFM;
-	phi /= N_MFM;
+	psi /= N_MFM;
 	
 	float coef = 1.0;//0.75;
 
 
 	// range: [-1;1]	
 	theta = -coef*(theta/* + sigma() * n.x*/);
-	phi = -coef*(phi /*+ sigma() * n.y*/);
+	psi = -coef*(psi /*+ sigma() * n.y*/);
 
 
-	theta = range(theta, -1.0, 1.0);
-	phi = range(phi, -1.0, 1.0);
+	//theta = range(theta, -1.0, 1.0);
+	//psi = range(psi, -1.0, 1.0);
 	
 
 	// TODO: (when parallelized) replacer multiplication by received values 
 	
-	//io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(phi*1000));
+	io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
 	//io_printf(IO_STD,"speed %d, %d, norm %d\n", (int)(speed_.x*1000), (int)(speed_.y*1000), (int)(v_norm(speed_)*1000));
 	
 	// Motor command sending
@@ -285,7 +283,7 @@ void move(uint sim_time) {
 		sendNormMotorCommand(-1.0, 0.0);
 	}
 	else {	
-		sendNormMotorCommand(theta, phi);
+		sendNormMotorCommand(theta, psi);
 	}
 }
 
@@ -296,7 +294,7 @@ void update_A() { // TODO: has to change when it will be parallelized
 	
 	for(i = 0; i < N_MFM; i++) {
 		w_A_theta_array[i] += LEARNING_RATE_A*error*n.x*delta_A_wi(i);
-		w_A_phi_array[i] += LEARNING_RATE_A*error*n.y*delta_A_wi(i);
+		w_A_psi_array[i] += LEARNING_RATE_A*error*n.y*delta_A_wi(i);
 	}
 
 	// TODO: (when parallelized) remove loop and send new values (w_a * phi_A) to master node
@@ -307,7 +305,7 @@ float delta_A_wi(int index) {
 }
 
 float phi_A(int index){
-	return 0.0;//mfm_(index);
+	return F[index];
 }
 
 float sigma(){

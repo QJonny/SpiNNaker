@@ -58,6 +58,7 @@ void compute_pos(int x_cur, int y_cur, int sim_time)
 
 void update(uint sim_time, uint none)
 {
+	mfm_();
 	// actor network updating and command sending
 	//update_A( sim_time );
 	//move( sim_time );
