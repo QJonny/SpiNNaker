@@ -60,7 +60,7 @@ float V(); // returns the critic network value
 float phi_V(int index); // corresponds to the feature vector (unparallelized version)
 
 
-float mfm_(); // unparallelized, used for mean field model
+void mfm_(); // unparallelized, used for mean field model
 
 
 // critic network updating

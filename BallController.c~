@@ -60,8 +60,8 @@ void update(uint sim_time, uint none)
 {
 	mfm_();
 	// actor network updating and command sending
-	//update_A( sim_time );
-	//move( sim_time );
+	update_A( sim_time );
+	move( sim_time );
 
 	// critic networks update
 	updateError(x_pos, y_pos, sim_time);

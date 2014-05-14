@@ -36,7 +36,7 @@
 #define N_MFM 64 // number of available populations
 
 #define K 0.5
-#define SIGMA_0 0.05
+#define SIGMA_0 0.1
 
 
 #define SPEED_AVERAGER_STEP 10
