@@ -33,8 +33,8 @@
 #define B_Y -(A_Y)*BALL_POS_Y_CENTER
 
 
-#define N_V 64 // number of neurons in the critic network
-#define N_A 64 // number of neurons in the actor network
+#define N_MFM 64 // number of available populations
+
 #define K 0.5
 #define SIGMA_0 0.05
 
@@ -60,7 +60,7 @@ float V(); // returns the critic network value
 float phi_V(int index); // corresponds to the feature vector (unparallelized version)
 
 
-float mfm_(int index); // unparallelized, used for mean field model
+void mfm_(); // unparallelized, used for mean field model
 
 
 // critic network updating
