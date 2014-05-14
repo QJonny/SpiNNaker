@@ -251,12 +251,13 @@ void move(uint sim_time) {
 	float psi = 0.0;
 
 	for(i = 0; i < N_MFM; i++) {
-		theta += w_A_theta_array[i];// * phi_A(i);
+		theta += w_A_theta_array[i] * phi_A(i);
+		
+		if( w_A_psi_array[i] > -1000.0){ // bug min value (TODO: solve properly)
+			psi += w_A_psi_array[i] * phi_A(i);
+		}
 	}
 
-	for(i = 0; i < N_MFM; i++) {
-		psi += w_A_psi_array[i] * phi_A(i);
-	}
 	//theta /= N_MFM;
 	//psi /= N_MFM;
 	
@@ -264,15 +265,15 @@ void move(uint sim_time) {
 
 
 	// range: [-1;1]	
-	theta = coef*(theta/* + sigma() * n.x*/);
-	psi = coef*(psi/* + sigma() * n.y*/);
+	theta = coef*(theta + sigma() * n.x);
+	psi = coef*(psi + sigma() * n.y);
 
 
 
 
 	// TODO: (when parallelized) replacer multiplication by received values 
 	
-	io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi));
+	io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
 
 
 	//theta = range(theta, -1.0, 1.0);

@@ -251,12 +251,13 @@ void move(uint sim_time) {
 	float psi = 0.0;
 
 	for(i = 0; i < N_MFM; i++) {
-		theta += w_A_theta_array[i];// * phi_A(i);
+		theta += w_A_theta_array[i] * phi_A(i);
+		
+		if( w_A_psi_array[i] > -1000.0){ // bug min value (TODO: solve properly)
+			psi += w_A_psi_array[i] * phi_A(i);
+		}
 	}
 
-	for(i = 0; i < N_MFM; i++) {
-		psi += w_A_psi_array[i] * phi_A(i);
-	}
 	//theta /= N_MFM;
 	//psi /= N_MFM;
 	
