@@ -39,7 +39,7 @@
 
 #define SPEED_AVERAGER_STEP 10
 #define INV_SPEED_AVERAGER_STEP (1.0 / SPEED_AVERAGER_STEP)
-#define RESET_STEP 30000
+#define RESET_STEP 70
 
 
 // reward
@@ -60,6 +60,7 @@ float phi_V(int index); // corresponds to the feature vector (unparallelized ver
 
 void mfm_(); // unparallelized, used for mean field model
 
+void save_();
 
 // critic network updating
 void update_V();
@@ -67,7 +68,7 @@ float delta_V_wi(int index);
 
 
 // actor network
-void move(uint sim_time); // perform the next movement
+int move(uint sim_time); // perform the next movement
 void update_A();
 float delta_A_wi(int index);
 float phi_A(int index); // corresponds to the feature vector (unparallelized version)

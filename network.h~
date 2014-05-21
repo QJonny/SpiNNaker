@@ -14,7 +14,7 @@
 #define LEARNING_RATE_V 0.5
 #define LEARNING_RATE_A 0.5
 
-#define V_DECAY 1.0
+#define V_DECAY 0.5
 
 #define BALL_POS_Y_MAX 115
 #define BALL_POS_Y_MIN 5
@@ -39,7 +39,7 @@
 
 #define SPEED_AVERAGER_STEP 10
 #define INV_SPEED_AVERAGER_STEP (1.0 / SPEED_AVERAGER_STEP)
-#define RESET_STEP 30000
+#define RESET_STEP 70
 
 
 // reward
@@ -60,6 +60,7 @@ float phi_V(int index); // corresponds to the feature vector (unparallelized ver
 
 void mfm_(); // unparallelized, used for mean field model
 
+void save_();
 
 // critic network updating
 void update_V();

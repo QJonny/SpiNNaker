@@ -26,13 +26,14 @@ int y_command = 0;
 
 int pos_computed = 0;
 
+int balanced = 0;
 
 
 // ball tracking
 
 void compute_pos(int x_cur, int y_cur, int sim_time)
 {
-	if((pos_computed == 0 || norm(x_pos - x_cur, y_pos - y_cur) < 100) && (old_time == -1 || sim_time - old_time < 60) ) {
+	if((pos_computed == 0 || norm(x_pos - x_cur, y_pos - y_cur) < 100) /*&& (old_time == -1 || sim_time - old_time < 60)*/ ) {
 
 		total_sum_x = total_sum_x - x_buffer[curr_index] + x_cur;
 		x_buffer[curr_index] = x_cur;
@@ -57,17 +58,21 @@ void compute_pos(int x_cur, int y_cur, int sim_time)
 
 void update(uint sim_time, uint none)
 {
-	mfm_();
-	// actor network updating and command sending
-	update_A( sim_time );
-	move( sim_time );
+	//if(!balanced) {
+		mfm_();
+		// actor network updating and command sending
+		update_A( sim_time );
+		balanced = move( sim_time );
 
-	// critic networks update
-	updateError(x_pos, y_pos, sim_time);
-	update_V();
-
-
-	// end of networks update
+		// critic networks update
+		updateError(x_pos, y_pos, sim_time);
+		update_V();
+		// end of networks update
+	//}
+	// save step
+	//if(sim_time != 0 && sim_time % SAVE_STEP == 0) {
+	//	save_();
+	//}
 }
 
 
@@ -98,13 +103,7 @@ void c_main (void)
 	io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
 
 	spin1_set_timer_tick(TICK_TIME);
-	// end of simulation initialization
-
-
-
-	// events setting
-	spin1_callback_on(MC_PACKET_RECEIVED,cameraEvent,1);
-	spin1_callback_on(TIMER_TICK, update, 1);	
+	// end of simulation initialization	
 	
 
 	//if(chipID == 0 && coreID == 1) { // master core
@@ -114,9 +113,15 @@ void c_main (void)
 
 	// end of events setting
 
+
 	// networks init
 	init_network(chipID, coreID, 0);
+
 	
+	// events setting
+	spin1_callback_on(MC_PACKET_RECEIVED,cameraEvent,1);
+	spin1_callback_on(TIMER_TICK, update, 1);
+
 	spin1_start();
 
 

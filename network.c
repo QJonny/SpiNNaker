@@ -17,11 +17,12 @@ float w_V_array[N_MFM] = {0.5};
 
 float w_A_theta_array[N_MFM] = {0.5};
 float w_A_psi_array[N_MFM] = {0.5};
+
+float F[N_MFM] = {10.0};
+
 vector2d n; // noise
 
 
-// used only for mfm (unparallelized)
-float F[N_MFM] = {10.0};
 
 
 // call every tick (0.1s)
@@ -134,6 +135,58 @@ void init_network(uint chipID, uint coreID, uint noise_seed){
 
 
 
+/*
+// saving (printing param code)
+void save_() {
+	int i = 0;
+
+	// e_array
+	io_printf(IO_STD,"float e_array[N_MFM] = [ \n");
+
+	for(i = 0; i < N_MFM; i++) {
+		io_printf(IO_STD,"%d.0/1000.0,\n", (int)(e_array[i]*1000));
+	}
+	io_printf(IO_STD,"];\n");
+
+	
+	// w_V_array
+	io_printf(IO_STD,"float w_V_array[N_MFM] = [ \n");
+
+	for(i = 0; i < N_MFM; i++) {
+		io_printf(IO_STD,"%d.0/1000.0,\n", (int)(w_V_array[i]*1000));
+	}
+	io_printf(IO_STD,"];\n");
+
+
+	// w_A_theta_array
+	io_printf(IO_STD,"float w_A_theta_array[N_MFM] = [ \n");
+
+	for(i = 0; i < N_MFM; i++) {
+		io_printf(IO_STD,"%d.0/1000.0,\n", (int)(w_A_theta_array[i]*1000));
+	}
+	io_printf(IO_STD,"];\n");
+
+
+	// w_A_psi_array
+	io_printf(IO_STD,"float w_A_psi_array[N_MFM] = [ \n");
+
+	for(i = 0; i < N_MFM; i++) {
+		io_printf(IO_STD,"%d.0/1000.0,\n", (int)(w_A_psi_array[i]*1000));
+	}
+	io_printf(IO_STD,"];\n");
+
+	// F
+	io_printf(IO_STD,"float F[N_MFM] = [ \n");
+
+	for(i = 0; i < N_MFM; i++) {
+		io_printf(IO_STD,"%d.0/1000.0,\n", (int)(F[i]*1000));
+	}
+	io_printf(IO_STD,"];\n");
+}*/
+
+
+
+
 
 
 // MFM functions
@@ -170,8 +223,6 @@ void mfm_(){
 		float dv = ( -F[index] + IF( Iext ) ) * V_DECAY ;
 
 		F[index] += dv;
-	
-		//io_printf(IO_STD,"f %d\n", (int)(F[index]*1000));
 	}
 
 	n = noise();
@@ -249,7 +300,7 @@ float delta_V_wi(int index) {
 
 
 // Actor neural network
-void move(uint sim_time) {
+int move(uint sim_time) {
 	int i = 0;
 	float theta = 0.0;
 	float psi = 0.0;
@@ -262,8 +313,6 @@ void move(uint sim_time) {
 		}
 	}
 
-	//theta /= N_MFM;
-	//psi /= N_MFM;	
 	float coef = 1.0;//0.75;
 
 
@@ -284,11 +333,19 @@ void move(uint sim_time) {
 	psi = range(psi, -1.0, 1.0);
 
 	if(sim_time % RESET_STEP == 0) {
-		sendNormMotorCommand(-1.0, 0.0);
+		if(v_norm(pos_) > 0.7){
+			sendNormMotorCommand(pos_.x, pos_.y);
+		}
 	}
 	else {	
 		sendNormMotorCommand(theta, psi);
 	}
+
+	/*if(sim_time > 20 && v_norm(pos_) < 0.2 && v_norm(speed_) < 0.1) {
+		return 0; // ball balanced
+	}*/
+
+	return 0;
 }
 
 
