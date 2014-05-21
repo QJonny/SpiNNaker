@@ -14,9 +14,7 @@
 #define LEARNING_RATE_V 0.5
 #define LEARNING_RATE_A 0.5
 
-
-#define LOG_P1 16
-#define V_DECAY 0.5
+#define V_DECAY 1.0
 
 #define BALL_POS_Y_MAX 115
 #define BALL_POS_Y_MIN 5
@@ -36,7 +34,7 @@
 #define N_MFM 64 // number of available populations
 
 #define K 0.5
-#define SIGMA_0 0.05
+#define SIGMA_0 0.1
 
 
 #define SPEED_AVERAGER_STEP 10

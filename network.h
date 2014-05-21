@@ -14,8 +14,6 @@
 #define LEARNING_RATE_V 0.5
 #define LEARNING_RATE_A 0.5
 
-
-#define LOG_P1 16
 #define V_DECAY 0.5
 
 #define BALL_POS_Y_MAX 115

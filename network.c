@@ -2,26 +2,26 @@
 
 void raise() {}
 
-static float old_V = 0.0;
-static float error = 1.0;
+float old_V = 0.0;
+float error = 1.0;
 
-static vector2d pos_;
-static vector2d speed_;
-static vector2d old_pos_;
+vector2d pos_;
+vector2d speed_;
+vector2d old_pos_;
 
-static vector2d center[N_MFM];
+vector2d center[N_MFM];
 
 // TODO: has to change when parallelized
-static float e_array[N_MFM] = {0.0};
-static float w_V_array[N_MFM] = {0.5};
+float e_array[N_MFM] = {0.0};
+float w_V_array[N_MFM] = {0.5};
 
-static float w_A_theta_array[N_MFM] = {0.5};
-static float w_A_psi_array[N_MFM] = {0.5};
-static vector2d n; // noise
+float w_A_theta_array[N_MFM] = {0.5};
+float w_A_psi_array[N_MFM] = {0.5};
+vector2d n; // noise
 
 
 // used only for mfm (unparallelized)
-static float F[N_MFM] = {10.0};
+float F[N_MFM] = {10.0};
 
 
 // call every tick (0.1s)
@@ -64,6 +64,11 @@ float R(vector2d speed){
 
 	return r;
 }
+
+
+
+
+
 
 
 // compute center position for each neuron (inner, has to change when parallelized)
@@ -168,6 +173,8 @@ void mfm_(){
 	
 		//io_printf(IO_STD,"f %d\n", (int)(F[index]*1000));
 	}
+
+	n = noise();
 }
 
 
@@ -198,12 +205,9 @@ void updateError(int x_pos, int y_pos, uint sim_time) {
 float V() {
 	float v = 0;
 	int i = 0;
-	float phi = 0.0;
 
 	for(i = 0; i < N_MFM; i++) {
-		phi = phi_V(i);
-		v += w_V_array[i] * phi;
-		//phi_V_old[i] = phi;
+		v += w_V_array[i] * phi_V(i);
 	}
 
 	// TODO: (when parallelized) replacer multiplication by received values
@@ -259,8 +263,7 @@ void move(uint sim_time) {
 	}
 
 	//theta /= N_MFM;
-	//psi /= N_MFM;
-	
+	//psi /= N_MFM;	
 	float coef = 1.0;//0.75;
 
 
@@ -273,10 +276,11 @@ void move(uint sim_time) {
 
 	// TODO: (when parallelized) replacer multiplication by received values 
 	
-	io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
+	//io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
+	//io_printf(IO_STD,"v %d, error %d\n", (int)(old_V*1000), (int)(error*1000));
 
 
-	//theta = range(theta, -1.0, 1.0);
+	theta = range(theta, -1.0, 1.0);
 	psi = range(psi, -1.0, 1.0);
 
 	if(sim_time % RESET_STEP == 0) {
@@ -290,7 +294,6 @@ void move(uint sim_time) {
 
 void update_A() { // TODO: has to change when it will be parallelized
 	int i = 0;
-	n = noise();
 	
 	for(i = 0; i < N_MFM; i++) {
 		w_A_theta_array[i] += LEARNING_RATE_A*error*n.x*delta_A_wi(i);

@@ -55,7 +55,6 @@ void compute_pos(int x_cur, int y_cur, int sim_time)
 
 
 
-
 void update(uint sim_time, uint none)
 {
 	mfm_();
