@@ -20,7 +20,7 @@
 #define A_Y -1.0/(BALL_POS_Y_MIN - BALL_POS_Y_CENTER)
 #define B_Y -(A_Y)*BALL_POS_Y_CENTER
 
-#define SPEED_RESIZE_FACTOR (float)(0.3)
+#define SPEED_RESIZE_FACTOR (float)(0.1)
 
 // simulation definitions
 #define SPEED_AVERAGER_STEP 5
@@ -85,13 +85,11 @@ void save_();
 
 // critic network updating
 void update_V();
-float delta_V_wi(int index);
 
 
 // actor network
 int move(uint sim_time); // perform the next movement
 void update_A();
-float delta_A_wi(int index);
 float phi_A(int index); // corresponds to the feature vector (unparallelized version)
 float sigma();
 vector2d noise();

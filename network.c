@@ -224,8 +224,6 @@ void mfm_(){
 
 		F[index] += dv;
 	}
-
-	//n = noise();
 }
 
 
@@ -267,29 +265,23 @@ float V() {
 }
 
 
-
-// For the moment the parameters are unparallelized, but this will be the case in the future
-
-float phi_V(int index){
-	return F[index];
-}
-
-
-
 // Critic network updating
 void update_V() { // TODO: has to change when it will be parallelized
 	int i = 0;
 	
 	for(i = 0; i < N_MFM; i++) {
-		e_array[i] = LAMBDA*GAMMA*e_array[i] + delta_V_wi(i);
+		e_array[i] = LAMBDA*GAMMA*e_array[i] + phi_V(i);
 		w_V_array[i] += LEARNING_RATE_V*error*e_array[i];
 	}
 
 	// TODO: (when parallelized) remove loop and send new values (w_v * phi_V) to master node
 }
 
-float delta_V_wi(int index) {
-	return phi_V(index);
+
+// For the moment the parameters are unparallelized, but this will be the case in the future
+
+float phi_V(int index){
+	return F[index];
 }
 
 
@@ -352,17 +344,14 @@ int move(uint sim_time) {
 
 void update_A() { // TODO: has to change when it will be parallelized
 	int i = 0;
-	
+	n = noise();	
+
 	for(i = 0; i < N_MFM; i++) {
-		w_A_theta_array[i] += LEARNING_RATE_A*error*n.x*delta_A_wi(i);
-		w_A_psi_array[i] += LEARNING_RATE_A*error*n.y*delta_A_wi(i);
+		w_A_theta_array[i] += LEARNING_RATE_A*error*n.x*phi_A(i);
+		w_A_psi_array[i] += LEARNING_RATE_A*error*n.y*phi_A(i);
 	}
 
 	// TODO: (when parallelized) remove loop and send new values (w_a * phi_A) to master node
-}
-
-float delta_A_wi(int index) {
-	return phi_A(index);
 }
 
 float phi_A(int index){

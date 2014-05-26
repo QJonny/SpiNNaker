@@ -71,28 +71,25 @@ void updateError(int x_pos, int y_pos, uint sim_time);
 
 void init_network(uint chipID, uint coreID, uint noise_seed);
 
-// critic network
-float V(); // returns the critic network value
-
-
-// unparallelized
-float phi_V(int index); // corresponds to the feature vector (unparallelized version)
 
 
 void mfm_(); // unparallelized, used for mean field model
 
 void save_();
 
-// critic network updating
+
+
+// critic network
+float V(); // returns the critic network value
+float phi_V(int index); // corresponds to the feature vector (unparallelized version)
 void update_V();
-float delta_V_wi(int index);
 
 
 // actor network
 int move(uint sim_time); // perform the next movement
 void update_A();
-float delta_A_wi(int index);
 float phi_A(int index); // corresponds to the feature vector (unparallelized version)
+
 float sigma();
 vector2d noise();
 
