@@ -18,7 +18,7 @@ float w_V_array[N_MFM] = {0.5};
 float w_A_theta_array[N_MFM] = {0.5};
 float w_A_psi_array[N_MFM] = {0.5};
 
-float F[N_MFM] = {10.0};
+float F[N_MFM] = {0.5};
 
 vector2d n; // noise
 
@@ -29,8 +29,8 @@ vector2d n; // noise
 void compute_speed(uint sim_time)
 {
 	if(sim_time % SPEED_AVERAGER_STEP == 0) {
-		speed_.x = (pos_.x - old_pos_.x) * INV_DELTA_TIME * INV_SPEED_AVERAGER_STEP;
-		speed_.y = (pos_.y - old_pos_.y) * INV_DELTA_TIME * INV_SPEED_AVERAGER_STEP;
+		speed_.x = (pos_.x - old_pos_.x) * INV_DELTA_TIME * INV_SPEED_AVERAGER_STEP * SPEED_RESIZE_FACTOR;
+		speed_.y = (pos_.y - old_pos_.y) * INV_DELTA_TIME * INV_SPEED_AVERAGER_STEP * SPEED_RESIZE_FACTOR;
 
 		old_pos_.x = pos_.x;
 		old_pos_.y = pos_.y;
@@ -43,10 +43,10 @@ void normalizeBallParams(int x_pos, int y_pos, uint sim_time) {
 	pos_.x = A_X*x_pos + B_X;
 	pos_.y = A_Y*y_pos + B_Y;
 
-	compute_speed(sim_time);
-
 	pos_.x = range(pos_.x, -1.0, 1.0);
 	pos_.y = range(pos_.y, -1.0, 1.0);
+
+	compute_speed(sim_time);
 }
 
 
@@ -60,7 +60,7 @@ float r_pos() {
 
 float R(vector2d speed){
 	float r = r_pos() - (2.0 / PI_) * atan(v_norm(speed));
-	
+
 	r = range(r, 0.0, 1.0);
 
 	return r;
@@ -182,8 +182,8 @@ void save_() {
 		io_printf(IO_STD,"%d.0/1000.0,\n", (int)(F[i]*1000));
 	}
 	io_printf(IO_STD,"];\n");
-}*/
-
+}
+*/
 
 
 
@@ -225,7 +225,7 @@ void mfm_(){
 		F[index] += dv;
 	}
 
-	n = noise();
+	//n = noise();
 }
 
 
@@ -246,7 +246,8 @@ void updateError(int x_pos, int y_pos, uint sim_time) {
 		
 	// TODO: (when parallelized) spread new error to every node
 
-	//io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
+	io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
+	//io_printf(IO_STD,"sp x %d, sp y %d\n", (int)(speed_.x*1000), (int)(speed_.y*1000));
 }
 
 
@@ -254,7 +255,7 @@ void updateError(int x_pos, int y_pos, uint sim_time) {
 
 // V in [0; 1]
 float V() {
-	float v = 0;
+	float v = 1.0;
 	int i = 0;
 
 	for(i = 0; i < N_MFM; i++) {
@@ -295,7 +296,7 @@ float delta_V_wi(int index) {
 
 
 
-
+/*
 
 
 
@@ -334,18 +335,18 @@ int move(uint sim_time) {
 
 	if(sim_time % RESET_STEP == 0) {
 		if(v_norm(pos_) > 0.7){
-			sendNormMotorCommand(pos_.x, pos_.y);
+			//sendNormMotorCommand(pos_.x, pos_.y);
 		}
 	}
 	else {	
 		sendNormMotorCommand(theta, psi);
 	}
 
-	/*if(sim_time > 20 && v_norm(pos_) < 0.2 && v_norm(speed_) < 0.1) {
-		return 0; // ball balanced
-	}*/
+	/*if(sim_time > 50 && v_norm(pos_) < 0.2 && v_norm(speed_) < 0.1) {
+		return STATE_BALANCED; // ball balanced
+	}
 
-	return 0;
+	return STATE_UNBALANCED;
 }
 
 
@@ -388,4 +389,4 @@ vector2d noise(){
 	return r;
 }
 
-
+*/

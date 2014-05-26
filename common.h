@@ -20,6 +20,12 @@ void raise();
 #define INV_DELTA_TIME (1.0 / DELTA_TIME)
 // end of simulation constants
 
+// state constants
+#define STATE_UNBALANCED 0
+#define STATE_BALANCED 1
+#define STATE_SAVED 2
+// end of state constants
+
 
 typedef short int16_t;
 typedef unsigned short uint16_t;
