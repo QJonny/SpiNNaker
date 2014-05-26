@@ -116,6 +116,7 @@ void init_network(uint chipID, uint coreID, uint noise_seed){
 	pos_ = vector(-1.0, 0.0);
 	old_pos_ = vector(-1.0, 0.0);
 	speed_ = vector(0.0, 0.0);
+	n = vector(0.0, 0.0);
 
 	srand(noise_seed);
 
@@ -244,7 +245,7 @@ void updateError(int x_pos, int y_pos, uint sim_time) {
 		
 	// TODO: (when parallelized) spread new error to every node
 
-	io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
+	//io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
 	//io_printf(IO_STD,"sp x %d, sp y %d\n", (int)(speed_.x*1000), (int)(speed_.y*1000));
 }
 
@@ -263,11 +264,6 @@ float V() {
 	// TODO: (when parallelized) replacer multiplication by received values
 	return v/ N_MFM;
 }
-
-
-
-
-
 
 
 // Critic network updating
@@ -293,7 +289,7 @@ float phi_V(int index){
 
 
 
-/*
+
 
 
 
@@ -332,19 +328,24 @@ int move(uint sim_time) {
 
 	if(sim_time % RESET_STEP == 0) {
 		if(v_norm(pos_) > 0.7){
-			//sendNormMotorCommand(pos_.x, pos_.y);
+			sendNormMotorCommand(pos_.x, pos_.y);
 		}
 	}
 	else {	
 		sendNormMotorCommand(theta, psi);
 	}
 
-	/*if(sim_time > 50 && v_norm(pos_) < 0.2 && v_norm(speed_) < 0.1) {
+	if(sim_time > 50 && v_norm(pos_) < 0.2 && v_norm(speed_) < 0.1) {
 		return STATE_BALANCED; // ball balanced
 	}
 
 	return STATE_UNBALANCED;
 }
+
+float phi_A(int index){
+	return F[index];
+}
+
 
 
 void update_A() { // TODO: has to change when it will be parallelized
@@ -359,9 +360,6 @@ void update_A() { // TODO: has to change when it will be parallelized
 	// TODO: (when parallelized) remove loop and send new values (w_a * phi_A) to master node
 }
 
-float phi_A(int index){
-	return F[index];
-}
 
 float sigma(){
 	return SIGMA_0 * min(K, max(0.0, 1.0-old_V));
@@ -372,7 +370,11 @@ vector2d noise(){
 	float U1 = (float)rand() / RAND_MAX; // uniform number in range [0, 1]
 	float U2 = (float)rand() / RAND_MAX; // ||
 
-	float R = sqrt(-2.0*(logf(U1)/M_LOG10E));
+	if(U1 == 0.0) {
+		U1 = 0.000001;
+	}
+
+	float R = sqrt(-2.0* (-0.693147));// log not usable... TODO: has to solve
 	float theta = 2.0*PI_*U2;
 
 	vector2d r = v_mul(0.5, vector(R*cos(theta), R*sin(theta)));
@@ -383,4 +385,4 @@ vector2d noise(){
 	return r;
 }
 
-*/
+

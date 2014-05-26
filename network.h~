@@ -25,7 +25,7 @@
 // simulation definitions
 #define SPEED_AVERAGER_STEP 5
 #define INV_SPEED_AVERAGER_STEP (1.0 / SPEED_AVERAGER_STEP)
-#define RESET_STEP 70
+#define RESET_STEP 70 // in sec /10
 // end of ball parameters definitions
 
 
@@ -71,19 +71,17 @@ void updateError(int x_pos, int y_pos, uint sim_time);
 
 void init_network(uint chipID, uint coreID, uint noise_seed);
 
-// critic network
-float V(); // returns the critic network value
-
-
-// unparallelized
-float phi_V(int index); // corresponds to the feature vector (unparallelized version)
 
 
 void mfm_(); // unparallelized, used for mean field model
 
 void save_();
 
-// critic network updating
+
+
+// critic network
+float V(); // returns the critic network value
+float phi_V(int index); // corresponds to the feature vector (unparallelized version)
 void update_V();
 
 
@@ -91,6 +89,7 @@ void update_V();
 int move(uint sim_time); // perform the next movement
 void update_A();
 float phi_A(int index); // corresponds to the feature vector (unparallelized version)
+
 float sigma();
 vector2d noise();
 
