@@ -25,7 +25,7 @@
 // simulation definitions
 #define SPEED_AVERAGER_STEP 5
 #define INV_SPEED_AVERAGER_STEP (1.0 / SPEED_AVERAGER_STEP)
-#define RESET_STEP 70 // in sec * 10
+#define RESET_STEP 200 // in sec * 10
 // end of ball parameters definitions
 
 

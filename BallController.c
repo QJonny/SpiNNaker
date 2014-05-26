@@ -72,7 +72,7 @@ void update(uint sim_time, uint none)
 
 	// save step
 	if(state != STATE_SAVED && sim_time != 0 && sim_time % SAVE_STEP == 0) {
-		save_();
+		//save_();
 		state = STATE_SAVED;
 	}
 }

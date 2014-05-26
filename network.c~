@@ -1,7 +1,5 @@
 #include "network.h"
 
-void raise() {}
-
 float old_V = 0.0;
 float error = 1.0;
 
@@ -136,7 +134,7 @@ void init_network(uint chipID, uint coreID, uint noise_seed){
 
 
 
-
+/*
 // saving (printing param code)
 void save_() {
 	int i = 0;
@@ -185,7 +183,7 @@ void save_() {
 	io_printf(IO_STD,"];\n");
 }
 
-
+*/
 
 
 
@@ -301,26 +299,22 @@ int move(uint sim_time) {
 
 	for(i = 0; i < N_MFM; i++) {
 		theta += w_A_theta_array[i] * phi_A(i);
-		
-		if( w_A_psi_array[i] > -1000.0){ // bug min value (TODO: solve properly)
-			psi += w_A_psi_array[i] * phi_A(i);
-		}
+		psi += w_A_psi_array[i] * phi_A(i);
 	}
 
 	float coef = 1.0;//0.75;
 
 
 	// range: [-1;1]	
-	theta = coef*(theta + sigma() * n.x);
-	psi = coef*(psi + sigma() * n.y);
+	theta = -coef*(theta + sigma() * n.x);
+	psi = -coef*(psi + sigma() * n.y);
 
 
 
 
 	// TODO: (when parallelized) replacer multiplication by received values 
 	
-	//io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
-	//io_printf(IO_STD,"v %d, error %d\n", (int)(old_V*1000), (int)(error*1000));
+	io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
 
 
 	theta = range(theta, -1.0, 1.0);
@@ -336,9 +330,9 @@ int move(uint sim_time) {
 	}
 
 	// TODO: should take an average instead of just at one time
-	if(sim_time > 50 && v_norm(pos_) < 0.2 && v_norm(speed_) < 0.1) {
+	/*if(sim_time > 50 && v_norm(pos_) < 0.2 && v_norm(speed_) < 0.1) {
 		return STATE_BALANCED; // ball balanced
-	}
+	}*/
 
 	return STATE_UNBALANCED;
 }
@@ -354,8 +348,8 @@ void update_A() { // TODO: has to change when it will be parallelized
 	n = noise();	
 
 	for(i = 0; i < N_MFM; i++) {
-		w_A_theta_array[i] += LEARNING_RATE_A*error*n.x*phi_A(i);
-		w_A_psi_array[i] += LEARNING_RATE_A*error*n.y*phi_A(i);
+		w_A_theta_array[i] -= LEARNING_RATE_A*error*n.x*phi_A(i);
+		w_A_psi_array[i] -= LEARNING_RATE_A*error*n.y*phi_A(i);
 	}
 
 	// TODO: (when parallelized) remove loop and send new values (w_a * phi_A) to master node
