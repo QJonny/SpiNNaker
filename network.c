@@ -1,7 +1,5 @@
 #include "network.h"
 
-void raise() {}
-
 float old_V = 0.0;
 float error = 1.0;
 
@@ -136,7 +134,7 @@ void init_network(uint chipID, uint coreID, uint noise_seed){
 
 
 
-/*
+
 // saving (printing param code)
 void save_() {
 	int i = 0;
@@ -184,7 +182,7 @@ void save_() {
 	}
 	io_printf(IO_STD,"];\n");
 }
-*/
+
 
 
 

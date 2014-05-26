@@ -15,7 +15,7 @@ LIBSPIN = $(LIB_DIR)/spin1_api_gnulib.o
 MUSL_LIBC = ./musl-1.0.0/lib/libc.a
 
 
-FILES = $(EXAMPLE).c network.c communication.c spin1_math.c fixed_float.c 
+FILES = $(EXAMPLE).c network.c communication.c spin1_math.c
 
 
 

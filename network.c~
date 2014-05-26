@@ -136,7 +136,7 @@ void init_network(uint chipID, uint coreID, uint noise_seed){
 
 
 
-/*
+
 // saving (printing param code)
 void save_() {
 	int i = 0;
@@ -184,7 +184,7 @@ void save_() {
 	}
 	io_printf(IO_STD,"];\n");
 }
-*/
+
 
 
 
@@ -335,6 +335,7 @@ int move(uint sim_time) {
 		sendNormMotorCommand(theta, psi);
 	}
 
+	// TODO: should take an average instead of just at one time
 	if(sim_time > 50 && v_norm(pos_) < 0.2 && v_norm(speed_) < 0.1) {
 		return STATE_BALANCED; // ball balanced
 	}

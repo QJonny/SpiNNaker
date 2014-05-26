@@ -61,8 +61,8 @@ void update(uint sim_time, uint none)
 	if(state == STATE_UNBALANCED) {
 		mfm_();
 		// actor network updating and command sending
-		//update_A( sim_time );
-		//state = move( sim_time );
+		update_A( sim_time );
+		state = move( sim_time );
 
 		// critic networks update
 		updateError(x_pos, y_pos, sim_time);
