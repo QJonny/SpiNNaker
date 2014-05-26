@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include "stdlib.h"
+#include "stdio.h"
 
 #include "spin1_api.h"
 #include "spinn_io.h"

@@ -134,56 +134,59 @@ void init_network(uint chipID, uint coreID, uint noise_seed){
 
 
 
-/*
+
 // saving (printing param code)
-void save_() {
+void save_() {/*
 	int i = 0;
+	int length = 0;
+	char text[10000] = "";
 
 	// e_array
-	io_printf(IO_STD,"float e_array[N_MFM] = [ \n");
+	length += sprintf(text + length, "float e_array[N_MFM] = [ \n");
 
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD,"%d.0/1000.0,\n", (int)(e_array[i]*1000));
+		//length += sprintf(text + length, "\t %f,\n", e_array[i]);
 	}
-	io_printf(IO_STD,"];\n");
+	length += sprintf(text + length, "];\n");
 
 	
 	// w_V_array
-	io_printf(IO_STD,"float w_V_array[N_MFM] = [ \n");
+	length += sprintf(text + length, "float w_V_array[N_MFM] = [ \n");
 
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD,"%d.0/1000.0,\n", (int)(w_V_array[i]*1000));
+		//length += sprintf(text + length, "\t %f,\n", w_V_array[i]);
 	}
-	io_printf(IO_STD,"];\n");
+	length += sprintf(text + length, "];\n");
 
 
 	// w_A_theta_array
-	io_printf(IO_STD,"float w_A_theta_array[N_MFM] = [ \n");
+	length += sprintf(text + length, "float w_A_theta_array[N_MFM] = [ \n");
 
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD,"%d.0/1000.0,\n", (int)(w_A_theta_array[i]*1000));
+		//length += sprintf(text + length, "\t %f,\n", w_A_theta_array[i]);
 	}
-	io_printf(IO_STD,"];\n");
+	length += sprintf(text + length, "];\n");
 
 
 	// w_A_psi_array
-	io_printf(IO_STD,"float w_A_psi_array[N_MFM] = [ \n");
+	length += sprintf(text + length, "float w_A_psi_array[N_MFM] = [ \n");
 
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD,"%d.0/1000.0,\n", (int)(w_A_psi_array[i]*1000));
+		//length += sprintf(text + length, "\t %f,\n", w_A_psi_array[i]);
 	}
-	io_printf(IO_STD,"];\n");
+	length += sprintf(text + length, "];\n");
 
 	// F
-	io_printf(IO_STD,"float F[N_MFM] = [ \n");
+	length += sprintf(text + length, "float F[N_MFM] = [ \n");
 
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD,"%d.0/1000.0,\n", (int)(F[i]*1000));
+		//length += sprintf(text + length, "\t %f,\n", F[i]);
 	}
-	io_printf(IO_STD,"];\n");
+	length += sprintf(text + length, "];\n");
+
+	//io_printf(IO_STD, text);*/
 }
 
-*/
 
 
 
@@ -306,15 +309,15 @@ int move(uint sim_time) {
 
 
 	// range: [-1;1]	
-	theta = -coef*(theta + sigma() * n.x);
-	psi = -coef*(psi + sigma() * n.y);
+	theta = coef*(theta + sigma() * n.x);
+	psi = coef*(psi + sigma() * n.y);
 
 
 
 
 	// TODO: (when parallelized) replacer multiplication by received values 
 	
-	io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
+	//io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
 
 
 	theta = range(theta, -1.0, 1.0);
