@@ -209,25 +209,25 @@ void save_() {
 
 	// e_array
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "e_array[%d] = %d.0/1000.0,\n", i, (int)(e_array[i]*1000));
+		io_printf(IO_STD, "e_array[%d] = %d.0/1000.0;\n", i, (int)(e_array[i]*1000));
 	}
 
 	
 	// w_V_array
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "w_V_array[%d] = %d.0/1000.0,\n", i, (int)(w_V_array[i]*1000));
+		io_printf(IO_STD, "w_V_array[%d] = %d.0/1000.0;\n", i, (int)(w_V_array[i]*1000));
 	}
 
 
 	// w_A_theta_array
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "w_A_theta_array[%d] = %d.0/1000.0,\n", i, (int)(w_A_theta_array[i]*1000));
+		io_printf(IO_STD, "w_A_theta_array[%d] = %d.0/1000.0;\n", i, (int)(w_A_theta_array[i]*1000));
 	}
 
 
 	// w_A_psi_array
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "w_A_psi_array[%d] = %d.0/1000.0,\n", i, (int)(w_A_psi_array[i]*1000));
+		io_printf(IO_STD, "w_A_psi_array[%d] = %d.0/1000.0;\n", i, (int)(w_A_psi_array[i]*1000));
 	}
 }
 

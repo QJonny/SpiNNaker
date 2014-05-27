@@ -327,14 +327,6 @@ void update_V() { // TODO: has to change when it will be parallelized
 }
 
 
-// For the moment the parameters are unparallelized, but this will be the case in the future
-
-float phi_V(int index){
-	return F[index];
-}
-
-
-
 
 
 
@@ -387,11 +379,6 @@ int move(uint sim_time) {
 
 	return STATE_UNBALANCED;
 }
-
-float phi_A(int index){
-	return F[index];
-}
-
 
 
 void update_A() { // TODO: has to change when it will be parallelized

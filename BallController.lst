@@ -4159,8 +4159,8 @@ Disassembly of section RO_DATA:
     2f94:	08bd8010 	popeq	{r4, pc}
     2f98:	e59f3030 	ldr	r3, [pc, #48]	; 2fd0 <update+0x98>
     2f9c:	e0832394 	umull	r2, r3, r4, r3
-    2fa0:	e1a03223 	lsr	r3, r3, #4
-    2fa4:	e3a02032 	mov	r2, #50	; 0x32
+    2fa0:	e1a033a3 	lsr	r3, r3, #7
+    2fa4:	e3a02e7d 	mov	r2, #2000	; 0x7d0
     2fa8:	e0030392 	mul	r3, r2, r3
     2fac:	e1540003 	cmp	r4, r3
     2fb0:	18bd8010 	popne	{r4, pc}
@@ -4171,7 +4171,7 @@ Disassembly of section RO_DATA:
     2fc4:	ebfff884 	bl	11dc <spin1_callback_off>
     2fc8:	e8bd8010 	pop	{r4, pc}
     2fcc:	00400060 	.word	0x00400060
-    2fd0:	51eb851f 	.word	0x51eb851f
+    2fd0:	10624dd3 	.word	0x10624dd3
 
 00002fd4 <compute_pos>:
     2fd4:	e92d40f8 	push	{r3, r4, r5, r6, r7, lr}
