@@ -9,7 +9,7 @@
 // comparision
 float min(float v1, float v2);
 float max(float v1, float v2);
-float range(float value, float upper, float lower);
+float range(float value, float lower, float upper);
 
 // vectors
 struct vector2d {

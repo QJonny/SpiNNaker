@@ -12,7 +12,7 @@ float max(float v1, float v2){
 	return (v1 > v2) ? v1:v2;
 }
 
-float range(float value, float upper, float lower) {
+float range(float value, float lower, float upper) {
 	if(value > upper) {
 		value = upper;
 	} else if(value < lower) {

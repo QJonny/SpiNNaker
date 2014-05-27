@@ -28,14 +28,16 @@ void sendMotorCommand(uint motor_x, uint motor_y) {
 
 void update(uint sim_time, uint none)
 {
-	float rad = 2.0*3.1415*(sim_time % 360)/360.0;
+	if(sim_time % 2 == 0) {
+		float rad = 2.0*3.1415*(sim_time % 360)/360.0;
 
-	float s = sin(rad);
+		float s = sin(rad);
 
-	int x_coord = (int)(500*(s) + 2000);
+		int coord = (int)(500*(s) + 2000);
 
-	sendMotorCommand(x_coord, 2000);
-	io_printf(IO_STD,"x is %d\n", x_coord);
+		sendMotorCommand(coord, 2000);
+		io_printf(IO_STD,"coord is %d\n", coord);
+	}
 }
 
 

@@ -5,17 +5,7 @@
 #include "common.h"
 #include "communication.h"
 
-#define TAU 0.1001
-#define KAPPA 0.05
-#define LAMBDA 0.1//(1.0 - DELTA_TIME/KAPPA) / (1.0 - DELTA_TIME/TAU)
-#define LEARNING_RATE_V 0.5
-#define LEARNING_RATE_A 0.5
-#define DELTA_TIME_OVER_TAU (DELTA_TIME / TAU)
-#define GAMMA 0.1
-
-#define LOG_P1 16
-#define V_DECAY 0.5
-
+// ball parameters definitions
 #define BALL_POS_Y_MAX 115
 #define BALL_POS_Y_MIN 5
 #define BALL_POS_Y_CENTER (int)((BALL_POS_Y_MAX + BALL_POS_Y_MIN) / 2)
@@ -30,16 +20,47 @@
 #define A_Y -1.0/(BALL_POS_Y_MIN - BALL_POS_Y_CENTER)
 #define B_Y -(A_Y)*BALL_POS_Y_CENTER
 
+#define SPEED_RESIZE_FACTOR (float)(0.1)
 
-#define N_V 64 // number of neurons in the critic network
-#define N_A 64 // number of neurons in the actor network
-#define K 0.5
-#define SIGMA_0 0.05
-
-
-#define SPEED_AVERAGER_STEP 10
+// simulation definitions
+#define SPEED_AVERAGER_STEP 5
 #define INV_SPEED_AVERAGER_STEP (1.0 / SPEED_AVERAGER_STEP)
-#define RESET_STEP 30000
+#define RESET_STEP 200 // in sec * 10
+// end of ball parameters definitions
+
+
+
+
+
+// Critic network definitions
+// have been tuned for DELTA_TIME = 0.1
+#define TAU 0.101
+#define KAPPA 0.101
+#define GAMMA 0.01
+#define LAMBDA 1.0//(1.0 - DELTA_TIME/KAPPA) / (1.0 - DELTA_TIME/TAU)
+
+#define LEARNING_RATE_V 0.5
+// end of Critic network definitions
+
+
+// MFM definitions
+#define V_DECAY 0.5
+#define N_MFM 64 // number of available populations
+// end of MFM definitions
+
+
+
+// Actor network definitions
+#define LEARNING_RATE_A 0.5
+
+#define K 0.5
+#define SIGMA_0 0.1
+// end of Actor network definitions
+
+
+
+
+// Functions
 
 
 // reward
@@ -48,29 +69,27 @@ float R(vector2d speed);
 void updateError(int x_pos, int y_pos, uint sim_time);
 
 
+void init_network(uint chipID, uint coreID, uint noise_seed);
+
+
+// mfm
+void mfm_(); // unparallelized, used for mean field model
+float phi_MFM(int index);
+
+void save_();
+void load_();
+
+
+
 // critic network
-void init_V(uint chipID, uint coreID);
 float V(); // returns the critic network value
-
-
-// unparallelized
-float phi_V(int index); // corresponds to the feature vector (unparallelized version)
-
-
-float mfm_V(int index); // unparallelized, used for mean field model
-
-
-// critic network updating
 void update_V();
-float delta_V_wi(int index);
 
 
 // actor network
-void init_A(uint noise_seed);
-void move(uint sim_time); // perform the next movement
+int move(uint sim_time); // perform the next movement
 void update_A();
-float delta_A_wi(int index);
-float phi_A(int index); // corresponds to the feature vector (unparallelized version)
+
 float sigma();
 vector2d noise();
 
