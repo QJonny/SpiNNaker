@@ -22,8 +22,8 @@ vector2d n; // noise
 
 
 // average params
-float pos_buffer[4] = {1.0};
-float speed_buffer[4] = {1.0};
+float pos_buffer[4] = {0.0};
+float speed_buffer[4] = {0.0};
 float total_sum_pos = 4.0;
 float total_sum_speed = 4.0;
 float avg_pos = 1.0;
