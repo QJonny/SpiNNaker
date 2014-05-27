@@ -33,6 +33,16 @@ int avg_index = 0;
 
 
 
+
+// loading params
+void load_() {
+
+}
+
+
+
+
+
 // average pos and speed
 void average_params() {
 	float n_pos = v_norm(pos_);
@@ -156,12 +166,12 @@ void init_params_() {
 		w_A_psi_array[i] = (((float)rand() / RAND_MAX) / 5.0) - 0.1;
 	}
 
+	//load_();
 
 	for(i = 0; i < 4; i++) {
 		pos_buffer[i] = 1.0;
 		speed_buffer[i] = 1.0;
 	}
-
 }
 
 
@@ -196,35 +206,28 @@ void init_network(uint chipID, uint coreID, uint noise_seed){
 // saving (printing param code)
 void save_() {
 	int i = 0;
-	int length = 0;
 
 	// e_array
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "e_array[%d] = %d.0/1000.0,\n", i, (int)(e_array[i]*1000));
+		io_printf(IO_STD, "e_array[%d] = %d.0/1000.0;\n", i, (int)(e_array[i]*1000));
 	}
 
 	
 	// w_V_array
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "w_V_array[%d] = %d.0/1000.0,\n", i, (int)(w_V_array[i]*1000));
+		io_printf(IO_STD, "w_V_array[%d] = %d.0/1000.0;\n", i, (int)(w_V_array[i]*1000));
 	}
 
 
 	// w_A_theta_array
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "w_A_theta_array[%d] = %d.0/1000.0,\n", i, (int)(w_A_theta_array[i]*1000));
+		io_printf(IO_STD, "w_A_theta_array[%d] = %d.0/1000.0;\n", i, (int)(w_A_theta_array[i]*1000));
 	}
 
 
 	// w_A_psi_array
 	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "w_A_psi_array[%d] = %d.0/1000.0,\n", i, (int)(w_A_psi_array[i]*1000));
-	}
-
-
-	// F
-	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "F[%d] = %d.0/1000.0,\n", i, (int)(F[i]*1000));
+		io_printf(IO_STD, "w_A_psi_array[%d] = %d.0/1000.0;\n", i, (int)(w_A_psi_array[i]*1000));
 	}
 }
 

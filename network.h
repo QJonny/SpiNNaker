@@ -77,6 +77,7 @@ void mfm_(); // unparallelized, used for mean field model
 float phi_MFM(int index);
 
 void save_();
+void load_();
 
 
 
