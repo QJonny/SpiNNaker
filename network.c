@@ -194,55 +194,38 @@ void init_network(uint chipID, uint coreID, uint noise_seed){
 
 
 // saving (printing param code)
-void save_() {/*
+void save_() {
 	int i = 0;
 	int length = 0;
-	char text[10000] = "";
 
 	// e_array
-	length += sprintf(text + length, "float e_array[N_MFM] = [ \n");
-
 	for(i = 0; i < N_MFM; i++) {
-		//length += sprintf(text + length, "\t %f,\n", e_array[i]);
+		io_printf(IO_STD, "e_array[%d] = %d.0/1000.0,\n", i, (int)(e_array[i]*1000));
 	}
-	length += sprintf(text + length, "];\n");
 
 	
 	// w_V_array
-	length += sprintf(text + length, "float w_V_array[N_MFM] = [ \n");
-
 	for(i = 0; i < N_MFM; i++) {
-		//length += sprintf(text + length, "\t %f,\n", w_V_array[i]);
+		io_printf(IO_STD, "w_V_array[%d] = %d.0/1000.0,\n", i, (int)(w_V_array[i]*1000));
 	}
-	length += sprintf(text + length, "];\n");
 
 
 	// w_A_theta_array
-	length += sprintf(text + length, "float w_A_theta_array[N_MFM] = [ \n");
-
 	for(i = 0; i < N_MFM; i++) {
-		//length += sprintf(text + length, "\t %f,\n", w_A_theta_array[i]);
+		io_printf(IO_STD, "w_A_theta_array[%d] = %d.0/1000.0,\n", i, (int)(w_A_theta_array[i]*1000));
 	}
-	length += sprintf(text + length, "];\n");
 
 
 	// w_A_psi_array
-	length += sprintf(text + length, "float w_A_psi_array[N_MFM] = [ \n");
-
 	for(i = 0; i < N_MFM; i++) {
-		//length += sprintf(text + length, "\t %f,\n", w_A_psi_array[i]);
+		io_printf(IO_STD, "w_A_psi_array[%d] = %d.0/1000.0,\n", i, (int)(w_A_psi_array[i]*1000));
 	}
-	length += sprintf(text + length, "];\n");
+
 
 	// F
-	length += sprintf(text + length, "float F[N_MFM] = [ \n");
-
 	for(i = 0; i < N_MFM; i++) {
-		//length += sprintf(text + length, "\t %f,\n", F[i]);
+		io_printf(IO_STD, "F[%d] = %d.0/1000.0,\n", i, (int)(F[i]*1000));
 	}
-	length += sprintf(text + length, "];\n");
-
-	//io_printf(IO_STD, text);*/
 }
 
 
@@ -286,6 +269,10 @@ void mfm_(){
 	}
 }
 
+float phi_MFM(int index) {
+	return F[index];
+}
+
 
 
 
@@ -316,7 +303,7 @@ float V() {
 	int i = 0;
 
 	for(i = 0; i < N_MFM; i++) {
-		v += w_V_array[i] * phi_V(i);
+		v += w_V_array[i] * phi_MFM(i);
 	}
 
 	// TODO: (when parallelized) replacer multiplication by received values
@@ -329,7 +316,7 @@ void update_V() { // TODO: has to change when it will be parallelized
 	int i = 0;
 	
 	for(i = 0; i < N_MFM; i++) {
-		e_array[i] = LAMBDA*GAMMA*e_array[i] + phi_V(i);
+		e_array[i] = LAMBDA*GAMMA*e_array[i] + phi_MFM(i);
 		w_V_array[i] += LEARNING_RATE_V*error*e_array[i];
 	}
 
@@ -358,8 +345,8 @@ int move(uint sim_time) {
 	float psi = 0.0;
 
 	for(i = 0; i < N_MFM; i++) {
-		theta += w_A_theta_array[i] * phi_A(i);
-		psi += w_A_psi_array[i] * phi_A(i);
+		theta += w_A_theta_array[i] * phi_MFM(i);
+		psi += w_A_psi_array[i] * phi_MFM(i);
 	}
 
 	float coef = 1.0;//0.75;
@@ -409,8 +396,8 @@ void update_A() { // TODO: has to change when it will be parallelized
 	n = noise();	
 
 	for(i = 0; i < N_MFM; i++) {
-		w_A_theta_array[i] -= LEARNING_RATE_A*error*n.x*phi_A(i);
-		w_A_psi_array[i] -= LEARNING_RATE_A*error*n.y*phi_A(i);
+		w_A_theta_array[i] -= LEARNING_RATE_A*error*n.x*phi_MFM(i);
+		w_A_psi_array[i] -= LEARNING_RATE_A*error*n.y*phi_MFM(i);
 	}
 
 	// TODO: (when parallelized) remove loop and send new values (w_a * phi_A) to master node
@@ -430,7 +417,8 @@ vector2d noise(){
 		U1 = 0.000001;
 	}
 
-	float R = sqrt(-2.0* (-0.693147));// log not usable... TODO: has to solve
+	// log not usable... TODO: has to solve (just used a mean value of 0.5 so far, which still gives a noise impression)
+	float R = sqrt(-2.0* (-0.693147));
 	float theta = 2.0*PI_*U2;
 
 	vector2d r = v_mul(0.5, vector(R*cos(theta), R*sin(theta)));

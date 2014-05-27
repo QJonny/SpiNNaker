@@ -12,7 +12,7 @@
 #define NUMBER_OF_XCHIPS 2
 #define NUMBER_OF_YCHIPS 2
 
-#define SAVE_STEP 1200 // in sec * 10
+#define SAVE_STEP 50 // in sec * 10
 
 
 uint core_map [ NUMBER_OF_XCHIPS ][ NUMBER_OF_YCHIPS ] =
