@@ -22,17 +22,17 @@ vector2d n; // noise
 
 
 // average params
-float pos_buffer[8] = {1.0};
-float speed_buffer[8] = {1.0};
-float total_sum_pos = 8.0;
-float total_sum_speed = 8.0;
+float pos_buffer[4] = {1.0};
+float speed_buffer[4] = {1.0};
+float total_sum_pos = 4.0;
+float total_sum_speed = 4.0;
 float avg_pos = 1.0;
 float avg_speed = 1.0;
 int avg_index = 0;
 // end of average params
 
 
-/*
+
 // average pos and speed
 void average_params() {
 	float n_pos = v_norm(pos_);
@@ -43,12 +43,12 @@ void average_params() {
 	pos_buffer[avg_index] = n_pos;
 	speed_buffer[avg_index] = n_sp;
 
-	avg_pos = total_sum_pos / 8.0;
-	avg_speed = total_sum_speed / 8.0;
+	avg_pos = total_sum_pos / 4.0;
+	avg_speed = total_sum_speed / 4.0;
 		
-	avg_index = (avg_index + 1) % 8;
+	avg_index = (avg_index + 1) % 4;
 }
-*/
+
 
 // call every tick (0.1s)
 void compute_speed(uint sim_time)
@@ -68,10 +68,17 @@ void normalizeBallParams(int x_pos, int y_pos, uint sim_time) {
 	pos_.x = A_X*x_pos + B_X;
 	pos_.y = A_Y*y_pos + B_Y;
 
-	pos_.x = range(pos_.x, -1.0, 1.0);
-	pos_.y = range(pos_.y, -1.0, 1.0);
+
+	// normalizing pos
+	float n_pos = v_norm(pos_);
+	if(n_pos > 1.0) {
+		pos_.x /= n_pos;
+		pos_.y /= n_pos;
+	}
 
 	compute_speed(sim_time);
+
+	average_params();
 }
 
 
@@ -150,7 +157,7 @@ void init_params_() {
 	}
 
 
-	for(i = 0; i < 8; i++) {
+	for(i = 0; i < 4; i++) {
 		pos_buffer[i] = 1.0;
 		speed_buffer[i] = 1.0;
 	}
@@ -373,7 +380,11 @@ int move(uint sim_time) {
 	theta = range(theta, -1.0, 1.0);
 	psi = range(psi, -1.0, 1.0);
 
-	if(sim_time % RESET_STEP == 0) {
+	if(avg_pos < 0.3 && avg_speed < 0.05) {
+		sendNormMotorCommand(0.0, 0.0);
+		return STATE_BALANCED; // ball balanced
+	}
+	else if(sim_time % RESET_STEP == 0) {
 		if(v_norm(pos_) > 0.7){
 			sendNormMotorCommand(pos_.x, pos_.y);
 		}
@@ -382,10 +393,7 @@ int move(uint sim_time) {
 		sendNormMotorCommand(theta, psi);
 	}
 
-	// TODO: should take an average instead of just at one time
-	/*if(sim_time > 50 && v_norm(pos_) < 0.2 && v_norm(speed_) < 0.1) {
-		return STATE_BALANCED; // ball balanced
-	}*/
+
 
 	return STATE_UNBALANCED;
 }
