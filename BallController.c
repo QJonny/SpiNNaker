@@ -10,7 +10,6 @@ int y_buffer[16] = {0};
 int total_sum_x = 0;
 int total_sum_y = 0;
 int curr_index = 0;
-int old_time = -1;
 // end of ball tracking
 
 
@@ -28,12 +27,12 @@ int pos_computed = 0;
 
 int state = STATE_UNBALANCED;
 
-int updateMode = 0;
-
+int updateCount = 0;
+int sim_count = 2;
 
 // ball tracking
 
-void compute_pos(int x_cur, int y_cur, int sim_time)
+void compute_pos(int x_cur, int y_cur)
 {
 	if((pos_computed == 0 || norm(x_pos - x_cur, y_pos - y_cur) < 100)) {
 
@@ -50,8 +49,6 @@ void compute_pos(int x_cur, int y_cur, int sim_time)
 		}
 
 		curr_index = (curr_index + 1) % 16;
-
-		old_time = sim_time;
 	}
 }
 
@@ -60,40 +57,29 @@ void compute_pos(int x_cur, int y_cur, int sim_time)
 
 void update(uint sim_time, uint none)
 {
-	if(chipID == 0 && coreID == 1 )
-	{
-		if(updateMode == 0) {
-			spin1_send_mc_packet(BALL_POS_MSG, (x_pos << 16)|y_pos, WITH_PAYLOAD);
-		}
-		else {
-			io_printf(IO_STD,"pos : %d, %d\n", x_pos, y_pos);
-		}
-
-		updateMode = !updateMode;
+	if(updateCount == 1) {
+		spin1_send_mc_packet(BALL_POS_MSG, (x_pos << 16)|y_pos, WITH_PAYLOAD);
 	}
-	else {
-		io_printf(IO_STD,"pos : %d, %d\n", x_pos, y_pos);
-
-	}
-	/*
+	else if(updateCount == 0){
 		if(state == STATE_UNBALANCED) {
-			mfm_();
-			// actor network updating and command sending
-			update_A( sim_time );
-			state = move( sim_time );
+			// actor network command sending
+			state = move( (sim_time + 3) / 4 );
 
 			// critic networks update
-			updateError(x_pos, y_pos, sim_time);
-			update_V();
-			// end of networks update
+			updateError();
 		}
+
 
 		// save step
 		if(state == STATE_BALANCED || (state != STATE_SAVED && sim_time != 0 && sim_time % SAVE_STEP == 0)) {
 			save_();
+			// TODO: send save message to nodes
 			state = STATE_SAVED;
 			spin1_callback_off(TIMER_TICK);
-		}*/
+		}
+	}
+
+	updateCount = (updateCount + 1) % 4;
 }
 
 
@@ -101,10 +87,20 @@ void update(uint sim_time, uint none)
 
 void event(uint key, uint payload){
 	if(key == BALL_POS_MSG) {
-		//io_printf(IO_STD,"payload : %d\n", payload);
 		x_pos = payload >> 16;
 		y_pos = payload & 0x0000FFFF;
-	}
+
+		updateNodePos(x_pos, y_pos, sim_count);
+
+		mfm_();
+		// actor network update
+		update_A( sim_count );
+
+		// critic network update
+		update_V();
+
+		sim_count += 1;
+	} // TODO: master: receive updatings
 	else {  // camera event (why the hell isn't payload that contains the information????)
 		// raw position extraction
 		int y_cur = ((key & 0x7F));
@@ -113,7 +109,7 @@ void event(uint key, uint payload){
 		int check = (key >> 15) & 0x01;
 
 		if(pol == 1 && spin1_get_simulation_time()) {
-			compute_pos(x_cur, y_cur, spin1_get_simulation_time());
+			compute_pos(x_cur, y_cur);
 		}
 	}
 }
@@ -131,10 +127,7 @@ void c_main (void)
 	io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
 
 	if(chipID == 0 && coreID == 1) { // master core
-		spin1_set_timer_tick(TICK_TIME/2);
-	}
-	else {
-		spin1_set_timer_tick(TICK_TIME);
+		spin1_set_timer_tick(TICK_TIME/4);
 	}
 	// end of simulation initialization	
 	
@@ -146,17 +139,19 @@ void c_main (void)
 
 
 	// networks init
-	//init_network(chipID, coreID, 0);
+	init_network(chipID, coreID, 0);
 
 	
 	// events setting
 	spin1_callback_on(MC_PACKET_RECEIVED,event,1);
 
-	spin1_callback_on(TIMER_TICK, update, 1);
+	if(chipID == 0 && coreID == 1) { // master core
+		spin1_callback_on(TIMER_TICK, update, 1);
+
+		srand(0);
+	}
 
 	spin1_start();
-
-
 }
 
 

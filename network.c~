@@ -106,7 +106,6 @@ void normalizeBallParams(int x_pos, int y_pos, uint sim_time) {
 
 // reward
 float r_pos() {
-	// TODO: change from linear to other
 	return 1.0 - v_norm(pos_);
 }
 
@@ -124,11 +123,15 @@ float R(vector2d speed){
 
 
 // network communication updating
-void updateNodesNoise(vector2d noise) {
+void updateNodePos(int x_pos, int y_pos, uint sim_time) {
+	normalizeBallParams(x_pos, y_pos, sim_time);	
+}
+
+void updateNodeNoise(vector2d noise) {
 	n = noise;
 }
 
-void updateNodesError(float err) {
+void updateNodeError(float err) {
 	error = err;
 }
 
@@ -180,8 +183,6 @@ void init_MFM(){
 	float x = (a+b*theta)*cos(theta);
 	float y = (a+b*theta)*sin(theta);*/
 
-
-	// TODO: has to change when parallelized
 	center.x = x;
 	center.y = y;
 }
@@ -209,16 +210,13 @@ void init_params_() {
 
 
 // initialize network parameters
-void init_network(uint chipIDs, uint coreIDs, uint noise_seed){
+void init_network(uint chipIDs, uint coreIDs){
 	chipID = chipIDs;
 	coreID = coreIDs;
 	pos_ = vector(-1.0, 0.0);
 	old_pos_ = vector(-1.0, 0.0);
 	speed_ = vector(0.0, 0.0);	
 	n = vector(0.0, 0.0);
-
-	srand(noise_seed);
-
 
 	init_MFM();
 
@@ -232,13 +230,13 @@ void init_network(uint chipIDs, uint coreIDs, uint noise_seed){
 void save_() {
 	// e_array
 	io_printf(IO_STD, "if(coreID==%d && chipID==%d){\n", coreID, chipID);
-	io_printf(IO_STD, "\t e = %d.0/1000.0;\n", i, (int)(e*1000));
+	io_printf(IO_STD, "\t e = %d.0/1000.0;\n", (int)(e*1000));
 
-	io_printf(IO_STD, "\t w_V = %d.0/1000.0;\n", i, (int)(w_V*1000));
+	io_printf(IO_STD, "\t w_V = %d.0/1000.0;\n", (int)(w_V*1000));
 
-	io_printf(IO_STD, "\t w_A_theta = %d.0/1000.0;\n", i, (int)(w_A_theta*1000));
+	io_printf(IO_STD, "\t w_A_theta = %d.0/1000.0;\n", (int)(w_A_theta*1000));
 
-	io_printf(IO_STD, "\t w_A_psi = %d.0/1000.0;\n", i, (int)(w_A_psi*1000));
+	io_printf(IO_STD, "\t w_A_psi = %d.0/1000.0;\n", (int)(w_A_psi*1000));
 	io_printf(IO_STD, "}\n", coreID, chipID);
 
 }
@@ -289,8 +287,7 @@ float phi_MFM() {
 
 // critic network
 
-void updateError(int x_pos, int y_pos, uint sim_time) {
-	normalizeBallParams(x_pos, y_pos, sim_time);
+void updateError() {
 	float r = R(speed_);
 	float curr_V = INV_DELTA_TIME*V();
 
@@ -316,13 +313,12 @@ float V() {
 		v += V_array[i];
 	}
 
-	// TODO: (when parallelized) replacer multiplication by received values
 	return v/ N_MFM;
 }
 
 
 // Critic network updating
-void update_V() { // TODO: has to change when it will be parallelized	
+void update_V() {	
 	e = LAMBDA*GAMMA*e + phi_MFM();
 	w_V += LEARNING_RATE_V*error*e;
 
@@ -355,10 +351,6 @@ int move(uint sim_time) {
 	psi = coef*(psi + sigma() * n.y);
 
 
-
-
-	// TODO: (when parallelized) replacer multiplication by received values 
-	
 	//io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
 
 
@@ -379,12 +371,11 @@ int move(uint sim_time) {
 	}
 
 
-
 	return STATE_UNBALANCED;
 }
 
 
-void update_A() { // TODO: has to change when it will be parallelized
+void update_A() {
 	w_A_theta -= LEARNING_RATE_A*error*n.x*phi_MFM();
 	w_A_psi -= LEARNING_RATE_A*error*n.y*phi_MFM();
 

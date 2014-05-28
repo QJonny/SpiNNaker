@@ -66,10 +66,10 @@
 // reward
 float r_pos();
 float R(vector2d speed);
-void updateError(int x_pos, int y_pos, uint sim_time);
+void updateError();
 
 
-void init_network(uint chipIDs, uint coreIDs, uint noise_seed);
+void init_network(uint chipIDs, uint coreIDs);
 
 
 // mfm
@@ -80,8 +80,9 @@ void save_();
 void load_();
 
 // network communication updating
-void updateNodesNoise(vector2d noise);
-void updateNodesError(float err);
+void updateNodePos(int x_pos, int y_pos, uint sim_time);
+void updateNodeNoise(vector2d noise);
+void updateNodeError(float err);
 void update_V_array(int index, float value);
 void update_A_theta_array(int index, float value);
 void update_A_psi_array(int index, float value);
