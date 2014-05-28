@@ -25,6 +25,8 @@
 #define MOTOR_X_CENTER	2150
 #define MOTOR_Y_CENTER	2000//1970
 
+#define BALL_POS_MSG 47
+
 
 
 void initIO(uint chipID, uint coreID);

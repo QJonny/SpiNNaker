@@ -26,9 +26,10 @@
 #define MOTOR_Y_CENTER	2000//1970
 
 
+#define BALL_POS_MSG 47
 
 void initIO(uint chipID, uint coreID);
-void startDevices((uint chipID, uint coreID);
+void startDevices(uint chipID, uint coreID);
 void stopDevices();
 
 void sendNormMotorCommand(float x, float y);
