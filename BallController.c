@@ -63,12 +63,10 @@ void update(uint sim_time, uint none)
 	else if(updateCount == 0){
 		if(state == STATE_UNBALANCED) {
 			// actor network command sending
-			state = move( sim_count );
+			//state = move( sim_count );
 
-			// critic networks update
+			// critic networks update (also sends error)
 			updateError();
-
-			// TODO: send error and noise
 		}
 
 
@@ -89,20 +87,28 @@ void update(uint sim_time, uint none)
 
 void event(uint key, uint payload){
 	if(key == BALL_POS_MSG) {
-		sim_count += 1;
-
 		x_pos = payload >> 16;
 		y_pos = payload & 0x0000FFFF;
 
 		updateNodePos(x_pos, y_pos, sim_count);
 
 		mfm_();
+	}
+	else if(key == ERROR_MSG) {
+		sim_count += 1;
+		// TODO: error
+		float* err = (float*)&payload;
+		updateNodeError(*err);
+
 		// actor network update
-		update_A( sim_count );
+		//update_A( sim_count );
 
 		// critic network update
-		update_V();
-	} // TODO: master: receive updatings
+		//update_V();
+
+		// TODO: sending updatings
+	} 
+// TODO: master: receive updatings
 	else {  // camera event (why the hell isn't payload that contains the information????)
 		// raw position extraction
 		int y_cur = ((key & 0x7F));
@@ -124,8 +130,6 @@ void c_main (void)
 	coreID = spin1_get_core_id();
 	chipID = spin1_get_chip_id();
 
-	//spin1_application_core_map(NUMBER_OF_XCHIPS, NUMBER_OF_YCHIPS, core_map);
-
 	io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
 
 	if(chipID == 0 && coreID == 1) { // master core
@@ -138,14 +142,14 @@ void c_main (void)
 
 
 	// networks init
-	init_network(chipID, coreID, 0);
+	init_network(chipID, coreID);
 
 	
 	// events setting
-	spin1_callback_on(MC_PACKET_RECEIVED,event,1);
+	spin1_callback_on(MC_PACKET_RECEIVED,event,0);
 
 	if(chipID == 0 && coreID == 1) { // master core
-		spin1_callback_on(TIMER_TICK, update, 1);
+		spin1_callback_on(TIMER_TICK, update, 0);
 
 	}
 

@@ -25,8 +25,13 @@
 #define MOTOR_X_CENTER	2150
 #define MOTOR_Y_CENTER	2000//1970
 
-
 #define BALL_POS_MSG 47
+#define ERROR_MSG 48
+#define A_MSG 49
+#define THETA_MSG 50
+#define PSI_MSG 51
+
+
 
 void initIO(uint chipID, uint coreID);
 void startDevices(uint chipID, uint coreID);

@@ -127,10 +127,6 @@ void updateNodePos(int x_pos, int y_pos, uint sim_time) {
 	normalizeBallParams(x_pos, y_pos, sim_time);	
 }
 
-void updateNodeNoise(vector2d noise) {
-	n = noise;
-}
-
 void updateNodeError(float err) {
 	error = err;
 }
@@ -171,17 +167,6 @@ void init_MFM(){
 
 	float x = r*cos(theta);
 	float y = r*sin(theta);
-
-
-
-	// archimedean spiral
-	/*float a = 0.0;
-	float b = 0.05;
-	float coreNb = (float)(32*chipY + 16*chipX + coreID);
-	float theta = (coreNb / 64.0) * 7.5 * PI_;
-
-	float x = (a+b*theta)*cos(theta);
-	float y = (a+b*theta)*sin(theta);*/
 
 	center.x = x;
 	center.y = y;
@@ -300,10 +285,10 @@ void updateError() {
 
 	old_V = curr_V;
 
-		
-	// TODO: (when parallelized) spread new error to every node
+	int* err = (int*)&error;
 
-	//io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
+	spin1_send_mc_packet(ERROR_MSG, *err, WITH_PAYLOAD);
+	io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
 }
 
 

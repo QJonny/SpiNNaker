@@ -81,7 +81,6 @@ void load_();
 
 // network communication updating
 void updateNodePos(int x_pos, int y_pos, uint sim_time);
-void updateNodeNoise(vector2d noise);
 void updateNodeError(float err);
 void update_V_array(int index, float value);
 void update_A_theta_array(int index, float value);

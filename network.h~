@@ -69,7 +69,7 @@ float R(vector2d speed);
 void updateError();
 
 
-void init_network(uint chipIDs, uint coreIDs, uint noise_seed);
+void init_network(uint chipIDs, uint coreIDs);
 
 
 // mfm
