@@ -27,10 +27,11 @@
 
 
 
-void initIO();
-void startDevices();
+void initIO(uint chipID, uint coreID);
+void startDevices((uint chipID, uint coreID);
 void stopDevices();
 
+void sendNormMotorCommand(float x, float y);
 void sendMotorCommand(uint motor_x, uint motor_y);
 
 #endif

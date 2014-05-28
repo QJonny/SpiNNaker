@@ -7,16 +7,27 @@ vector2d pos_;
 vector2d speed_;
 vector2d old_pos_;
 
-vector2d center[N_MFM];
+uint chipID;
+uint coreID;
 
-// TODO: has to change when parallelized
-float e_array[N_MFM] = {0.0};
-float w_V_array[N_MFM] = {0.0};
+// master node
+float V_array[N_MFM] = {0.0};
 
-float w_A_theta_array[N_MFM] = {0.0};
-float w_A_psi_array[N_MFM] = {0.0};
+float A_theta_array[N_MFM] = {0.0};
+float A_psi_array[N_MFM] = {0.0};
 
-float F[N_MFM] = {0.0};
+
+// slave nodes
+float e = 0.0;
+float w_V = 0.0;
+
+float w_A_theta = 0.0;
+float w_A_psi = 0.0;
+
+float F = 0.0;
+vector2d center;
+
+
 
 vector2d n; // noise
 
@@ -112,10 +123,32 @@ float R(vector2d speed){
 
 
 
+// network communication updating
+void updateNodesNoise(vector2d noise) {
+	n = noise;
+}
+
+void updateNodesError(float err) {
+	error = err;
+}
+
+void update_V_array(int index, float value) {
+	V_array[index] = value;
+}
+
+void update_A_theta_array(int index, float value) {
+	A_theta_array[index] = value;
+}
+
+void update_A_psi_array(int index, float value) {
+	A_psi_array[index] = value;
+}
 
 
-// compute center position for each neuron (inner, has to change when parallelized)
-void init_MFM(uint chipID, uint coreID){
+
+
+// compute center position for each neuron
+void init_MFM(){
 	int chipX = chipID & 0x000000FF;
 	int chipY = chipID >> 8;
 
@@ -149,8 +182,8 @@ void init_MFM(uint chipID, uint coreID){
 
 
 	// TODO: has to change when parallelized
-	center[32*chipY + 16*chipX + coreID].x = x;
-	center[32*chipY + 16*chipX + coreID].y = y;
+	center.x = x;
+	center.y = y;
 }
 
 
@@ -159,43 +192,35 @@ void init_params_() {
 	int i = 0;
 
 	// uniform number in range [-0.1, 0.1]
-	for(i = 0; i < N_MFM; i++) {
-		w_V_array[i] = 	(((float)rand() / RAND_MAX) / 5.0) - 0.1; 
+	w_V = (((float)rand() / RAND_MAX) / 5.0) - 0.1; 
 
-		w_A_theta_array[i] = (((float)rand() / RAND_MAX) / 5.0) - 0.1;
-		w_A_psi_array[i] = (((float)rand() / RAND_MAX) / 5.0) - 0.1;
-	}
+	w_A_theta = (((float)rand() / RAND_MAX) / 5.0) - 0.1;
+	w_A_psi = (((float)rand() / RAND_MAX) / 5.0) - 0.1;
 
 	//load_();
 
-	for(i = 0; i < 4; i++) {
-		pos_buffer[i] = 1.0;
-		speed_buffer[i] = 1.0;
+	if(chipID == 0 && coreID == 1) { // master core
+		for(i = 0; i < 4; i++) {
+			pos_buffer[i] = 1.0;
+			speed_buffer[i] = 1.0;
+		}
 	}
 }
 
 
-// compute center position for each neuron (outer, has to change when parallelized)
-void init_network(uint chipID, uint coreID, uint noise_seed){
+// initialize network parameters
+void init_network(uint chipIDs, uint coreIDs, uint noise_seed){
+	chipID = chipIDs;
+	coreID = coreIDs;
 	pos_ = vector(-1.0, 0.0);
 	old_pos_ = vector(-1.0, 0.0);
-	speed_ = vector(0.0, 0.0);
+	speed_ = vector(0.0, 0.0);	
 	n = vector(0.0, 0.0);
 
 	srand(noise_seed);
 
-	coreID = 0;
-	int i = 0;
-	uint chipsID[4] = {0, 1, 256, 257}; // 0,0  0,1  1,0  1,1
-	uint chipIndex = 0;
-	
-	for(chipIndex = 0; chipIndex < 4; chipIndex++) {
-		chipID = chipsID[chipIndex];
 
-		for(coreID = 0; coreID < 16; coreID++) {
-			init_MFM(chipID, coreID);
-		}
-	}
+	init_MFM();
 
 	init_params_();
 }
@@ -205,32 +230,18 @@ void init_network(uint chipID, uint coreID, uint noise_seed){
 
 // saving (printing param code)
 void save_() {
-	int i = 0;
-
 	// e_array
-	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "e_array[%d] = %d.0/1000.0;\n", i, (int)(e_array[i]*1000));
-	}
+	io_printf(IO_STD, "if(coreID==%d && chipID==%d){\n", coreID, chipID);
+	io_printf(IO_STD, "\t e = %d.0/1000.0;\n", (int)(e*1000));
 
-	
-	// w_V_array
-	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "w_V_array[%d] = %d.0/1000.0;\n", i, (int)(w_V_array[i]*1000));
-	}
+	io_printf(IO_STD, "\t w_V = %d.0/1000.0;\n", (int)(w_V*1000));
 
+	io_printf(IO_STD, "\t w_A_theta = %d.0/1000.0;\n", (int)(w_A_theta*1000));
 
-	// w_A_theta_array
-	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "w_A_theta_array[%d] = %d.0/1000.0;\n", i, (int)(w_A_theta_array[i]*1000));
-	}
+	io_printf(IO_STD, "\t w_A_psi = %d.0/1000.0;\n", (int)(w_A_psi*1000));
+	io_printf(IO_STD, "}\n", coreID, chipID);
 
-
-	// w_A_psi_array
-	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "w_A_psi_array[%d] = %d.0/1000.0;\n", i, (int)(w_A_psi_array[i]*1000));
-	}
 }
-
 
 
 
@@ -260,20 +271,16 @@ float IF(float input){
 }
 
 void mfm_(){
-	int index = 0;
+	// 0: ball far from population center, 1: ball close to population center
+	float Iext = (2.0 - v_norm(v_sub(pos_, center))) / 2.0;
 
-	for(index = 0; index < N_MFM; index++) {
-		// 0: ball far from population center, 1: ball close to population center
-		float Iext = (2.0 - v_norm(v_sub(pos_, center[index]))) / 2.0;
+	float dv = ( -F + IF( Iext ) ) * V_DECAY ;
 
-		float dv = ( -F[index] + IF( Iext ) ) * V_DECAY ;
-
-		F[index] += dv;
-	}
+	F += dv;
 }
 
-float phi_MFM(int index) {
-	return F[index];
+float phi_MFM() {
+	return F;
 }
 
 
@@ -306,7 +313,7 @@ float V() {
 	int i = 0;
 
 	for(i = 0; i < N_MFM; i++) {
-		v += w_V_array[i] * phi_MFM(i);
+		v += V_array[i];
 	}
 
 	// TODO: (when parallelized) replacer multiplication by received values
@@ -315,15 +322,11 @@ float V() {
 
 
 // Critic network updating
-void update_V() { // TODO: has to change when it will be parallelized
-	int i = 0;
-	
-	for(i = 0; i < N_MFM; i++) {
-		e_array[i] = LAMBDA*GAMMA*e_array[i] + phi_MFM(i);
-		w_V_array[i] += LEARNING_RATE_V*error*e_array[i];
-	}
+void update_V() { // TODO: has to change when it will be parallelized	
+	e = LAMBDA*GAMMA*e + phi_MFM();
+	w_V += LEARNING_RATE_V*error*e;
 
-	// TODO: (when parallelized) remove loop and send new values (w_v * phi_V) to master node
+	// TODO: send new values (w_V * phi_MFM) to master node
 }
 
 
@@ -340,8 +343,8 @@ int move(uint sim_time) {
 	float psi = 0.0;
 
 	for(i = 0; i < N_MFM; i++) {
-		theta += w_A_theta_array[i] * phi_MFM(i);
-		psi += w_A_psi_array[i] * phi_MFM(i);
+		theta += A_theta_array[i];
+		psi += A_psi_array[i];
 	}
 
 	float coef = 1.0;//0.75;
@@ -382,15 +385,10 @@ int move(uint sim_time) {
 
 
 void update_A() { // TODO: has to change when it will be parallelized
-	int i = 0;
-	n = noise();	
+	w_A_theta -= LEARNING_RATE_A*error*n.x*phi_MFM();
+	w_A_psi -= LEARNING_RATE_A*error*n.y*phi_MFM();
 
-	for(i = 0; i < N_MFM; i++) {
-		w_A_theta_array[i] -= LEARNING_RATE_A*error*n.x*phi_MFM(i);
-		w_A_psi_array[i] -= LEARNING_RATE_A*error*n.y*phi_MFM(i);
-	}
-
-	// TODO: (when parallelized) remove loop and send new values (w_a * phi_A) to master node
+	// TODO: send new values (w_A_theta * phi_MFM and w_A_psi * phi_MFM) to master node
 }
 
 

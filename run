@@ -11,9 +11,19 @@ p2pc 2 2
 
 sp 0 0
 sload BallController.aplx f5000000
-as f5000000 2
+as f5000000 6
 
+sp 0 1
+sload BallController.aplx f5000000
+as f5000000 6
 
+sp 1 0
+sload BallController.aplx f5000000
+as f5000000 6
+
+sp 1 1
+sload BallController.aplx f5000000
+as f5000000 6
 
 
 sleep 1

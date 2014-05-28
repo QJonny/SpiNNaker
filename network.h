@@ -69,15 +69,22 @@ float R(vector2d speed);
 void updateError(int x_pos, int y_pos, uint sim_time);
 
 
-void init_network(uint chipID, uint coreID, uint noise_seed);
+void init_network(uint chipIDs, uint coreIDs, uint noise_seed);
 
 
 // mfm
-void mfm_(); // unparallelized, used for mean field model
-float phi_MFM(int index);
+void mfm_();
+float phi_MFM();
 
 void save_();
 void load_();
+
+// network communication updating
+void updateNodesNoise(vector2d noise);
+void updateNodesError(float err);
+void update_V_array(int index, float value);
+void update_A_theta_array(int index, float value);
+void update_A_psi_array(int index, float value);
 
 
 

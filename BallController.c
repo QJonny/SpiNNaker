@@ -71,7 +71,7 @@ void update(uint sim_time, uint none)
 	}
 
 	// save step
-	if(state != STATE_SAVED && sim_time != 0 && sim_time % SAVE_STEP == 0) {
+	if(state == STATE_BALANCED || (state != STATE_SAVED && sim_time != 0 && sim_time % SAVE_STEP == 0)) {
 		save_();
 		state = STATE_SAVED;
 		spin1_callback_off(TIMER_TICK);
@@ -90,6 +90,7 @@ void cameraEvent(uint key, uint payload){
 
 	if(pol == 1 && spin1_get_simulation_time()) {
 		compute_pos(x_cur, y_cur, spin1_get_simulation_time());
+		io_printf(IO_STD,"camera event!\n");
 	}
 }
 
@@ -103,16 +104,14 @@ void c_main (void)
 
 	//spin1_application_core_map(NUMBER_OF_XCHIPS, NUMBER_OF_YCHIPS, core_map);
 
-	//io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
+	io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
 
 	spin1_set_timer_tick(TICK_TIME);
 	// end of simulation initialization	
 	
 
-	//if(chipID == 0 && coreID == 1) { // master core
-		initIO();
-		startDevices();
-	//}
+	initIO(chipID, coreID);
+	startDevices(chipID, coreID);
 
 	// end of events setting
 
@@ -123,7 +122,7 @@ void c_main (void)
 	
 	// events setting
 	spin1_callback_on(MC_PACKET_RECEIVED,cameraEvent,1);
-	spin1_callback_on(TIMER_TICK, update, 1);
+	//spin1_callback_on(TIMER_TICK, update, 1);
 
 	spin1_start();
 

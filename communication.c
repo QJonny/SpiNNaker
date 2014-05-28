@@ -2,21 +2,33 @@
 
 
 
-void initIO() {
-	spin1_set_mc_table_entry(0x2, 	MOTORS_KEY, 0xFFFF0000,	EAST);
+void initIO(uint chipID, uint coreID) {
+	if(chipID == 0) { // 0, 0
+		spin1_set_mc_table_entry(0x2, 	MOTORS_KEY, 0xFFFF0000,	EAST);
 
-	spin1_set_mc_table_entry(0x1, 	EVDS1_ENABLE | MGMT_BIT, 0xFFFFFFFF, EAST);
-	spin1_set_mc_table_entry(0x4, 	0x41, 0xFFFFFFFF, WEST);
+		spin1_set_mc_table_entry(0x1, 	EVDS1_ENABLE | MGMT_BIT, 0xFFFFFFFF, EAST);
+		spin1_set_mc_table_entry(0x4, 	0x41, 0xFFFFFFFF, WEST);
 
-	// camera reception entry
-	spin1_set_mc_table_entry(0x3, 	0x0,	0x0, CORE(1));
+		spin1_set_mc_table_entry(0x3, 	0x0,	0x0, CORE(1)|NORTH);
+	}/*	
+	else if(chipID == 1) { // 0, 1
+		spin1_set_mc_table_entry(0x3, 	0x0,	0x0, CORE(1)|CORE(2)|CORE(3)|CORE(4)|CORE(5)|CORE(6)|CORE(7)|CORE(8)|CORE(9)|CORE(10)|CORE(11)|CORE(12)|CORE(13)|CORE(14)|CORE(15));
+	}
+	else if(chipID == 256) { // 1, 0
+		spin1_set_mc_table_entry(0x3, 	0x0,	0x0, CORE(1)|CORE(2)|CORE(3)|CORE(4)|CORE(5)|CORE(6)|CORE(7)|CORE(8)|CORE(9)|CORE(10)|CORE(11)|CORE(12)|CORE(13)|CORE(14)|CORE(15)|NORTH);
+	}
+	else if(chipID == 257) { // 1, 1
+		spin1_set_mc_table_entry(0x3, 	0x0,	0x0, CORE(1)|CORE(2)|CORE(3)|CORE(4)|CORE(5)|CORE(6)|CORE(7)|CORE(8)|CORE(9)|CORE(10)|CORE(11)|CORE(12)|CORE(13)|CORE(14)|CORE(15));
+	}*/
 }
 
 
-void startDevices() {
-	spin1_send_mc_packet(MOTORS_KEY,MOTOR_Y_CENTER | (MOTOR_X_CENTER << 16 ), 1);
+void startDevices(uint chipID, uint coreID) {
+	if(chipID == 0 && coreID == 1) { // master core
+		spin1_send_mc_packet(MOTORS_KEY,MOTOR_Y_CENTER | (MOTOR_X_CENTER << 16 ), 1);
 
-  	spin1_send_mc_packet(EVDS1_ENABLE | MGMT_BIT, 1, 1);
+	  	spin1_send_mc_packet(EVDS1_ENABLE | MGMT_BIT, 1, 1);
+	}
 }
 
 
@@ -28,7 +40,6 @@ void stopDevices() {
 
 
 void sendMotorCommand(uint motor_x, uint motor_y) {
-	//io_printf(IO_STD,"x %d, y %d\n", motor_x, motor_y);
 	spin1_send_mc_packet(MOTORS_KEY, motor_y | (motor_x << 16 ), 1);
 }
 
