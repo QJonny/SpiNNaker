@@ -218,6 +218,11 @@ void init_network(uint chipIDs, uint coreIDs){
 	speed_ = vector(0.0, 0.0);	
 	n = vector(0.0, 0.0);
 
+	int chipX = chipID & 0x000000FF;
+	int chipY = chipID >> 8;
+
+	srand(32*chipY + 16*chipX + coreID);
+
 	init_MFM();
 
 	init_params_();
@@ -376,6 +381,8 @@ int move(uint sim_time) {
 
 
 void update_A() {
+	n = noise(); // generates the same noise because of the same seed between all nodes
+
 	w_A_theta -= LEARNING_RATE_A*error*n.x*phi_MFM();
 	w_A_psi -= LEARNING_RATE_A*error*n.y*phi_MFM();
 

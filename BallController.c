@@ -28,7 +28,7 @@ int pos_computed = 0;
 int state = STATE_UNBALANCED;
 
 int updateCount = 0;
-int sim_count = 2;
+int sim_count = 1;
 
 // ball tracking
 
@@ -63,10 +63,12 @@ void update(uint sim_time, uint none)
 	else if(updateCount == 0){
 		if(state == STATE_UNBALANCED) {
 			// actor network command sending
-			state = move( (sim_time + 3) / 4 );
+			state = move( sim_count );
 
 			// critic networks update
 			updateError();
+
+			// TODO: send error and noise
 		}
 
 
@@ -87,6 +89,8 @@ void update(uint sim_time, uint none)
 
 void event(uint key, uint payload){
 	if(key == BALL_POS_MSG) {
+		sim_count += 1;
+
 		x_pos = payload >> 16;
 		y_pos = payload & 0x0000FFFF;
 
@@ -98,8 +102,6 @@ void event(uint key, uint payload){
 
 		// critic network update
 		update_V();
-
-		sim_count += 1;
 	} // TODO: master: receive updatings
 	else {  // camera event (why the hell isn't payload that contains the information????)
 		// raw position extraction
@@ -131,11 +133,8 @@ void c_main (void)
 	}
 	// end of simulation initialization	
 	
-
 	initIO(chipID, coreID);
 	startDevices(chipID, coreID);
-
-	// end of events setting
 
 
 	// networks init
@@ -148,8 +147,9 @@ void c_main (void)
 	if(chipID == 0 && coreID == 1) { // master core
 		spin1_callback_on(TIMER_TICK, update, 1);
 
-		srand(0);
 	}
+
+	srand(0); // up to now, every node generates the same noise! (no need to send it)
 
 	spin1_start();
 }

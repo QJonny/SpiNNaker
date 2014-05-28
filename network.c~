@@ -218,6 +218,11 @@ void init_network(uint chipIDs, uint coreIDs){
 	speed_ = vector(0.0, 0.0);	
 	n = vector(0.0, 0.0);
 
+	int chipX = chipID & 0x000000FF;
+	int chipY = chipID >> 8;
+
+	srand(32*chipY + 16*chipX + coreID);
+
 	init_MFM();
 
 	init_params_();
