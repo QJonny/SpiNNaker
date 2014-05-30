@@ -12,20 +12,24 @@ void initIO(uint chipID, uint coreID) {
 		// ball position
 		spin1_set_mc_table_entry(0x5, 	BALL_POS_MSG,	 0xFFFFFFFF, NORTH|N_EAST|EAST|CORE(1));
 		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xFFFFFFFF, NORTH|N_EAST|EAST|CORE(1));
+		spin1_set_mc_table_entry(0x7, 	UPD_MSG,	 0xF0000000, CORE(1));
 
 		spin1_set_mc_table_entry(0x20, 	0x0,	0x0, CORE(1)); // default: camera event
 	}	
 	else if(chipID == 1) { // 0, 1
 		spin1_set_mc_table_entry(0x5, 	BALL_POS_MSG,	 0xFFFFFFFF, CORE(1));
 		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xFFFFFFFF, CORE(1));
+		spin1_set_mc_table_entry(0x7, 	UPD_MSG,	 0xF0000000, SOUTH);
 	}
 	else if(chipID == 256) { // 1, 0
 		spin1_set_mc_table_entry(0x5, 	BALL_POS_MSG,	 0xFFFFFFFF, CORE(1));
 		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xFFFFFFFF, CORE(1));
+		spin1_set_mc_table_entry(0x7, 	UPD_MSG,	 0xF0000000, WEST);
 	}
 	else if(chipID == 257) { // 1, 1
 		spin1_set_mc_table_entry(0x5, 	BALL_POS_MSG,	 0xFFFFFFFF, CORE(1));
 		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xFFFFFFFF, CORE(1));
+		spin1_set_mc_table_entry(0x7, 	UPD_MSG,	 0xF0000000, S_WEST);
 		//spin1_set_mc_table_entry(0x3, 	0x0,	0x0, CORE(1)|CORE(2)|CORE(3)|CORE(4)|CORE(5)|CORE(6)|CORE(7)|CORE(8)|CORE(9)|CORE(10)|CORE(11)|CORE(12)|CORE(13)|CORE(14)|CORE(15));
 	}
 }
@@ -57,46 +61,33 @@ void sendNormMotorCommand(float x, float y) {
 }
 
 
+void decodeUPD(uint key, uint payload, int* index, float* v, float* theta, float* psi) {
+	int iTheta = (payload >> 16);
+	int iPsi = (payload & 0x0000FFFF);
+
+	int iV = (key & 0x0000FFFF);
+	int signV = (key >> 26) & 0x00000001;
+	int signTheta = (key >> 25) & 0x00000001;
+	int signPsi = (key >> 24) & 0x00000001;
+
+	*index = (key >> 16) & 0x000000FF;
+
+	if (signV == 1) {
+		iV = -iV;
+	}
+
+	if (signTheta == 1) {
+		iTheta = -iTheta;
+	}
+
+	if (signPsi == 1) {
+		iPsi = -iPsi;
+	}
+
+	*v = (float)(iV) / 10000.0;
+	*theta = (float)(iV) / 10000.0;
+	*psi = (float)(iV) / 10000.0;
+}
 
 
 
-
-/*
-	sdp_msg_t* msg = spin1_msg_get();
-	//msg->length = 36;
-
-	msg->flags = 0x07;
-	msg->tag = 0;
-	msg->srce_port = (0x1<<5) | coreID;
-	msg->dest_port = (0x1<<5) | coreID;
-	msg->srce_addr = 0x0;
-	msg->dest_addr = 0x1;
-
-	msg->data[0] = (key & 0xFF000000) >> 24;
-	msg->data[1] = (key & 0x00FF0000) >> 16;
-	msg->data[2] = (key & 0x0000FF00) >> 8;
-	msg->data[3] = key & 0x000000FF;
-
-	spin1_send_sdp_msg(msg, 100);
-
-	spin1_msg_free(msg);*/
-
-
-/*
-void sdp_rec(uint m, uint port){
-	sdp_msg_t* msg = (sdp_msg_t*)m;
-
-	uint key = ((uint)msg->data[0] << 24) | ((uint)msg->data[1] << 16) | ((uint)msg->data[2] << 8) | (uint)msg->data[3];
-	x_cur = ((key & 0x7F));
-	y_cur = (((key >> 8) & 0x7F));
-	io_printf (IO_STD, "sdp rec (%d, %d)\n", x_cur, y_cur);
-	io_printf (IO_STD, "sdp rec (%d)\n", port);
-
-	spin1_msg_free(msg);	
-}*/
-
-
-
-	//if(chipID == 1) {
-		//spin1_callback_on(SDP_PACKET_RX, sdp_rec, 2);
-	//}

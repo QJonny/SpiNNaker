@@ -5,6 +5,8 @@
 #include "common.h"
 #include "communication.h"
 
+#define CORE_NB(chipY, chipX, coreID) (32*chipY + 16*chipX + coreID)
+
 // ball parameters definitions
 #define BALL_POS_Y_MAX 115
 #define BALL_POS_Y_MIN 5
@@ -82,10 +84,9 @@ void load_();
 // network communication updating
 void updateNodePos(int x_pos, int y_pos, uint sim_time);
 void updateNodeError(float err);
-void update_V_array(int index, float value);
-void update_A_theta_array(int index, float value);
-void update_A_psi_array(int index, float value);
 
+void send_upd();
+void rec_upd(uint key, uint payload);
 
 
 // critic network

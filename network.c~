@@ -131,16 +131,87 @@ void updateNodeError(float err) {
 	error = err;
 }
 
-void update_V_array(int index, float value) {
-	V_array[index] = value;
+
+void send_upd() {
+	int chipX = chipID & 0x000000FF;
+	int chipY = chipID >> 8;
+
+	float v = w_V * phi_MFM();
+	float theta = w_A_theta * phi_MFM();
+	float psi = w_A_psi * phi_MFM();
+	uint payload = 0;
+	uint key = 0;
+
+	// coding
+	int index = CORE_NB(chipY, chipX, coreID);
+	int iV = (int)(v * 10000.0);
+	int iTheta = (int)(theta * 10000.0);
+	int iPsi = (int)(psi * 10000.0);
+	int signV = 0; // positive
+	int signTheta = 0;
+	int signPsi = 0;
+
+	if (iV < 0) {
+		signV = 1; // negative
+		iV = -iV;
+	}
+
+	if (iTheta < 0) {
+		signTheta = 1;
+		iTheta = -iTheta;
+	}
+
+	if (iPsi < 0) {
+		signPsi = 1;
+		iPsi = -iPsi;
+	}
+
+
+	payload = (iTheta << 16) | iPsi;
+	key = (0xA << 28) | (signV << 26) | (signTheta << 25) | (signPsi << 24) | (index << 16) | iV;
+
+	// sending
+	//spin1_send_mc_packet(key, payload, WITH_PAYLOAD);
+
+	io_printf(IO_STD,"sent\n");
+
 }
 
-void update_A_theta_array(int index, float value) {
-	A_theta_array[index] = value;
-}
+void rec_upd(uint key, uint payload) {
+	// deconding
+	int iTheta = (payload >> 16);
+	int iPsi = (payload & 0x0000FFFF);
 
-void update_A_psi_array(int index, float value) {
-	A_psi_array[index] = value;
+	int iV = (key & 0x0000FFFF);
+	int signV = (key >> 26) & 0x00000001;
+	int signTheta = (key >> 25) & 0x00000001;
+	int signPsi = (key >> 24) & 0x00000001;
+
+	int index = (key >> 16) & 0x000000FF;
+
+	if (signV == 1) {
+		iV = -iV;
+	}
+
+	if (signTheta == 1) {
+		iTheta = -iTheta;
+	}
+
+	if (signPsi == 1) {
+		iPsi = -iPsi;
+	}
+
+	float v = (float)(iV) / 10000.0;
+	float theta = (float)(iTheta) / 10000.0;
+	float psi = (float)(iPsi) / 10000.0;
+
+	//io_printf(IO_STD, "what the fuck???\n");
+
+/*
+	// updating
+	V_array[index] = v;
+	A_theta_array[index] = theta;
+	A_psi_array[index] = psi;*/
 }
 
 
@@ -206,7 +277,7 @@ void init_network(uint chipIDs, uint coreIDs){
 	int chipX = chipID & 0x000000FF;
 	int chipY = chipID >> 8;
 
-	srand(32*chipY + 16*chipX + coreID);
+	srand(CORE_NB(chipY, chipX, coreID));
 
 	init_MFM();
 
@@ -296,7 +367,7 @@ void updateError() {
 
 // V in [0; 1]
 float V() {
-	float v = 1.0;
+	float v = 0.0;
 	int i = 0;
 
 	for(i = 0; i < N_MFM; i++) {
@@ -311,8 +382,6 @@ float V() {
 void update_V() {	
 	e = LAMBDA*GAMMA*e + phi_MFM();
 	w_V += LEARNING_RATE_V*error*e;
-
-	// TODO: send new values (w_V * phi_MFM) to master node
 }
 
 
@@ -370,8 +439,6 @@ void update_A() {
 
 	w_A_theta -= LEARNING_RATE_A*error*n.x*phi_MFM();
 	w_A_psi -= LEARNING_RATE_A*error*n.y*phi_MFM();
-
-	// TODO: send new values (w_A_theta * phi_MFM and w_A_psi * phi_MFM) to master node
 }
 
 

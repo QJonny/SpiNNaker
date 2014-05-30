@@ -67,7 +67,6 @@ void update(uint sim_time, uint none)
 
 			// critic networks update (also sends error)
 			updateError();
-			io_printf(IO_STD,"error\n");
 		}
 
 
@@ -87,7 +86,7 @@ void update(uint sim_time, uint none)
 
 
 void event(uint key, uint payload){
-	if(key == BALL_POS_MSG) {
+	if(key == BALL_POS_MSG) { // on node
 		x_pos = payload >> 16;
 		y_pos = payload & 0x0000FFFF;
 
@@ -95,9 +94,9 @@ void event(uint key, uint payload){
 
 		mfm_();
 	}
-	else if(key == ERROR_MSG) {
+	else if(key == ERROR_MSG) { // on node
 		sim_count += 1;
-		// TODO: error
+
 		float* err = (float*)&payload;
 		updateNodeError(*err);
 
@@ -105,11 +104,13 @@ void event(uint key, uint payload){
 		//update_A( sim_count );
 
 		// critic network update
-		//update_V();
+		update_V();
 
-		// TODO: sending updatings
+		//send_upd();
 	} 
-// TODO: master: receive updatings
+	else if((key & 0xF0000000) == UPD_MSG) { // on master
+		//rec_upd(key, payload);
+	} 
 	else {  // camera event (why the hell isn't payload that contains the information????)
 		// raw position extraction
 		int y_cur = ((key & 0x7F));

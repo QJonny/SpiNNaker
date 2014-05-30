@@ -27,9 +27,7 @@
 
 #define BALL_POS_MSG 47
 #define ERROR_MSG 48
-#define A_MSG 49
-#define THETA_MSG 50
-#define PSI_MSG 51
+#define UPD_MSG 0xA0000000 // format - key: [ A (4) - 0 - signs (3) - index (8) - v (16)] payload : [theta (16) - psi (16)] Note that values are positive integers (v * 10000)
 #define SAVE_MSG 52
 
 
@@ -40,5 +38,6 @@ void stopDevices();
 
 void sendNormMotorCommand(float x, float y);
 void sendMotorCommand(uint motor_x, uint motor_y);
+
 
 #endif
