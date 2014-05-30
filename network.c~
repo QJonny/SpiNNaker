@@ -177,41 +177,39 @@ void send_upd() {
 
 }
 
-void rec_upd(uint key, uint payload) {
-	// deconding
-	int iTheta = (payload >> 16);
-	int iPsi = (payload & 0x0000FFFF);
+void rec_upd(uint key, uint payload) {/*
+	// decoding
+	uint iTheta = (payload >> 16);
+	uint iPsi = (payload & 0x0000FFFF);
 
-	int iV = (key & 0x0000FFFF);
-	int signV = (key >> 26) & 0x00000001;
-	int signTheta = (key >> 25) & 0x00000001;
-	int signPsi = (key >> 24) & 0x00000001;
+	uint iV = 0x03 & 0x0000FFFF;
+	uint signV = 1;//(key >> 26) & 0x00000001;
+	uint signTheta = (key >> 25) & 0x00000001;
+	uint signPsi = (key >> 24) & 0x00000001;
 
-	int index = (key >> 16) & 0x000000FF;
-
-	if (signV == 1) {
-		iV = -iV;
-	}
-
-	if (signTheta == 1) {
-		iTheta = -iTheta;
-	}
-
-	if (signPsi == 1) {
-		iPsi = -iPsi;
-	}
+	uint index = (key >> 16) & 0x000000FF;
 
 	float v = (float)(iV) / 10000.0;
 	float theta = (float)(iTheta) / 10000.0;
 	float psi = (float)(iPsi) / 10000.0;
 
-	//io_printf(IO_STD, "what the fuck???\n");
+	if (signV == 1) {
+		v = -v;
+	}
 
-/*
+	if (signTheta == 1) {
+		theta = -theta;
+	}
+
+	if (signPsi == 1) {
+		psi = -psi;
+	}
+
+
 	// updating
 	V_array[index] = v;
-	A_theta_array[index] = theta;
-	A_psi_array[index] = psi;*/
+	A_theta_array[index] = 0.0;//theta;
+	A_psi_array[index] = 0.0;//psi;*/
 }
 
 
@@ -348,7 +346,8 @@ float phi_MFM() {
 
 // critic network
 
-void updateError() {
+void updateError(uint x_pos, uint y_pos, uint sim_time) {
+	normalizeBallParams(x_pos, y_pos, sim_time);
 	float r = R(speed_);
 	float curr_V = INV_DELTA_TIME*V();
 
@@ -358,8 +357,10 @@ void updateError() {
 
 	int* err = (int*)&error;
 
-	spin1_send_mc_packet(ERROR_MSG, *err, WITH_PAYLOAD);
-	//io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
+	uint key = ERROR_MSG | (x_pos << 16) | y_pos;
+
+	spin1_send_mc_packet(key, *err, WITH_PAYLOAD);
+	io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
 }
 
 

@@ -68,7 +68,7 @@
 // reward
 float r_pos();
 float R(vector2d speed);
-void updateError();
+void updateError(uint x_pos, uint y_pos, uint sim_time);
 
 
 void init_network(uint chipIDs, uint coreIDs);

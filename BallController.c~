@@ -57,45 +57,38 @@ void compute_pos(int x_cur, int y_cur)
 
 void update(uint sim_time, uint none)
 {
-	if(updateCount == 1) {
-		spin1_send_mc_packet(BALL_POS_MSG, (x_pos << 16)|y_pos, WITH_PAYLOAD);
-	}
-	else if(updateCount == 0){
-		if(state == STATE_UNBALANCED) {
-			// actor network command sending
-			//state = move( sim_count );
+	if(state == STATE_UNBALANCED) {
+		// actor network command sending
+		//state = move( sim_count );
 
-			// critic networks update (also sends error)
-			updateError();
-		}
-
-
-		// save step
-		if(state == STATE_BALANCED || (state != STATE_SAVED && sim_time != 0 && sim_time % SAVE_STEP == 0)) {
-			save_();
-			// TODO: send save message to nodes
-			state = STATE_SAVED;
-			spin1_callback_off(TIMER_TICK);
-		}
+		// critic networks update (also sends error and ball position)
+		updateError(x_pos, y_pos, sim_time);
 	}
 
-	updateCount = (updateCount + 1) % 4;
+
+	// save step
+	if(state == STATE_BALANCED || (state != STATE_SAVED && sim_time != 0 && sim_time % SAVE_STEP == 0)) {
+		save_();
+		// TODO: send save message to nodes
+		state = STATE_SAVED;
+		spin1_callback_off(TIMER_TICK);
+	}
 }
 
 
 
 
 void event(uint key, uint payload){
-	if(key == BALL_POS_MSG) { // on node
-		x_pos = payload >> 16;
-		y_pos = payload & 0x0000FFFF;
+	if((key & 0xF0000000) == ERROR_MSG) { // on node
+		io_printf(IO_STD,"error\n");
+		sim_count += 1;
+
+		x_pos = (key >> 16) & 0x00000FFF;
+		y_pos = key & 0x00000FFF;
 
 		updateNodePos(x_pos, y_pos, sim_count);
 
 		mfm_();
-	}
-	else if(key == ERROR_MSG) { // on node
-		sim_count += 1;
 
 		float* err = (float*)&payload;
 		updateNodeError(*err);
@@ -106,9 +99,10 @@ void event(uint key, uint payload){
 		// critic network update
 		update_V();
 
-		//send_upd();
+		send_upd();
 	} 
 	else if((key & 0xF0000000) == UPD_MSG) { // on master
+		io_printf(IO_STD,"upd\n");
 		//rec_upd(key, payload);
 	} 
 	else {  // camera event (why the hell isn't payload that contains the information????)
@@ -135,7 +129,7 @@ void c_main (void)
 	io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
 
 	if(chipID == 0 && coreID == 1) { // master core
-		spin1_set_timer_tick(TICK_TIME/4);
+		spin1_set_timer_tick(TICK_TIME);
 	}
 	// end of simulation initialization	
 	

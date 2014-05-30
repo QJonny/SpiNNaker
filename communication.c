@@ -9,27 +9,24 @@ void initIO(uint chipID, uint coreID) {
 		spin1_set_mc_table_entry(0x1, 	EVDS1_ENABLE | MGMT_BIT, 0xFFFFFFFF, EAST);
 		spin1_set_mc_table_entry(0x4, 	0x41, 0xFFFFFFFF, WEST);
 
-		// ball position
-		spin1_set_mc_table_entry(0x5, 	BALL_POS_MSG,	 0xFFFFFFFF, NORTH|N_EAST|EAST|CORE(1));
-		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xFFFFFFFF, NORTH|N_EAST|EAST|CORE(1));
+		// from master to nodes
+		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xF0000000, NORTH|N_EAST|EAST|CORE(2));
+		// froms nodes to master
 		spin1_set_mc_table_entry(0x7, 	UPD_MSG,	 0xF0000000, CORE(1));
 
 		spin1_set_mc_table_entry(0x20, 	0x0,	0x0, CORE(1)); // default: camera event
 	}	
 	else if(chipID == 1) { // 0, 1
-		spin1_set_mc_table_entry(0x5, 	BALL_POS_MSG,	 0xFFFFFFFF, CORE(1));
-		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xFFFFFFFF, CORE(1));
-		spin1_set_mc_table_entry(0x7, 	UPD_MSG,	 0xF0000000, SOUTH);
+		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xF0000000, CORE(1)); // to nodes
+		spin1_set_mc_table_entry(0x7, 	UPD_MSG,	 0xF0000000, SOUTH); // to master
 	}
 	else if(chipID == 256) { // 1, 0
-		spin1_set_mc_table_entry(0x5, 	BALL_POS_MSG,	 0xFFFFFFFF, CORE(1));
-		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xFFFFFFFF, CORE(1));
-		spin1_set_mc_table_entry(0x7, 	UPD_MSG,	 0xF0000000, WEST);
+		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xF0000000, CORE(1)); // to nodes
+		spin1_set_mc_table_entry(0x7, 	UPD_MSG,	 0xF0000000, WEST); // to master
 	}
 	else if(chipID == 257) { // 1, 1
-		spin1_set_mc_table_entry(0x5, 	BALL_POS_MSG,	 0xFFFFFFFF, CORE(1));
-		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xFFFFFFFF, CORE(1));
-		spin1_set_mc_table_entry(0x7, 	UPD_MSG,	 0xF0000000, S_WEST);
+		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xF0000000, CORE(1)); // to nodes
+		spin1_set_mc_table_entry(0x7, 	UPD_MSG,	 0xF0000000, S_WEST); // to master
 		//spin1_set_mc_table_entry(0x3, 	0x0,	0x0, CORE(1)|CORE(2)|CORE(3)|CORE(4)|CORE(5)|CORE(6)|CORE(7)|CORE(8)|CORE(9)|CORE(10)|CORE(11)|CORE(12)|CORE(13)|CORE(14)|CORE(15));
 	}
 }
