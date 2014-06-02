@@ -57,7 +57,8 @@ void sendNormMotorCommand(float x, float y) {
 	sendMotorCommand((int)(x*MOTOR_DELTA) + MOTOR_X_CENTER, (int)(y*MOTOR_DELTA) + MOTOR_Y_CENTER);
 }
 
-
+/*
+HOW CAN THIS FUNCTION (NOT CALLED ANYWHERE) DECIDE IF send_upd WORKS OR NOT??????
 void decodeUPD(uint key, uint payload, int* index, float* v, float* theta, float* psi) {
 	int iTheta = (payload >> 16);
 	int iPsi = (payload & 0x0000FFFF);
@@ -85,6 +86,6 @@ void decodeUPD(uint key, uint payload, int* index, float* v, float* theta, float
 	*theta = (float)(iV) / 10000.0;
 	*psi = (float)(iV) / 10000.0;
 }
-
+*/
 
 

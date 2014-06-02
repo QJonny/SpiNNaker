@@ -136,58 +136,75 @@ void send_upd() {
 	int chipX = chipID & 0x000000FF;
 	int chipY = chipID >> 8;
 
+	uint key = UPD_MSG;
+	uint payload = 0;
+
+
 	float v = w_V * phi_MFM();
 	float theta = w_A_theta * phi_MFM();
 	float psi = w_A_psi * phi_MFM();
-	uint payload = 0;
-	uint key = 0;
 
 	// coding
-	int index = CORE_NB(chipY, chipX, coreID);
+	uint index = (uint)CORE_NB(chipY, chipX, coreID);
 	int iV = (int)(v * 10000.0);
 	int iTheta = (int)(theta * 10000.0);
 	int iPsi = (int)(psi * 10000.0);
-	int signV = 0; // positive
-	int signTheta = 0;
-	int signPsi = 0;
 
+	// check if negative
 	if (iV < 0) {
-		signV = 1; // negative
+		key += (uint)67108864; //1 << 26
 		iV = -iV;
 	}
 
 	if (iTheta < 0) {
-		signTheta = 1;
+		key += (uint)33554432; // 1 << 25
 		iTheta = -iTheta;
 	}
 
 	if (iPsi < 0) {
-		signPsi = 1;
+		key += (uint)16777216; // 1 << 24
 		iPsi = -iPsi;
 	}
+	key += index * 65536; // index << 16
 
+	key += (uint)iV;
 
-	payload = (iTheta << 16) | iPsi;
-	key = (0xA << 28) | (signV << 26) | (signTheta << 25) | (signPsi << 24) | (index << 16) | iV;
+	payload = ((uint)iTheta << 16) | (uint)iPsi;
 
+	//key = UPD_MSG | (signV << 26) | (signTheta << 25) | (signPsi << 24) | (index << 16) | (uint)iV; // does not work...
 	// sending
 	spin1_send_mc_packet(key, payload, WITH_PAYLOAD);
-
-	io_printf(IO_STD,"sent\n");
-
+	io_printf(IO_STD, "sent\n");
 }
 
-void rec_upd(uint key, uint payload) {/*
+void rec_upd(uint key, uint payload) {
 	// decoding
-	uint iTheta = (payload >> 16);
-	uint iPsi = (payload & 0x0000FFFF);
+	uint signV = 0;
+	uint signTheta = 0;
+	uint signPsi = 0;
 
-	uint iV = 0x03 & 0x0000FFFF;
-	uint signV = 1;//(key >> 26) & 0x00000001;
-	uint signTheta = (key >> 25) & 0x00000001;
-	uint signPsi = (key >> 24) & 0x00000001;
 
-	uint index = (key >> 16) & 0x000000FF;
+	uint iTheta = payload / 65536; // >> 16
+	uint iPsi = payload - (iTheta * 65536);
+
+	key -= UPD_MSG;
+
+	if(key >= (uint)67108864) {
+		signV = 1;
+		key -= (uint)67108864;
+	}
+	if(key >= (uint)33554432) {
+		signTheta = 1;
+		key -= (uint)33554432;
+	}
+	if(key >= (uint)16777216) {
+		signPsi = 1;
+		key -= (uint)16777216;
+	}
+
+	uint index = key / 65536;
+
+	uint iV = key - (index * 65536);
 
 	float v = (float)(iV) / 10000.0;
 	float theta = (float)(iTheta) / 10000.0;
@@ -208,8 +225,8 @@ void rec_upd(uint key, uint payload) {/*
 
 	// updating
 	V_array[index] = v;
-	A_theta_array[index] = 0.0;//theta;
-	A_psi_array[index] = 0.0;//psi;*/
+	A_theta_array[index] = theta;
+	A_psi_array[index] = psi;
 }
 
 
@@ -275,7 +292,7 @@ void init_network(uint chipIDs, uint coreIDs){
 	int chipX = chipID & 0x000000FF;
 	int chipY = chipID >> 8;
 
-	srand(CORE_NB(chipY, chipX, coreID));
+	srand(CORE_NB(chipY, chipX, coreID)+1);
 
 	init_MFM();
 
@@ -360,7 +377,7 @@ void updateError(uint x_pos, uint y_pos, uint sim_time) {
 	uint key = ERROR_MSG | (x_pos << 16) | y_pos;
 
 	spin1_send_mc_packet(key, *err, WITH_PAYLOAD);
-	io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
+	//io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error*1000));
 }
 
 

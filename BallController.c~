@@ -78,13 +78,13 @@ void update(uint sim_time, uint none)
 
 
 
-void event(uint key, uint payload){
-	if((key & 0xF0000000) == ERROR_MSG) { // on node
-		io_printf(IO_STD,"error\n");
+
+void eventNode(uint key, uint payload){
+	if((key & 0xF0000000) == ERROR_MSG) {
 		sim_count += 1;
 
-		x_pos = (key >> 16) & 0x00000FFF;
-		y_pos = key & 0x00000FFF;
+		x_pos = (key >> 16) & 0x000000FF;
+		y_pos = key & 0x000000FF;
 
 		updateNodePos(x_pos, y_pos, sim_count);
 
@@ -100,10 +100,14 @@ void event(uint key, uint payload){
 		update_V();
 
 		send_upd();
-	} 
-	else if((key & 0xF0000000) == UPD_MSG) { // on master
-		io_printf(IO_STD,"upd\n");
-		//rec_upd(key, payload);
+	}
+}
+
+
+
+void eventMaster(uint key, uint payload){
+	if((key & 0xF0000000) == UPD_MSG) {
+		rec_upd(key, payload);
 	} 
 	else {  // camera event (why the hell isn't payload that contains the information????)
 		// raw position extraction
@@ -126,10 +130,11 @@ void c_main (void)
 	coreID = spin1_get_core_id();
 	chipID = spin1_get_chip_id();
 
-	io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
+
 
 	if(chipID == 0 && coreID == 1) { // master core
-		spin1_set_timer_tick(TICK_TIME);
+		io_printf(IO_STD,"This is the master node\n");
+		spin1_set_timer_tick(TICK_TIME*10);
 	}
 	// end of simulation initialization	
 	
@@ -140,13 +145,16 @@ void c_main (void)
 	// networks init
 	init_network(chipID, coreID);
 
-	
-	// events setting
-	spin1_callback_on(MC_PACKET_RECEIVED,event,0);
 
 	if(chipID == 0 && coreID == 1) { // master core
+		// events setting
+		spin1_callback_on(MC_PACKET_RECEIVED,eventMaster,0);
 		spin1_callback_on(TIMER_TICK, update, 0);
 
+	}
+	else { // nodes
+		// events setting
+		spin1_callback_on(MC_PACKET_RECEIVED,eventNode,0);
 	}
 
 	srand(0); // up to now, every node generates the same noise! (no need to send it)

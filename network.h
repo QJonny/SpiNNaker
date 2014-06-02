@@ -5,7 +5,7 @@
 #include "common.h"
 #include "communication.h"
 
-#define CORE_NB(chipY, chipX, coreID) (32*chipY + 16*chipX + coreID)
+#define CORE_NB(chipY, chipX, coreID) 32*chipY + 16*chipX + (coreID - 1)
 
 // ball parameters definitions
 #define BALL_POS_Y_MAX 115

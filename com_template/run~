@@ -11,11 +11,11 @@ p2pc 2 2
 
 sp 0 0
 sload ComTemplate.aplx f5000000
-as f5000000 FE
+as f5000000 2
 
 sp 1 1
 sload ComTemplate.aplx f5000000
-as f5000000 FE
+as f5000000 2
 
 
 sleep 1

@@ -10,7 +10,7 @@ void initIO(uint chipID, uint coreID) {
 		spin1_set_mc_table_entry(0x4, 	0x41, 0xFFFFFFFF, WEST);
 
 		// from master to nodes
-		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xF0000000, NORTH|N_EAST|EAST|CORE(1)|CORE(2));
+		spin1_set_mc_table_entry(0x6, 	ERROR_MSG,	 0xF0000000, NORTH|N_EAST|EAST|CORE(2));
 		// froms nodes to master
 		spin1_set_mc_table_entry(0x7, 	UPD_MSG,	 0xF0000000, CORE(1));
 
@@ -55,35 +55,6 @@ void sendMotorCommand(uint motor_x, uint motor_y) {
 
 void sendNormMotorCommand(float x, float y) {
 	sendMotorCommand((int)(x*MOTOR_DELTA) + MOTOR_X_CENTER, (int)(y*MOTOR_DELTA) + MOTOR_Y_CENTER);
-}
-
-
-void decodeUPD(uint key, uint payload, int* index, float* v, float* theta, float* psi) {
-	int iTheta = (payload >> 16);
-	int iPsi = (payload & 0x0000FFFF);
-
-	int iV = (key & 0x0000FFFF);
-	int signV = (key >> 26) & 0x00000001;
-	int signTheta = (key >> 25) & 0x00000001;
-	int signPsi = (key >> 24) & 0x00000001;
-
-	*index = (key >> 16) & 0x000000FF;
-
-	if (signV == 1) {
-		iV = -iV;
-	}
-
-	if (signTheta == 1) {
-		iTheta = -iTheta;
-	}
-
-	if (signPsi == 1) {
-		iPsi = -iPsi;
-	}
-
-	*v = (float)(iV) / 10000.0;
-	*theta = (float)(iV) / 10000.0;
-	*psi = (float)(iV) / 10000.0;
 }
 
 

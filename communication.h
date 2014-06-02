@@ -25,8 +25,8 @@
 #define MOTOR_X_CENTER	2150
 #define MOTOR_Y_CENTER	2000//1970
 
-#define ERROR_MSG 0xA0000000 // format - key [ A (4) - 0 (4) - x (8) - 0 (8) - y (8)] payload : [ error (32) ]
-#define UPD_MSG 0xB0000000 // format - key: [ B (4) - 0 - signs (3) - index (8) - v (16)] payload : [theta (16) - psi (16)] Note that values are positive integers (v * 10000)
+#define ERROR_MSG (uint)(0xA0000000) // format - key [ A (4) - 0 (4) - x (8) - 0 (8) - y (8)] payload : [ error (32) ]
+#define UPD_MSG (uint)(0xB0000000) // format - key: [ B (4) - 0 - signs (3) - index (8) - v (16)] payload : [theta (16) - psi (16)] Note that values are positive integers (v * 10000)
 #define SAVE_MSG 52
 
 
