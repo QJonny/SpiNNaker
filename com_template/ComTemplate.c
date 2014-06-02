@@ -23,7 +23,8 @@ void mcRec(uint key, uint payload){
 		spin1_send_mc_packet(0x3, MC_PAYLOAD << 2, WITH_PAYLOAD);
 	}
 	else if(key == 0x3) {
-		io_printf (IO_STD, "Master: MC reply received (%d).\n", payload);
+		float p = (float)(payload);
+		io_printf (IO_STD, "Master: MC reply received (%d).\n", (int)p);
 	}
 }
 

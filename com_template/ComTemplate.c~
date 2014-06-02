@@ -20,9 +20,10 @@ void updateMaster(uint sim_time, uint none)
 void mcRec(uint key, uint payload){
 	if(key == 0x2) {
 		io_printf (IO_STD, "Slave: MC packet received (%d). Sending reply\n", payload);
-		spin1_send_mc_packet(0x3, MC_PAYLOAD + 1, WITH_PAYLOAD);
+		spin1_send_mc_packet(0x3, MC_PAYLOAD << 2, WITH_PAYLOAD);
 	}
 	else if(key == 0x3) {
+		float p = (float)(payload);
 		io_printf (IO_STD, "Master: MC reply received (%d).\n", payload);
 	}
 }

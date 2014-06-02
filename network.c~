@@ -150,6 +150,14 @@ void send_upd() {
 	int iTheta = (int)(theta * 10000.0);
 	int iPsi = (int)(psi * 10000.0);
 
+// if I change the above lines into these one it does not send anymore.... pfffffffffffffffffffffffffff
+// I HATE THIS F....G DEVICE!!! I HATE MANCHESTER AND ITS F......G UNIVERSITY!!!!
+/*
+	int iV = (int)range(v * 10000.0, -65535.0, 65535.0);
+	int iTheta = (int)range(theta * 10000.0, -65535.0, 65535.0);
+	int iPsi = (int)range(psi * 10000.0, -65535.0, 65535.0);
+*/
+
 	// check if negative
 	if (iV < 0) {
 		key += (uint)67108864; //1 << 26
@@ -174,41 +182,29 @@ void send_upd() {
 	//key = UPD_MSG | (signV << 26) | (signTheta << 25) | (signPsi << 24) | (index << 16) | (uint)iV; // does not work...
 	// sending
 	spin1_send_mc_packet(key, payload, WITH_PAYLOAD);
-	io_printf(IO_STD, "sent\n");
+	//io_printf(IO_STD, "sent\n");
 }
 
 void rec_upd(uint key, uint payload) {
 	// decoding
-	uint signV = 0;
-	uint signTheta = 0;
-	uint signPsi = 0;
+	int iTheta = (payload >> 16);
+	int iPsi = (payload & 0x0000FFFF);
 
 
-	uint iTheta = payload / 65536; // >> 16
-	uint iPsi = payload - (iTheta * 65536);
+	int iV = key & 0x0000FFFF;
+	uint signV = (key >> 26) & 0x00000001;
+	uint signTheta = (key >> 25) & 0x00000001;
+	uint signPsi = (key >> 24) & 0x00000001;
 
-	key -= UPD_MSG;
+	uint index = (key >> 16) & 0x000000FF;
 
-	if(key >= (uint)67108864) {
-		signV = 1;
-		key -= (uint)67108864;
-	}
-	if(key >= (uint)33554432) {
-		signTheta = 1;
-		key -= (uint)33554432;
-	}
-	if(key >= (uint)16777216) {
-		signPsi = 1;
-		key -= (uint)16777216;
-	}
 
-	uint index = key / 65536;
+	float v = 1.0;//(float)iV;
+	float theta = 0.5;//(float)(iTheta);
+	float psi = 0.3;//(float)(iPsi);
 
-	uint iV = key - (index * 65536);
 
-	float v = (float)(iV) / 10000.0;
-	float theta = (float)(iTheta) / 10000.0;
-	float psi = (float)(iPsi) / 10000.0;
+	io_printf(IO_STD, "rec: %d\n", (int)v);
 
 	if (signV == 1) {
 		v = -v;
@@ -222,10 +218,9 @@ void rec_upd(uint key, uint payload) {
 		psi = -psi;
 	}
 
-/*
 	// updating
 	V_array[index] = v;
-	A_theta_array[index] = theta;
+/*	A_theta_array[index] = theta;
 	A_psi_array[index] = psi;*/
 }
 
