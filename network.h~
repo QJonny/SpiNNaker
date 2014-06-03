@@ -5,7 +5,7 @@
 #include "common.h"
 #include "communication.h"
 
-#define CORE_NB(chipY, chipX, coreID) (uint)(32*chipY + 16*chipX + (coreID - 1))
+#define CORE_NB(chipY, chipX, coreID) 32*chipY + 16*chipX + (coreID - 1)
 
 // ball parameters definitions
 #define BALL_POS_Y_MAX 115
@@ -48,6 +48,8 @@
 // MFM definitions
 #define V_DECAY 0.5
 #define N_MFM 64 // number of available populations
+#define BETA 5.0
+#define ALPHA 0.8
 // end of MFM definitions
 
 

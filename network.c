@@ -321,15 +321,13 @@ float IF(float input){
 	
 	float output = 0.0;
 	
-	float thr1 = 0.8;
-	float slope = 5.0;
 	float thr2 = 1.0;
 	
 	if(input < thr1){
 		output = 0.0;
 	}
 	else{
-		output = slope * (input - thr1);
+		output = BETA * (input - ALPHA);
 	}
 	
 	if(output > thr2){
@@ -343,7 +341,7 @@ void mfm_(){
 	// 0: ball far from population center, 1: ball close to population center
 	float Iext = (2.0 - v_norm(v_sub(pos_, center))) / 2.0;
 
-	float dv = ( -F + IF( Iext ) ) * V_DECAY ;
+	float dv = ( -F + IF( Iext ) ) * TAU_M ;
 
 	F += dv;
 }

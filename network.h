@@ -46,8 +46,10 @@
 
 
 // MFM definitions
-#define V_DECAY 0.5
+#define TAU_M 0.5
 #define N_MFM 64 // number of available populations
+#define BETA 5.0
+#define ALPHA 0.8
 // end of MFM definitions
 
 
