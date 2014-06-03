@@ -33,7 +33,7 @@ int state = STATE_UNBALANCED;
 
 void compute_pos(int x_cur, int y_cur, int sim_time)
 {
-	if((pos_computed == 0 || norm(x_pos - x_cur, y_pos - y_cur) < 100) /*&& (old_time == -1 || sim_time - old_time < 60)*/ ) {
+	if((pos_computed == 0 || norm(x_pos - x_cur, y_pos - y_cur) < 100)) {
 
 		total_sum_x = total_sum_x - x_buffer[curr_index] + x_cur;
 		x_buffer[curr_index] = x_cur;

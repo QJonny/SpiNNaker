@@ -126,8 +126,6 @@ void c_main (void)
 	spin1_callback_on(TIMER_TICK, update, 1);
 
 	spin1_start();
-
-
 }
 
 
