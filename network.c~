@@ -341,7 +341,7 @@ void mfm_(){
 	// 0: ball far from population center, 1: ball close to population center
 	float Iext = (2.0 - v_norm(v_sub(pos_, center))) / 2.0;
 
-	float dv = ( -F + IF( Iext ) ) * T_M ;
+	float dv = ( -F + IF( Iext ) ) * TAU_M ;
 
 	F += dv;
 }

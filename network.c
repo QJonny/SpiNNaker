@@ -150,8 +150,6 @@ void send_upd() {
 	int iTheta = (int)(theta * 10000.0);
 	int iPsi = (int)(psi * 10000.0);
 
-// if I change the above lines into these one it does not send anymore.... pfffffffffffffffffffffffffff
-// I HATE THIS F..... DEVICE!!! I HATE MANCHESTER AND ITS F....... UNIVERSITY!!!!
 /*
 	int iV = (int)range(v * 10000.0, -65535.0, 65535.0);
 	int iTheta = (int)range(theta * 10000.0, -65535.0, 65535.0);
