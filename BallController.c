@@ -103,7 +103,7 @@ void c_main (void)
 
 	//spin1_application_core_map(NUMBER_OF_XCHIPS, NUMBER_OF_YCHIPS, core_map);
 
-	//io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
+	io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
 
 	spin1_set_timer_tick(TICK_TIME);
 	// end of simulation initialization	

@@ -64,8 +64,10 @@
 
 
 // reward
-float r_pos();
-float R(vector2d speed);
+float r_pos_x();
+float r_pos_y();
+float R_x(vector2d speed);
+float R_y(vector2d speed);
 void updateError(int x_pos, int y_pos, uint sim_time);
 
 
@@ -74,14 +76,17 @@ void init_network(uint chipID, uint coreID, uint noise_seed);
 
 // mfm
 void mfm_(); // unparallelized, used for mean field model
-float phi_MFM(int index);
+float phi_MFM_x(int index);
+float phi_MFM_y(int index);
 
 void save_();
+void load_();
 
 
 
 // critic network
-float V(); // returns the critic network value
+float V_x(); // returns the critic network value
+float V_y(); // returns the critic network value
 void update_V();
 
 
@@ -89,7 +94,8 @@ void update_V();
 int move(uint sim_time); // perform the next movement
 void update_A();
 
-float sigma();
+float sigma_x();
+float sigma_y();
 vector2d noise();
 
 
