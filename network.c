@@ -263,22 +263,22 @@ void send_upd() {
 	//key = UPD_MSG | (signV << 26) | (signTheta << 25) | (signPsi << 24) | (index << 16) | (uint)iV; // does not work...
 
 
+
 /*
-	if(v_x < 0.0) {
-		key = key | (1 << 29);
-		key = key | (uint)(-v_x*1000.0);
-	} else {
-		key = key | (uint)(v_x*1000.0);
-	}
-
-
 	if(v_y < 0.0) {
-		key = key | (1 << 28);
+		key = key | (1 << 29);
 		key = key | ((uint)(-v_y*1000.0) << 10);
 	} else {
 		key = key | ((uint)(v_y*1000.0) << 10);
 	}
 
+
+	if(v_x < 0.0) {
+		key = key | (1 << 28);
+		key = key | (uint)(-v_x*1000.0);
+	} else {
+		key = key | (uint)(v_x*1000.0);
+	}
 
 	if(theta < 0.0) {
 		key = key | (1 << 27);
