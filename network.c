@@ -213,7 +213,7 @@ void rec_err(uint key, uint payload, uint sim_time) {
 
 
 
-void send_upd() {/*
+void send_upd() {
 	int chipX = chipID & 0x000000FF;
 	int chipY = chipID >> 8;
 
@@ -221,21 +221,23 @@ void send_upd() {/*
 	uint payload = 0;
 
 
-	float v = w_V * phi_MFM();
-	float theta = w_A_theta * phi_MFM();
-	float psi = w_A_psi * phi_MFM();
+	float v_x = w_V_x * phi_MFM_x();
+	float v_y = w_V_y * phi_MFM_y();
+	float theta = w_A_theta * phi_MFM_x();
+	float psi = w_A_psi * phi_MFM_y();
+
+	v_x = range(v_x, -1.0, 1.0);
+	v_y = range(v_y, -1.0, 1.0);
+	theta = range(theta, -1.0, 1.0);
+	psi = range(psi, -1.0, 1.0);
 
 	// coding
 	uint index = (uint)CORE_NB(chipY, chipX, coreID);
-	int iV = (int)(v * 10000.0);
-	int iTheta = (int)(theta * 10000.0);
-	int iPsi = (int)(psi * 10000.0);
 
 /*
-	int iV = (int)range(v * 10000.0, -65535.0, 65535.0);
-	int iTheta = (int)range(theta * 10000.0, -65535.0, 65535.0);
-	int iPsi = (int)range(psi * 10000.0, -65535.0, 65535.0);
-
+	int iV = (int)(v_x * 10000.0);
+	int iTheta = (int)(theta * 10000.0);
+	int iPsi = (int)(psi * 10000.0);
 
 	// check if negative
 	if (iV < 0) {
@@ -257,10 +259,46 @@ void send_upd() {/*
 	key += (uint)iV;
 
 	payload = ((uint)iTheta << 16) | (uint)iPsi;
-
+*/
 	//key = UPD_MSG | (signV << 26) | (signTheta << 25) | (signPsi << 24) | (index << 16) | (uint)iV; // does not work...
+
+
+/*
+	if(v_x < 0.0) {
+		key = key | (1 << 29);
+		key = key | (uint)(-v_x*1000.0);
+	} else {
+		key = key | (uint)(v_x*1000.0);
+	}
+
+
+	if(v_y < 0.0) {
+		key = key | (1 << 28);
+		key = key | ((uint)(-v_y*1000.0) << 10);
+	} else {
+		key = key | ((uint)(v_y*1000.0) << 10);
+	}
+
+
+	if(theta < 0.0) {
+		key = key | (1 << 27);
+		payload = payload | ((uint)(-theta*10000.0) << 16);
+	} else {
+		payload = payload | ((uint)(theta*10000.0) << 16);
+	}
+
+	if(psi < 0.0) {
+		key = key | (1 << 26);
+		payload = payload | (uint)(-psi*10000.0);
+	} else {
+		payload = payload | (uint)(psi*10000.0);
+	}
+	key = key | (index << 20);*/
+
+
+
 	// sending
-	spin1_send_mc_packet(key, payload, WITH_PAYLOAD);*/
+	spin1_send_mc_packet(key, payload, WITH_PAYLOAD);
 	io_printf(IO_STD, "sent\n");
 }
 
@@ -476,7 +514,7 @@ void updateError(uint x_pos, uint y_pos, uint sim_time) {
 
 	old_V_y = curr_V;
 
-	io_printf(IO_STD,"updating\n");
+	//io_printf(IO_STD,"updating\n");
 }
 
 

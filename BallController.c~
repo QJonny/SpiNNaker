@@ -63,7 +63,7 @@ void update(uint sim_time, uint none)
 
 		// critic networks update (also sends error and ball position)
 		updateError(x_pos, y_pos, sim_time);
-		send_err();
+		send_err(x_pos, y_pos);
 	}
 
 
@@ -102,7 +102,7 @@ void eventNode(uint key, uint payload){
 
 void eventMaster(uint key, uint payload){
 	if((key & 0xF0000000) == UPD_MSG) {
-		//rec_upd(key, payload);
+		rec_upd(key, payload);
 	} 
 	else {
 		// raw position extraction

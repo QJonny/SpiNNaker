@@ -101,8 +101,8 @@ void eventNode(uint key, uint payload){
 
 
 void eventMaster(uint key, uint payload){
-	if((key & 0xF0000000) == UPD_MSG) {
-		//rec_upd(key, payload);
+	if((key & 0xC0000000) == UPD_MSG) {
+		rec_upd(key, payload);
 	} 
 	else {
 		// raw position extraction
