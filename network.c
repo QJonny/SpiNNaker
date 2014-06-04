@@ -406,6 +406,7 @@ void updateError(uint x_pos, uint y_pos, uint sim_time) {
 	float curr_V = INV_DELTA_TIME * V_x();
 
 	error_x = r + GAMMA*curr_V - old_V_x;
+	error_x = range(error_x, -1.0, 1.0);
 
 	old_V_x = curr_V;
 
@@ -415,16 +416,31 @@ void updateError(uint x_pos, uint y_pos, uint sim_time) {
 	curr_V = INV_DELTA_TIME * V_y();
 
 	error_y = r + GAMMA*curr_V - old_V_y;
+	error_y = range(error_y, -1.0, 1.0);
 
 	old_V_y = curr_V;
 
-	// TODO: parameters sending
-/*
-	int* err = (int*)&error;
 
-	uint key = ERROR_MSG | (x_pos << 16) | y_pos;
+	// parameters sending
+	uint key = ERROR_MSG | (x_pos << 8) | y_pos;
+	uint payload = 0;
 
-	spin1_send_mc_packet(key, *err, WITH_PAYLOAD);*/
+	if(error_x < 0.0) {
+		key = key | (1 << 17);
+		payload = payload | ((uint)(-error_x*10000.0) << 16);
+	} else {
+		payload = payload | ((uint)(error_x*10000.0) << 16);
+	}
+
+	if(error_y < 0.0) {
+		key = key | (1 << 16);
+		payload = payload | (uint)(-error_y*10000.0);
+	} else {
+		payload = payload | (uint)(error_y*10000.0);
+	}
+
+
+	spin1_send_mc_packet(key, payload, WITH_PAYLOAD);
 	io_printf(IO_STD,"updating\n");
 }
 

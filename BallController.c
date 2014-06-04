@@ -83,15 +83,30 @@ void eventNode(uint key, uint payload){
 	if((key & 0xF0000000) == ERROR_MSG) {
 		sim_count += 1;
 
-		x_pos = (key >> 16) & 0x000000FF;
+		x_pos = (key >> 8) & 0x000000FF;
 		y_pos = key & 0x000000FF;
 
 		updateNodePos(x_pos, y_pos, sim_count);
 
 		mfm_();
 
-		//float* err = (float*)&payload;
-		//updateNodeError(*err);
+		// errors retrieving
+		float err_x = 0.0;
+		float err_y = 0.0;
+
+		if((key >> 17) & 0x00000001 == 1) { // negative
+			err_x = -((float)(payload >> 16)) / 10000.0;
+		} else { // positive
+			err_x = (float)(payload >> 16) / 10000.0;
+		}		
+
+		if((key >> 16) & 0x00000001 == 1) { // negative
+			err_y = -((float)(payload & 0x0000FFFF)) / 10000.0;
+		} else { // positive
+			err_y = (float)(payload & 0x0000FFFF) / 10000.0;
+		}
+
+		updateNodeError(err_x, err_y);
 
 		// actor network update
 		//update_A( sim_count );
@@ -109,7 +124,7 @@ void eventMaster(uint key, uint payload){
 	if((key & 0xF0000000) == UPD_MSG) {
 		//rec_upd(key, payload);
 	} 
-	else {  // camera event (why the hell isn't payload that contains the information????)
+	else {
 		// raw position extraction
 		int y_cur = ((key & 0x7F));
 		int x_cur = (((key >> 8) & 0x7F));
