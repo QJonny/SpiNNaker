@@ -44,7 +44,7 @@
 
 
 // MFM definitions
-#define V_DECAY 0.5
+#define V_DECAY 0.3
 #define N_MFM 64 // number of available populations
 // end of MFM definitions
 
@@ -66,8 +66,8 @@
 // reward
 float r_pos_x();
 float r_pos_y();
-float R_x(vector2d speed);
-float R_y(vector2d speed);
+float R_x();
+float R_y();
 void updateError(int x_pos, int y_pos, uint sim_time);
 
 

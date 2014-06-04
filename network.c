@@ -43,8 +43,263 @@ int avg_index = 0;
 
 
 // loading params
-void load_() {
-
+void load_() {/*
+w_V_x_array[0] = 477.0/1000.0;
+w_V_x_array[1] = 645.0/1000.0;
+w_V_x_array[2] = 730.0/1000.0;
+w_V_x_array[3] = 548.0/1000.0;
+w_V_x_array[4] = 454.0/1000.0;
+w_V_x_array[5] = 663.0/1000.0;
+w_V_x_array[6] = 609.0/1000.0;
+w_V_x_array[7] = 739.0/1000.0;
+w_V_x_array[8] = 404.0/1000.0;
+w_V_x_array[9] = 737.0/1000.0;
+w_V_x_array[10] = 578.0/1000.0;
+w_V_x_array[11] = 580.0/1000.0;
+w_V_x_array[12] = -146.0/1000.0;
+w_V_x_array[13] = 427.0/1000.0;
+w_V_x_array[14] = 503.0/1000.0;
+w_V_x_array[15] = 671.0/1000.0;
+w_V_x_array[16] = -456.0/1000.0;
+w_V_x_array[17] = -403.0/1000.0;
+w_V_x_array[18] = -430.0/1000.0;
+w_V_x_array[19] = -502.0/1000.0;
+w_V_x_array[20] = -185.0/1000.0;
+w_V_x_array[21] = -5.0/1000.0;
+w_V_x_array[22] = -127.0/1000.0;
+w_V_x_array[23] = -92.0/1000.0;
+w_V_x_array[24] = -39.0/1000.0;
+w_V_x_array[25] = -209.0/1000.0;
+w_V_x_array[26] = -271.0/1000.0;
+w_V_x_array[27] = 19.0/1000.0;
+w_V_x_array[28] = -152.0/1000.0;
+w_V_x_array[29] = -115.0/1000.0;
+w_V_x_array[30] = 50.0/1000.0;
+w_V_x_array[31] = 18.0/1000.0;
+w_V_x_array[32] = -172.0/1000.0;
+w_V_x_array[33] = -184.0/1000.0;
+w_V_x_array[34] = 219.0/1000.0;
+w_V_x_array[35] = 137.0/1000.0;
+w_V_x_array[36] = -104.0/1000.0;
+w_V_x_array[37] = -121.0/1000.0;
+w_V_x_array[38] = -105.0/1000.0;
+w_V_x_array[39] = 8.0/1000.0;
+w_V_x_array[40] = -26.0/1000.0;
+w_V_x_array[41] = -126.0/1000.0;
+w_V_x_array[42] = -214.0/1000.0;
+w_V_x_array[43] = 34.0/1000.0;
+w_V_x_array[44] = -171.0/1000.0;
+w_V_x_array[45] = -75.0/1000.0;
+w_V_x_array[46] = -42.0/1000.0;
+w_V_x_array[47] = -96.0/1000.0;
+w_V_x_array[48] = -340.0/1000.0;
+w_V_x_array[49] = -419.0/1000.0;
+w_V_x_array[50] = -469.0/1000.0;
+w_V_x_array[51] = -398.0/1000.0;
+w_V_x_array[52] = -161.0/1000.0;
+w_V_x_array[53] = 314.0/1000.0;
+w_V_x_array[54] = 389.0/1000.0;
+w_V_x_array[55] = 751.0/1000.0;
+w_V_x_array[56] = 304.0/1000.0;
+w_V_x_array[57] = 690.0/1000.0;
+w_V_x_array[58] = 458.0/1000.0;
+w_V_x_array[59] = 715.0/1000.0;
+w_V_x_array[60] = 351.0/1000.0;
+w_V_x_array[61] = 528.0/1000.0;
+w_V_x_array[62] = 757.0/1000.0;
+w_V_x_array[63] = 603.0/1000.0;
+w_V_y_array[0] = 49.0/1000.0;
+w_V_y_array[1] = -75.0/1000.0;
+w_V_y_array[2] = -42.0/1000.0;
+w_V_y_array[3] = 15.0/1000.0;
+w_V_y_array[4] = -35.0/1000.0;
+w_V_y_array[5] = 225.0/1000.0;
+w_V_y_array[6] = 502.0/1000.0;
+w_V_y_array[7] = 887.0/1000.0;
+w_V_y_array[8] = 118.0/1000.0;
+w_V_y_array[9] = 768.0/1000.0;
+w_V_y_array[10] = 587.0/1000.0;
+w_V_y_array[11] = 443.0/1000.0;
+w_V_y_array[12] = 258.0/1000.0;
+w_V_y_array[13] = 840.0/1000.0;
+w_V_y_array[14] = 300.0/1000.0;
+w_V_y_array[15] = 143.0/1000.0;
+w_V_y_array[16] = 295.0/1000.0;
+w_V_y_array[17] = 794.0/1000.0;
+w_V_y_array[18] = 133.0/1000.0;
+w_V_y_array[19] = 54.0/1000.0;
+w_V_y_array[20] = 306.0/1000.0;
+w_V_y_array[21] = 875.0/1000.0;
+w_V_y_array[22] = 358.0/1000.0;
+w_V_y_array[23] = 142.0/1000.0;
+w_V_y_array[24] = 152.0/1000.0;
+w_V_y_array[25] = 784.0/1000.0;
+w_V_y_array[26] = 635.0/1000.0;
+w_V_y_array[27] = 317.0/1000.0;
+w_V_y_array[28] = -110.0/1000.0;
+w_V_y_array[29] = 229.0/1000.0;
+w_V_y_array[30] = 597.0/1000.0;
+w_V_y_array[31] = 874.0/1000.0;
+w_V_y_array[32] = 19.0/1000.0;
+w_V_y_array[33] = 3.0/1000.0;
+w_V_y_array[34] = -22.0/1000.0;
+w_V_y_array[35] = -105.0/1000.0;
+w_V_y_array[36] = 276.0/1000.0;
+w_V_y_array[37] = 505.0/1000.0;
+w_V_y_array[38] = 762.0/1000.0;
+w_V_y_array[39] = 632.0/1000.0;
+w_V_y_array[40] = 443.0/1000.0;
+w_V_y_array[41] = 571.0/1000.0;
+w_V_y_array[42] = 878.0/1000.0;
+w_V_y_array[43] = 690.0/1000.0;
+w_V_y_array[44] = 594.0/1000.0;
+w_V_y_array[45] = 701.0/1000.0;
+w_V_y_array[46] = 794.0/1000.0;
+w_V_y_array[47] = 260.0/1000.0;
+w_V_y_array[48] = 599.0/1000.0;
+w_V_y_array[49] = 804.0/1000.0;
+w_V_y_array[50] = 802.0/1000.0;
+w_V_y_array[51] = -36.0/1000.0;
+w_V_y_array[52] = 546.0/1000.0;
+w_V_y_array[53] = 675.0/1000.0;
+w_V_y_array[54] = 776.0/1000.0;
+w_V_y_array[55] = 230.0/1000.0;
+w_V_y_array[56] = 385.0/1000.0;
+w_V_y_array[57] = 564.0/1000.0;
+w_V_y_array[58] = 799.0/1000.0;
+w_V_y_array[59] = 656.0/1000.0;
+w_V_y_array[60] = 354.0/1000.0;
+w_V_y_array[61] = 601.0/1000.0;
+w_V_y_array[62] = 663.0/1000.0;
+w_V_y_array[63] = 652.0/1000.0;
+/*w_A_theta_array[0] = -204.0/1000.0;
+w_A_theta_array[1] = -503.0/1000.0;
+w_A_theta_array[2] = -425.0/1000.0;
+w_A_theta_array[3] = -140.0/1000.0;
+w_A_theta_array[4] = -295.0/1000.0;
+w_A_theta_array[5] = -465.0/1000.0;
+w_A_theta_array[6] = -541.0/1000.0;
+w_A_theta_array[7] = -179.0/1000.0;
+w_A_theta_array[8] = -276.0/1000.0;
+w_A_theta_array[9] = -355.0/1000.0;
+w_A_theta_array[10] = -474.0/1000.0;
+w_A_theta_array[11] = -555.0/1000.0;
+w_A_theta_array[12] = -117.0/1000.0;
+w_A_theta_array[13] = -302.0/1000.0;
+w_A_theta_array[14] = -194.0/1000.0;
+w_A_theta_array[15] = -286.0/1000.0;
+w_A_theta_array[16] = -18.0/1000.0;
+w_A_theta_array[17] = 123.0/1000.0;
+w_A_theta_array[18] = -24.0/1000.0;
+w_A_theta_array[19] = -30.0/1000.0;
+w_A_theta_array[20] = 158.0/1000.0;
+w_A_theta_array[21] = 176.0/1000.0;
+w_A_theta_array[22] = 252.0/1000.0;
+w_A_theta_array[23] = 105.0/1000.0;
+w_A_theta_array[24] = 155.0/1000.0;
+w_A_theta_array[25] = 59.0/1000.0;
+w_A_theta_array[26] = 250.0/1000.0;
+w_A_theta_array[27] = 303.0/1000.0;
+w_A_theta_array[28] = 195.0/1000.0;
+w_A_theta_array[29] = 90.0/1000.0;
+w_A_theta_array[30] = 313.0/1000.0;
+w_A_theta_array[31] = 338.0/1000.0;
+w_A_theta_array[32] = 295.0/1000.0;
+w_A_theta_array[33] = 94.0/1000.0;
+w_A_theta_array[34] = 294.0/1000.0;
+w_A_theta_array[35] = 280.0/1000.0;
+w_A_theta_array[36] = 177.0/1000.0;
+w_A_theta_array[37] = 102.0/1000.0;
+w_A_theta_array[38] = 279.0/1000.0;
+w_A_theta_array[39] = 337.0/1000.0;
+w_A_theta_array[40] = 223.0/1000.0;
+w_A_theta_array[41] = 99.0/1000.0;
+w_A_theta_array[42] = 229.0/1000.0;
+w_A_theta_array[43] = 346.0/1000.0;
+w_A_theta_array[44] = 90.0/1000.0;
+w_A_theta_array[45] = 112.0/1000.0;
+w_A_theta_array[46] = 242.0/1000.0;
+w_A_theta_array[47] = 71.0/1000.0;
+w_A_theta_array[48] = 52.0/1000.0;
+w_A_theta_array[49] = 41.0/1000.0;
+w_A_theta_array[50] = 74.0/1000.0;
+w_A_theta_array[51] = 115.0/1000.0;
+w_A_theta_array[52] = -97.0/1000.0;
+w_A_theta_array[53] = -162.0/1000.0;
+w_A_theta_array[54] = -248.0/1000.0;
+w_A_theta_array[55] = -377.0/1000.0;
+w_A_theta_array[56] = -271.0/1000.0;
+w_A_theta_array[57] = -301.0/1000.0;
+w_A_theta_array[58] = -468.0/1000.0;
+w_A_theta_array[59] = -668.0/1000.0;
+w_A_theta_array[60] = -173.0/1000.0;
+w_A_theta_array[61] = -383.0/1000.0;
+w_A_theta_array[62] = -441.0/1000.0;
+w_A_theta_array[63] = -211.0/1000.0;
+w_A_psi_array[0] = 1075.0/1000.0;
+w_A_psi_array[1] = 1020.0/1000.0;
+w_A_psi_array[2] = 1110.0/1000.0;
+w_A_psi_array[3] = 1192.0/1000.0;
+w_A_psi_array[4] = 1314.0/1000.0;
+w_A_psi_array[5] = 1197.0/1000.0;
+w_A_psi_array[6] = 1031.0/1000.0;
+w_A_psi_array[7] = 732.0/1000.0;
+w_A_psi_array[8] = 1247.0/1000.0;
+w_A_psi_array[9] = 761.0/1000.0;
+w_A_psi_array[10] = 343.0/1000.0;
+w_A_psi_array[11] = 233.0/1000.0;
+w_A_psi_array[12] = 1024.0/1000.0;
+w_A_psi_array[13] = 445.0/1000.0;
+w_A_psi_array[14] = 161.0/1000.0;
+w_A_psi_array[15] = 174.0/1000.0;
+w_A_psi_array[16] = 1054.0/1000.0;
+w_A_psi_array[17] = 338.0/1000.0;
+w_A_psi_array[18] = 142.0/1000.0;
+w_A_psi_array[19] = 75.0/1000.0;
+w_A_psi_array[20] = 1150.0/1000.0;
+w_A_psi_array[21] = 299.0/1000.0;
+w_A_psi_array[22] = 143.0/1000.0;
+w_A_psi_array[23] = 169.0/1000.0;
+w_A_psi_array[24] = 1289.0/1000.0;
+w_A_psi_array[25] = 829.0/1000.0;
+w_A_psi_array[26] = 255.0/1000.0;
+w_A_psi_array[27] = 210.0/1000.0;
+w_A_psi_array[28] = 1238.0/1000.0;
+w_A_psi_array[29] = 1088.0/1000.0;
+w_A_psi_array[30] = 911.0/1000.0;
+w_A_psi_array[31] = 718.0/1000.0;
+w_A_psi_array[32] = 1069.0/1000.0;
+w_A_psi_array[33] = 1165.0/1000.0;
+w_A_psi_array[34] = 1157.0/1000.0;
+w_A_psi_array[35] = 1025.0/1000.0;
+w_A_psi_array[36] = 926.0/1000.0;
+w_A_psi_array[37] = 972.0/1000.0;
+w_A_psi_array[38] = 833.0/1000.0;
+w_A_psi_array[39] = 966.0/1000.0;
+w_A_psi_array[40] = 877.0/1000.0;
+w_A_psi_array[41] = 941.0/1000.0;
+w_A_psi_array[42] = 256.0/1000.0;
+w_A_psi_array[43] = -327.0/1000.0;
+w_A_psi_array[44] = 965.0/1000.0;
+w_A_psi_array[45] = 611.0/1000.0;
+w_A_psi_array[46] = -423.0/1000.0;
+w_A_psi_array[47] = -759.0/1000.0;
+w_A_psi_array[48] = 803.0/1000.0;
+w_A_psi_array[49] = 494.0/1000.0;
+w_A_psi_array[50] = -759.0/1000.0;
+w_A_psi_array[51] = -527.0/1000.0;
+w_A_psi_array[52] = 929.0/1000.0;
+w_A_psi_array[53] = 649.0/1000.0;
+w_A_psi_array[54] = -403.0/1000.0;
+w_A_psi_array[55] = -686.0/1000.0;
+w_A_psi_array[56] = 799.0/1000.0;
+w_A_psi_array[57] = 890.0/1000.0;
+w_A_psi_array[58] = 161.0/1000.0;
+w_A_psi_array[59] = -361.0/1000.0;
+w_A_psi_array[60] = 835.0/1000.0;
+w_A_psi_array[61] = 989.0/1000.0;
+w_A_psi_array[62] = 768.0/1000.0;
+w_A_psi_array[63] = 830.0/1000.0;*/
 }
 
 
@@ -75,8 +330,8 @@ void compute_speed(uint sim_time)
 		speed_.x = (pos_.x - old_pos_.x) * INV_DELTA_TIME * INV_SPEED_AVERAGER_STEP * SPEED_RESIZE_FACTOR;
 		speed_.y = (pos_.y - old_pos_.y) * INV_DELTA_TIME * INV_SPEED_AVERAGER_STEP * SPEED_RESIZE_FACTOR;
 
-		sp_x_term =  0.5*f_abs(speed_.x);  //(2.0 / PI_) * //atan(fabs(speed_.x));
-		sp_y_term =  0.5*f_abs(speed_.y);    //(2.0 / PI_) * //atan(fabs(speed_.y));
+		sp_x_term =  f_abs(speed_.x);  //(2.0 / PI_) * //atan(fabs(speed_.x));
+		sp_y_term =  f_abs(speed_.y);    //(2.0 / PI_) * //atan(fabs(speed_.y));
 
 		//io_printf(IO_STD,"x %d, tan %d\n", (int)(speed_.x*1000), (int)(atan(f_abs(speed_.x))*1000));
 
@@ -119,7 +374,7 @@ float r_pos_y() {
 float R_x(){
 	float r = r_pos_x() - sp_x_term;
 
-	r = range(r, 0.0, 1.0);
+	r = range(r, -1.0, 1.0);
 
 	return r;
 }
@@ -127,7 +382,7 @@ float R_x(){
 float R_y(){
 	float r = r_pos_y() - sp_y_term;
 
-	r = range(r, 0.0, 1.0);
+	r = range(r, -1.0, 1.0);
 
 	return r;
 }
@@ -171,15 +426,15 @@ void init_params_() {
 	int i = 0;
 
 	// uniform number in range [-0.1, 0.1]
-	for(i = 0; i < N_MFM; i++) {
+	/*for(i = 0; i < N_MFM; i++) {
 		w_V_x_array[i] = 	(((float)rand() / RAND_MAX) / 5.0) - 0.1; 
 		w_V_y_array[i] = 	(((float)rand() / RAND_MAX) / 5.0) - 0.1; 
 
 		w_A_theta_array[i] = (((float)rand() / RAND_MAX) / 5.0) - 0.1;
 		w_A_psi_array[i] = (((float)rand() / RAND_MAX) / 5.0) - 0.1;
-	}
+	}*/
 
-	//load_();
+	load_();
 
 	for(i = 0; i < 4; i++) {
 		pos_buffer[i] = 1.0;
@@ -220,15 +475,14 @@ void init_network(uint chipID, uint coreID, uint noise_seed){
 void save_() {
 	int i = 0;
 
-	// e_array
-	for(i = 0; i < N_MFM; i++) {
-		io_printf(IO_STD, "e_x_array[%d] = %d.0/1000.0;\n", i, (int)(e_x_array[i]*1000));
-	}
-
 	
 	// w_V_array
 	for(i = 0; i < N_MFM; i++) {
 		io_printf(IO_STD, "w_V_x_array[%d] = %d.0/1000.0;\n", i, (int)(w_V_x_array[i]*1000));
+	}
+
+	for(i = 0; i < N_MFM; i++) {
+		io_printf(IO_STD, "w_V_y_array[%d] = %d.0/1000.0;\n", i, (int)(w_V_y_array[i]*1000));
 	}
 
 
@@ -398,26 +652,27 @@ int move(uint sim_time) {
 		psi += w_A_psi_array[i] * phi_MFM_y(i);
 	}
 
-
-	float coef = 0.1;//0.75;
+	theta /= N_MFM;
+	psi /= N_MFM;
+	//float coef = 1.0 / N_MFM;//0.75;
 
 
 	// range: [-1;1]	
-	theta = coef*(theta + sigma_x() * n.x);
-	psi = coef*(psi + sigma_y() * n.y);
+	theta = theta + sigma_x() * n.x;
+	psi = psi + sigma_y() * n.y;
 
 
 
 
 	// TODO: (when parallelized) replacer multiplication by received values 
 	
-	io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
+	//io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
 
 
 	theta = range(theta, -1.0, 1.0);
 	psi = range(psi, -1.0, 1.0);
 
-	if(avg_pos < 0.3 && avg_speed < 0.05) {
+	/*if(sim_time > 300 && avg_pos < 0.2 && avg_speed < 0.05) {
 		sendNormMotorCommand(0.0, 0.0);
 		return STATE_BALANCED; // ball balanced
 	}
@@ -426,9 +681,9 @@ int move(uint sim_time) {
 			sendNormMotorCommand(pos_.x, pos_.y);
 		}
 	}
-	else {	
+	else {*/	
 		sendNormMotorCommand(theta, psi);
-	}
+	//}
 
 
 
