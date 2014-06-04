@@ -63,6 +63,7 @@ void update(uint sim_time, uint none)
 
 		// critic networks update (also sends error and ball position)
 		updateError(x_pos, y_pos, sim_time);
+		send_err();
 	}
 
 
@@ -83,30 +84,9 @@ void eventNode(uint key, uint payload){
 	if((key & 0xF0000000) == ERROR_MSG) {
 		sim_count += 1;
 
-		x_pos = (key >> 8) & 0x000000FF;
-		y_pos = key & 0x000000FF;
-
-		updateNodePos(x_pos, y_pos, sim_count);
+		rec_err(key, payload, sim_count);
 
 		mfm_();
-
-		// errors retrieving
-		float err_x = 0.0;
-		float err_y = 0.0;
-
-		if((key >> 17) & 0x00000001 == 1) { // negative
-			err_x = -((float)(payload >> 16)) / 10000.0;
-		} else { // positive
-			err_x = (float)(payload >> 16) / 10000.0;
-		}		
-
-		if((key >> 16) & 0x00000001 == 1) { // negative
-			err_y = -((float)(payload & 0x0000FFFF)) / 10000.0;
-		} else { // positive
-			err_x = (float)(payload & 0x0000FFFF) / 10000.0;
-		}
-
-		updateNodeError(err_x, err_y);
 
 		// actor network update
 		//update_A( sim_count );

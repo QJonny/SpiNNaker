@@ -146,15 +146,71 @@ float R_y(){
 
 
 
-// network communication updating
+// network communication
 void updateNodePos(int x_pos, int y_pos, uint sim_time) {
-	normalizeBallParams(x_pos, y_pos, sim_time);	
+	
 }
 
 void updateNodeError(float err_x, float err_y) {
 	error_x = err_x;
 	error_y = err_y;
 }
+
+
+void send_err(uint x_pos, uint y_pos) {
+	uint key = ERROR_MSG | (x_pos << 8) | y_pos;
+	uint payload = 0;
+
+	if(error_x < 0.0) {
+		key = key | (1 << 17);
+		payload = payload | ((uint)(-error_x*10000.0) << 16);
+	} else {
+		payload = payload | ((uint)(error_x*10000.0) << 16);
+	}
+
+	if(error_y < 0.0) {
+		key = key | (1 << 16);
+		payload = payload | (uint)(-error_y*10000.0);
+	} else {
+		payload = payload | (uint)(error_y*10000.0);
+	}
+
+
+	spin1_send_mc_packet(key, payload, WITH_PAYLOAD);
+
+}
+
+
+void rec_err(uint key, uint payload, uint sim_time) {
+	uint x_pos = (key >> 8) & 0x000000FF;
+	uint y_pos = key & 0x000000FF;
+
+	normalizeBallParams(x_pos, y_pos, sim_time);
+
+
+	// errors retrieving
+	float err_x = 0.0;
+	float err_y = 0.0;
+
+	if((key >> 17) & 0x00000001 == 1) { // negative
+		err_x = -((float)(payload >> 16)) / 10000.0;
+	} else { // positive
+		err_x = (float)(payload >> 16) / 10000.0;
+	}		
+
+	if((key >> 16) & 0x00000001 == 1) { // negative
+		err_y = -((float)(payload & 0x0000FFFF)) / 10000.0;
+	} else { // positive
+		err_y = (float)(payload & 0x0000FFFF) / 10000.0;
+	}
+
+	error_x = err_x;
+	error_y = err_y;
+}
+
+
+
+
 
 
 void send_upd() {/*
@@ -420,27 +476,6 @@ void updateError(uint x_pos, uint y_pos, uint sim_time) {
 
 	old_V_y = curr_V;
 
-
-	// parameters sending
-	uint key = ERROR_MSG | (x_pos << 8) | y_pos;
-	uint payload = 0;
-
-	if(error_x < 0.0) {
-		key = key | (1 << 17);
-		payload = payload | ((uint)(-error_x*10000.0) << 16);
-	} else {
-		payload = payload | ((uint)(error_x*10000.0) << 16);
-	}
-
-	if(error_y < 0.0) {
-		key = key | (1 << 16);
-		payload = payload | (uint)(-error_y*10000.0);
-	} else {
-		payload = payload | (uint)(error_y*10000.0);
-	}
-
-
-	spin1_send_mc_packet(key, payload, WITH_PAYLOAD);
 	io_printf(IO_STD,"updating\n");
 }
 

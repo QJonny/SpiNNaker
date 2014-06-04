@@ -86,12 +86,16 @@ float phi_MFM_y();
 void save_();
 void load_();
 
-// network communication updating
-void updateNodePos(int x_pos, int y_pos, uint sim_time);
-void updateNodeError(float err_x, float err_y);
 
+
+// network communication
+void send_err(uint x_pos, uint y_pos);
+void rec_err(uint key, uint payload, uint sim_time);
 void send_upd();
 void rec_upd(uint key, uint payload);
+
+
+
 
 
 // critic network
