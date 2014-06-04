@@ -90,8 +90,8 @@ void eventNode(uint key, uint payload){
 
 		mfm_();
 
-		float* err = (float*)&payload;
-		updateNodeError(*err);
+		//float* err = (float*)&payload;
+		//updateNodeError(*err);
 
 		// actor network update
 		//update_A( sim_count );
@@ -107,7 +107,7 @@ void eventNode(uint key, uint payload){
 
 void eventMaster(uint key, uint payload){
 	if((key & 0xF0000000) == UPD_MSG) {
-		rec_upd(key, payload);
+		//rec_upd(key, payload);
 	} 
 	else {  // camera event (why the hell isn't payload that contains the information????)
 		// raw position extraction

@@ -68,8 +68,10 @@
 
 
 // reward
-float r_pos();
-float R(vector2d speed);
+float r_pos_x();
+float r_pos_y();
+float R_x();
+float R_y();
 void updateError(uint x_pos, uint y_pos, uint sim_time);
 
 
@@ -78,21 +80,23 @@ void init_network(uint chipIDs, uint coreIDs);
 
 // mfm
 void mfm_();
-float phi_MFM();
+float phi_MFM_x();
+float phi_MFM_y();
 
 void save_();
 void load_();
 
 // network communication updating
 void updateNodePos(int x_pos, int y_pos, uint sim_time);
-void updateNodeError(float err);
+void updateNodeError(float err_x, float err_y);
 
 void send_upd();
 void rec_upd(uint key, uint payload);
 
 
 // critic network
-float V(); // returns the critic network value
+float V_x(); // returns the critic network value
+float V_y(); // returns the critic network value
 void update_V();
 
 
@@ -100,7 +104,8 @@ void update_V();
 int move(uint sim_time); // perform the next movement
 void update_A();
 
-float sigma();
+float sigma_x();
+float sigma_y();
 vector2d noise();
 
 

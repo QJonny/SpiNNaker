@@ -3,7 +3,7 @@
 
 
 
-// comparision
+// basic math
 float min(float v1, float v2){
 	return (v1 > v2) ? v2:v1;
 }
@@ -17,6 +17,15 @@ float range(float value, float lower, float upper) {
 		value = upper;
 	} else if(value < lower) {
 		value = lower;
+	}
+
+	return value;
+}
+
+
+float f_abs(float value) {
+	if(value < 0.0) {
+		return -value;
 	}
 
 	return value;
