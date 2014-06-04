@@ -87,8 +87,8 @@ void compute_speed(uint sim_time)
 		speed_.x = (pos_.x - old_pos_.x) * INV_DELTA_TIME * INV_SPEED_AVERAGER_STEP * SPEED_RESIZE_FACTOR;
 		speed_.y = (pos_.y - old_pos_.y) * INV_DELTA_TIME * INV_SPEED_AVERAGER_STEP * SPEED_RESIZE_FACTOR;
 
-		sp_x_term =  0.5*f_abs(speed_.x);  //(2.0 / PI_) * atan(f_abs(speed_.x));
-		sp_y_term =  0.5*f_abs(speed_.y);    //(2.0 / PI_) * atan(f_abs(speed_.y));
+		sp_x_term =  f_abs(speed_.x);  //(2.0 / PI_) * atan(f_abs(speed_.x));
+		sp_y_term =  f_abs(speed_.y);    //(2.0 / PI_) * atan(f_abs(speed_.y));
 
 		old_pos_.x = pos_.x;
 		old_pos_.y = pos_.y;
@@ -129,7 +129,7 @@ float r_pos_y() {
 float R_x(){
 	float r = r_pos_x() - sp_x_term;
 
-	r = range(r, 0.0, 1.0);
+	r = range(r, -1.0, 1.0);
 
 	return r;
 }
@@ -137,7 +137,7 @@ float R_x(){
 float R_y(){
 	float r = r_pos_y() - sp_y_term;
 
-	r = range(r, 0.0, 1.0);
+	r = range(r, -1.0, 1.0);
 
 	return r;
 }
@@ -147,16 +147,6 @@ float R_y(){
 
 
 // network communication
-void updateNodePos(int x_pos, int y_pos, uint sim_time) {
-	
-}
-
-void updateNodeError(float err_x, float err_y) {
-	error_x = err_x;
-	error_y = err_y;
-}
-
-
 void send_err(uint x_pos, uint y_pos) {
 	uint key = ERROR_MSG | (x_pos << 8) | y_pos;
 	uint payload = 0;
@@ -264,7 +254,7 @@ void send_upd() {
 
 
 
-
+/*
 	if(v_y < 0.0) {
 		key = key | (1 << 29);
 		key = key | ((uint)(-v_y*1000.0) << 10);
@@ -272,7 +262,7 @@ void send_upd() {
 		key = key | ((uint)(v_y*1000.0) << 10);
 	}
 
-/*
+
 	if(v_x < 0.0) {
 		key = key | (1 << 28);
 		key = key | (uint)(-v_x*1000.0);
@@ -419,10 +409,6 @@ void init_network(uint chipIDs, uint coreIDs){
 void save_() {
 	// e_array
 	io_printf(IO_STD, "if(coreID==%d && chipID==%d){\n", coreID, chipID);
-	io_printf(IO_STD, "\t e_x = %d.0/1000.0;\n", (int)(e_x*1000));
-
-	io_printf(IO_STD, "\t e_y = %d.0/1000.0;\n", (int)(e_y*1000));
-
 	io_printf(IO_STD, "\t w_V_x = %d.0/1000.0;\n", (int)(w_V_x*1000));
 
 	io_printf(IO_STD, "\t w_V_y = %d.0/1000.0;\n", (int)(w_V_y*1000));
@@ -573,12 +559,12 @@ int move(uint sim_time) {
 		psi += A_psi_array[i];
 	}
 
-	float coef = 0.1;//0.75;
-
+	theta /= N_MFM;
+	psi /= N_MFM;
 
 	// range: [-1;1]	
-	theta = coef*(theta + sigma_x() * n.x);
-	psi = coef*(psi + sigma_y() * n.y);
+	theta = theta + sigma_x() * n.x;
+	psi = psi + sigma_y() * n.y;
 
 
 	//io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
@@ -587,7 +573,7 @@ int move(uint sim_time) {
 	theta = range(theta, -1.0, 1.0);
 	psi = range(psi, -1.0, 1.0);
 
-	if(avg_pos < 0.3 && avg_speed < 0.05) {
+	if(avg_pos < 0.2 && avg_speed < 0.05) {
 		sendNormMotorCommand(0.0, 0.0);
 		return STATE_BALANCED; // ball balanced
 	}
