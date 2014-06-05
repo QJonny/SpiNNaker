@@ -639,7 +639,7 @@ f5007ee0 l       *ABS*	00000000 RST_BLOCK_BASE
 00000000 l    df *ABS*	00000000 
 00000000 l    df *ABS*	00000000 speed_test.c
 00000000 l    df *ABS*	00000000 
-00003160 l     F RO_DATA	0000000c __proc_aplx_from_arm
+00003168 l     F RO_DATA	0000000c __proc_aplx_from_arm
 00001828 g     F RO_DATA	00000650 spin1_start
 00400a98 g     O ZI_DATA	00000004 barrier_rdygo
 00400020 g     O ZI_DATA	00000004 barrier_rdy1_cnt
@@ -660,7 +660,7 @@ f5007ee0 l       *ABS*	00000000 RST_BLOCK_BASE
 00000d14 g     F RO_DATA	00000068 soft_int_isr
 000016c0 g     F RO_DATA	00000168 spin1_send_mc_packet
 00000ee8 g     F RO_DATA	00000040 spin1_rand
-00003028 g     F RO_DATA	00000138 c_main
+00003028 g     F RO_DATA	00000140 c_main
 00000140 g     F RO_DATA	00000000 bx
 00002234 g     F RO_DATA	00000244 rts_init
 000027e8 g     F RO_DATA	000000d8 io_put_hex
@@ -696,7 +696,7 @@ f5007ee0 l       *ABS*	00000000 RST_BLOCK_BASE
 00002030 g     F RO_DATA	00000038 spin1_kill
 00002f60 g     F RO_DATA	00000048 update_chip1
 0000120c g     F RO_DATA	00000010 spin1_get_simulation_time
-000031e4 g       *ABS*	00000000 RW_FROM
+000031ec g       *ABS*	00000000 RW_FROM
 000004b0 g     F RO_DATA	0000015c spin1_send_sdp_msg
 000025b4 g     F RO_DATA	00000108 io_put_int
 00001ee0 g     F RO_DATA	00000024 spin1_get_id
@@ -753,7 +753,7 @@ f5007ee0 l       *ABS*	00000000 RST_BLOCK_BASE
 00002fa8 g     F RO_DATA	00000038 eventNode_chip0
 000001dc g     F RO_DATA	00000000 div10
 00001ed0 g     F RO_DATA	00000010 spin1_int_disable
-000031b4 g       *ABS*	00000000 RO_LENGTH
+000031bc g       *ABS*	00000000 RO_LENGTH
 00000a90 g       *ABS*	00000000 ZI_LENGTH
 00000668 g     F RO_DATA	000003ac cpu_int_c
 00000144 g     F RO_DATA	00000000 copy_msg
@@ -767,10 +767,10 @@ Disassembly of section APLX:
    0:	00000002 	.word	0x00000002
    4:	00000000 	.word	0x00000000
    8:	00000040 	.word	0x00000040
-   c:	000031b4 	.word	0x000031b4
+   c:	000031bc 	.word	0x000031bc
   10:	00000002 	.word	0x00000002
   14:	00400000 	.word	0x00400000
-  18:	000031e4 	.word	0x000031e4
+  18:	000031ec 	.word	0x000031ec
   1c:	00000018 	.word	0x00000018
   20:	00000003 	.word	0x00000003
   24:	00400018 	.word	0x00400018
@@ -1471,7 +1471,7 @@ Disassembly of section RO_DATA:
      8e4:	ea000012 	b	934 <cpu_int_c+0x2cc>
      8e8:	e5940014 	ldr	r0, [r4, #20]
      8ec:	e3a01000 	mov	r1, #0
-     8f0:	eb000a1a 	bl	3160 <__proc_aplx_from_arm>
+     8f0:	eb000a1c 	bl	3168 <__proc_aplx_from_arm>
      8f4:	e3a0300c 	mov	r3, #12
      8f8:	ea00000e 	b	938 <cpu_int_c+0x2d0>
      8fc:	e3a03083 	mov	r3, #131	; 0x83
@@ -1528,7 +1528,7 @@ Disassembly of section RO_DATA:
      9c8:	e3a01000 	mov	r1, #0
      9cc:	e7c2118c 	strb	r1, [r2, ip, lsl #3]
      9d0:	e1a00005 	mov	r0, r5
-     9d4:	eb0009e1 	bl	3160 <__proc_aplx_from_arm>
+     9d4:	eb0009e3 	bl	3168 <__proc_aplx_from_arm>
      9d8:	e8bd8070 	pop	{r4, r5, r6, pc}
      9dc:	e3530003 	cmp	r3, #3
      9e0:	02855001 	addeq	r5, r5, #1
@@ -3943,7 +3943,7 @@ Disassembly of section RO_DATA:
     2f50:	e3a02001 	mov	r2, #1
     2f54:	ebfff9d9 	bl	16c0 <spin1_send_mc_packet>
     2f58:	e8bd8008 	pop	{r3, pc}
-    2f5c:	00003170 	.word	0x00003170
+    2f5c:	00003178 	.word	0x00003178
 
 00002f60 <update_chip1>:
     2f60:	e92d40f8 	push	{r3, r4, r5, r6, r7, lr}
@@ -3962,7 +3962,7 @@ Disassembly of section RO_DATA:
     2f94:	e2544001 	subs	r4, r4, #1
     2f98:	1afffff8 	bne	2f80 <update_chip1+0x20>
     2f9c:	e8bd80f8 	pop	{r3, r4, r5, r6, r7, pc}
-    2fa0:	00003180 	.word	0x00003180
+    2fa0:	00003188 	.word	0x00003188
     2fa4:	00400018 	.word	0x00400018
 
 00002fa8 <eventNode_chip0>:
@@ -3979,7 +3979,7 @@ Disassembly of section RO_DATA:
     2fd0:	e3a02001 	mov	r2, #1
     2fd4:	ebfff9b9 	bl	16c0 <spin1_send_mc_packet>
     2fd8:	e8bd8008 	pop	{r3, pc}
-    2fdc:	00003190 	.word	0x00003190
+    2fdc:	00003198 	.word	0x00003198
 
 00002fe0 <eventMaster_chip0>:
     2fe0:	e92d4008 	push	{r3, lr}
@@ -3991,7 +3991,7 @@ Disassembly of section RO_DATA:
     2ff8:	e59f1004 	ldr	r1, [pc, #4]	; 3004 <eventMaster_chip0+0x24>
     2ffc:	ebfffe93 	bl	2a50 <io_printf>
     3000:	e8bd8008 	pop	{r3, pc}
-    3004:	0000319c 	.word	0x0000319c
+    3004:	000031a4 	.word	0x000031a4
 
 00003008 <eventRec_chip1>:
     3008:	e92d4008 	push	{r3, lr}
@@ -4001,17 +4001,17 @@ Disassembly of section RO_DATA:
     3018:	e59f1004 	ldr	r1, [pc, #4]	; 3024 <eventRec_chip1+0x1c>
     301c:	ebfffe8b 	bl	2a50 <io_printf>
     3020:	e8bd8008 	pop	{r3, pc}
-    3024:	000031a8 	.word	0x000031a8
+    3024:	000031b0 	.word	0x000031b0
 
 00003028 <c_main>:
     3028:	e92d4010 	push	{r4, lr}
     302c:	ebfffbb4 	bl	1f04 <spin1_get_core_id>
-    3030:	e59f3104 	ldr	r3, [pc, #260]	; 313c <c_main+0x114>
+    3030:	e59f310c 	ldr	r3, [pc, #268]	; 3144 <c_main+0x11c>
     3034:	e5830000 	str	r0, [r3]
     3038:	ebfffbb5 	bl	1f14 <spin1_get_chip_id>
-    303c:	e59f40fc 	ldr	r4, [pc, #252]	; 3140 <c_main+0x118>
+    303c:	e59f4104 	ldr	r4, [pc, #260]	; 3148 <c_main+0x120>
     3040:	e5840000 	str	r0, [r4]
-    3044:	e59f00f8 	ldr	r0, [pc, #248]	; 3144 <c_main+0x11c>
+    3044:	e59f0100 	ldr	r0, [pc, #256]	; 314c <c_main+0x124>
     3048:	ebfff873 	bl	121c <spin1_set_timer_tick>
     304c:	e5943000 	ldr	r3, [r4]
     3050:	e3530000 	cmp	r3, #0
@@ -4019,33 +4019,33 @@ Disassembly of section RO_DATA:
     3058:	e3a00006 	mov	r0, #6
     305c:	e3a01020 	mov	r1, #32
     3060:	e3e02000 	mvn	r2, #0
-    3064:	e59f30dc 	ldr	r3, [pc, #220]	; 3148 <c_main+0x120>
+    3064:	e59f30e4 	ldr	r3, [pc, #228]	; 3150 <c_main+0x128>
     3068:	ebfffbae 	bl	1f28 <spin1_set_mc_table_entry>
     306c:	e3a00007 	mov	r0, #7
     3070:	e3a01030 	mov	r1, #48	; 0x30
     3074:	e3e02000 	mvn	r2, #0
     3078:	e3a03080 	mov	r3, #128	; 0x80
     307c:	ebfffba9 	bl	1f28 <spin1_set_mc_table_entry>
-    3080:	e59f30b4 	ldr	r3, [pc, #180]	; 313c <c_main+0x114>
+    3080:	e59f30bc 	ldr	r3, [pc, #188]	; 3144 <c_main+0x11c>
     3084:	e5933000 	ldr	r3, [r3]
     3088:	e3530001 	cmp	r3, #1
     308c:	1a000008 	bne	30b4 <c_main+0x8c>
     3090:	e3a00000 	mov	r0, #0
-    3094:	e59f10b0 	ldr	r1, [pc, #176]	; 314c <c_main+0x124>
+    3094:	e59f10b8 	ldr	r1, [pc, #184]	; 3154 <c_main+0x12c>
     3098:	e1a02000 	mov	r2, r0
     309c:	ebfff830 	bl	1164 <spin1_callback_on>
     30a0:	e3a00002 	mov	r0, #2
-    30a4:	e59f10a4 	ldr	r1, [pc, #164]	; 3150 <c_main+0x128>
+    30a4:	e59f10ac 	ldr	r1, [pc, #172]	; 3158 <c_main+0x130>
     30a8:	e3a02000 	mov	r2, #0
     30ac:	ebfff82c 	bl	1164 <spin1_callback_on>
-    30b0:	ea00001f 	b	3134 <c_main+0x10c>
+    30b0:	ea000021 	b	313c <c_main+0x114>
     30b4:	e3a00000 	mov	r0, #0
-    30b8:	e59f1094 	ldr	r1, [pc, #148]	; 3154 <c_main+0x12c>
+    30b8:	e59f109c 	ldr	r1, [pc, #156]	; 315c <c_main+0x134>
     30bc:	e1a02000 	mov	r2, r0
     30c0:	ebfff827 	bl	1164 <spin1_callback_on>
-    30c4:	ea00001a 	b	3134 <c_main+0x10c>
+    30c4:	ea00001c 	b	313c <c_main+0x114>
     30c8:	e3530001 	cmp	r3, #1
-    30cc:	1a000018 	bne	3134 <c_main+0x10c>
+    30cc:	1a00001a 	bne	313c <c_main+0x114>
     30d0:	e3a00002 	mov	r0, #2
     30d4:	e1a01000 	mov	r1, r0
     30d8:	e3e02000 	mvn	r2, #0
@@ -4061,47 +4061,49 @@ Disassembly of section RO_DATA:
     3100:	e3e02000 	mvn	r2, #0
     3104:	e3a03a01 	mov	r3, #4096	; 0x1000
     3108:	ebfffb86 	bl	1f28 <spin1_set_mc_table_entry>
-    310c:	e59f3028 	ldr	r3, [pc, #40]	; 313c <c_main+0x114>
+    310c:	e59f3030 	ldr	r3, [pc, #48]	; 3144 <c_main+0x11c>
     3110:	e5933000 	ldr	r3, [r3]
-    3114:	e3530003 	cmp	r3, #3
-    3118:	03a00002 	moveq	r0, #2
-    311c:	059f1034 	ldreq	r1, [pc, #52]	; 3158 <c_main+0x130>
-    3120:	03a02000 	moveq	r2, #0
-    3124:	13a00000 	movne	r0, #0
-    3128:	159f102c 	ldrne	r1, [pc, #44]	; 315c <c_main+0x134>
-    312c:	11a02000 	movne	r2, r0
-    3130:	ebfff80b 	bl	1164 <spin1_callback_on>
-    3134:	ebfff9bb 	bl	1828 <spin1_start>
-    3138:	e8bd8010 	pop	{r4, pc}
-    313c:	00400018 	.word	0x00400018
-    3140:	0040001c 	.word	0x0040001c
-    3144:	000186a0 	.word	0x000186a0
-    3148:	003fff00 	.word	0x003fff00
-    314c:	00002fe0 	.word	0x00002fe0
-    3150:	00002f38 	.word	0x00002f38
-    3154:	00002fa8 	.word	0x00002fa8
-    3158:	00002f60 	.word	0x00002f60
-    315c:	00003008 	.word	0x00003008
+    3114:	e3c32002 	bic	r2, r3, #2
+    3118:	e3530005 	cmp	r3, #5
+    311c:	13520001 	cmpne	r2, #1
+    3120:	03a00002 	moveq	r0, #2
+    3124:	059f1034 	ldreq	r1, [pc, #52]	; 3160 <c_main+0x138>
+    3128:	03e02001 	mvneq	r2, #1
+    312c:	13a00000 	movne	r0, #0
+    3130:	159f102c 	ldrne	r1, [pc, #44]	; 3164 <c_main+0x13c>
+    3134:	13e02000 	mvnne	r2, #0
+    3138:	ebfff809 	bl	1164 <spin1_callback_on>
+    313c:	ebfff9b9 	bl	1828 <spin1_start>
+    3140:	e8bd8010 	pop	{r4, pc}
+    3144:	00400018 	.word	0x00400018
+    3148:	0040001c 	.word	0x0040001c
+    314c:	000186a0 	.word	0x000186a0
+    3150:	003fff00 	.word	0x003fff00
+    3154:	00002fe0 	.word	0x00002fe0
+    3158:	00002f38 	.word	0x00002f38
+    315c:	00002fa8 	.word	0x00002fa8
+    3160:	00002f60 	.word	0x00002f60
+    3164:	00003008 	.word	0x00003008
 
-00003160 <__proc_aplx_from_arm>:
-    3160:	e59fc000 	ldr	ip, [pc]	; 3168 <__proc_aplx_from_arm+0x8>
-    3164:	e12fff1c 	bx	ip
-    3168:	00000241 	.word	0x00000241
-    316c:	00000000 	.word	0x00000000
-    3170:	646e6573 	.word	0x646e6573
-    3174:	20676e69 	.word	0x20676e69
-    3178:	6f727265 	.word	0x6f727265
-    317c:	00000a72 	.word	0x00000a72
-    3180:	646e6573 	.word	0x646e6573
-    3184:	20676e69 	.word	0x20676e69
-    3188:	736d2034 	.word	0x736d2034
-    318c:	00000a67 	.word	0x00000a67
-    3190:	20636572 	.word	0x20636572
-    3194:	20727265 	.word	0x20727265
-    3198:	000a7525 	.word	0x000a7525
-    319c:	20636572 	.word	0x20636572
-    31a0:	20647075 	.word	0x20647075
-    31a4:	000a7525 	.word	0x000a7525
-    31a8:	20636572 	.word	0x20636572
-    31ac:	2067736d 	.word	0x2067736d
-    31b0:	000a7525 	.word	0x000a7525
+00003168 <__proc_aplx_from_arm>:
+    3168:	e59fc000 	ldr	ip, [pc]	; 3170 <__proc_aplx_from_arm+0x8>
+    316c:	e12fff1c 	bx	ip
+    3170:	00000241 	.word	0x00000241
+    3174:	00000000 	.word	0x00000000
+    3178:	646e6573 	.word	0x646e6573
+    317c:	20676e69 	.word	0x20676e69
+    3180:	6f727265 	.word	0x6f727265
+    3184:	00000a72 	.word	0x00000a72
+    3188:	646e6573 	.word	0x646e6573
+    318c:	20676e69 	.word	0x20676e69
+    3190:	736d2034 	.word	0x736d2034
+    3194:	00000a67 	.word	0x00000a67
+    3198:	20636572 	.word	0x20636572
+    319c:	20727265 	.word	0x20727265
+    31a0:	000a7525 	.word	0x000a7525
+    31a4:	20636572 	.word	0x20636572
+    31a8:	20647075 	.word	0x20647075
+    31ac:	000a7525 	.word	0x000a7525
+    31b0:	20636572 	.word	0x20636572
+    31b4:	2067736d 	.word	0x2067736d
+    31b8:	000a7525 	.word	0x000a7525

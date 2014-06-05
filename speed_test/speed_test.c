@@ -155,12 +155,12 @@ void c_main (void)
 		spin1_set_mc_table_entry(0x6, 	0x6,	 0xFFFFFFFF, CORE(6));
 
 
-		if(coreID == 3 /*|coreID == 1 | coreID == 5*/) { // sending cores
-			spin1_callback_on(TIMER_TICK, update_chip1, 0);
+		if(coreID == 3 | coreID == 1 | coreID == 5) { // sending cores
+			spin1_callback_on(TIMER_TICK, update_chip1, -2);
 
 		}
 		else { // receiving cores
-			spin1_callback_on(MC_PACKET_RECEIVED,eventRec_chip1,0);
+			spin1_callback_on(MC_PACKET_RECEIVED,eventRec_chip1,-1);
 		}
 
 	}
