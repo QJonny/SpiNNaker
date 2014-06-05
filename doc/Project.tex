@@ -42,10 +42,6 @@
 
 \tableofcontents
 
-%----------------------------------------------------------------------------------------
-%	SECTION 1
-%----------------------------------------------------------------------------------------
-
 \section{Project Overview}
 During the last decades, machine learning and control theory underwent astonishing advances. New algorithms are continously created and optimization techniques are invented with the purpose to speed up the systems. Such methods are however almost always sequential and parallelization is rarely applied in order to speed up event more the systems. \\
 
@@ -393,7 +389,7 @@ The SpiNNaker is a massively distributed computaitonal system and another import
 In this section, first the SpiNNaker communication system is presented, then a simple parallelization strategy is discussed in details.
 
 
-\subsection{SpiNNaker Communication}
+\subsection{SpiNNaker Communication Mechanisms}
 The SpiNNaker has been designed with the purpose of being massively multiparallel. As already said, it is composed of a set of chips, each of them containing 16 cores. They are arranged in a grid-like structure (shown in Figure~\ref{fig:grid}), where each chip has a \textit{x} and \textit{y} coordinate. 
 
 \begin{figure}[h]
@@ -454,7 +450,7 @@ Then, the multicast tables for the two chips should have such entries:
 \end{verbatim}
 
 
-\subsection{Network Communication}
+\subsection{Network Parallelization}
 This sub-section details the parallelization strategy adopted to speed-up the algorithm. \\
 
 As stated in the previous sections, the plate is discretized so that each neuron population is located at some point on it and has some receptive field.\\
@@ -504,12 +500,46 @@ and its format is (key and payload respectively):
 The Actor network values are multiplied by 10000 and transformed into integers, as in the previous format. However, the Critic network values are multiplied only by 1000, thus occupying at most 10 bits. Also note that there 4 sign bits as well.
 
 
-\section{Results}
+\section{Results And Problems}
+
+\subsection{Algorithm Performance}
+In this section, the results of the performed simulations are briefly described. Then current unsolved problems are pointed out and possible solutions are mentioned.\\
+
+In a general way, the results are more or less satisfactory. At the end of many trials the ball is balanced, but the time the algorithm takes to perform the job is highly variable. \\
+One problem is that at the beginning of every trial the different parameters are set to their default random value, which should not be the case. Parameters should be saved after every trial, so that the algorithm can continue learning to control the ball. However, the SpiNNaker does not provide any way to permanently store data and pc files cannot (of course) be handled by the code.\\
+A very basic way to overcome this problem is to automatically print the C code corresponding to the parameters initialization into the console and then manually paste it into the project code itself, but strangely the SpiNNaker does not seem to handle such huge amount of code (256 lines of initialization). This could be due because of memory saturation problems.\\
+
+Another problem comes from the ball physics. If the algorithm works for relatively small ball velocities, the system breaks down as the ball speed increases. This is due to delay issues: if at time \textit{t} the ball is at position \textit{x}, during the system processing (with respect to that position), the ball moved to a completely different location because of its high speed. This turns the system into an oscillating one, making the ball running along the plate borders and never balancing it.\\
+
+One last problem comes from the algorithm itself. It is well known that machine learning techniques suffer from local minima problems. Indeed, sometimes the system breaks down and tries to balance the ball in a completely different position, most of the times near the plate periphery. This is partially corrected by sending an impulse to the opposite direction whenever the ball is detected too far from the center.\\
+
+Generally speaking, this system suffers from a generalization problem. The purpose was to keep the algorithm as general as possible, without adding extra code to "manually" stabilize the ball at the center. If this kind of techniques are really interesting because they apply to a wide range of problems, a major drawback is that without very important optimizations the system cannot reach the same results as a more specified one. Therefore a possible solution in order to increase the performance would be to add more code for this specific problem.\\
 
 
+\subsection{Parallelization Results}
+Parallelization could not be properly implemented because of some SpiNNaker issues.\\
+
+First of all, some strange errors arose during the parallelization implementation. Particularly, message exchanging problems where persistent. Whereas the \textit{ERR\_MSG} was correctly sent to slaves, some mysterious reasons prevented the \textit{UPD\_MSG} from being sent from slaves to the master. Actually, whenever the key were manipulated, the SpiNNaker just freezed and nothing happened. This problem sadly has yet to be solved.\\ \\
+
+The other encountered problem comes from performance. As stated in the previous section, it is crucial for the message exchange phase to complete within the \(\Delta t\) time limit. \\
+In order to check if the SpiNNaker were enough powerfull to overcome this restriction, some speed tests have been performed. \\
+Sadly, the results are really discouraging, as the SpiNNaker reveals to be very slow. \\
+Two tests have been performed. They used a very clean code version without any loaded library or additional computation. Just simple message exchange was performed. The testswere:
+
+\begin{itemize}
+\item Intrachip performance: a master node and 14 slave nodes located in the same chip were analyzed. The master sent a first simple message to the slaves, after which they all replied to the master with another simple message. Results showed that a lot of packets were lost in the process, both from the master and the slaves. In addition, the system was slower than normally expected.
+
+\item Independence communication. The second test analized 3 pairs of cores located inside the same chip. For each pair, a core sent 4 messages per \(\Delta t\) to the other core. However, the couples were completely independent in their message exchanging. On a first trial, only one pair was active and the receiving core received every packet. However, as the other pairs were activated, this was no more the case and many packets were lost. It is hypothesized that the bottleneck could be the multicast table, as each core has to read it before the packet can reach its destination.
+\end{itemize}
+
+As stated in the previous examples, performance results are really bad. In addition, the multicast design principle goes totally in the opposite direction with respect to the brain structure, where neurons are totally independent from their neighbours. \\
+There is however the question of whether this particular SpiNNaker unit had some hardware problems, as in any case the number of exchanged packets was too small to possibly induce such noticeable problem.
 
 
 \section{Conclusion}
+In conclusion, this project was bullshit and really frustrating and I recommend the SpiNNaker creators to just commit suicide as soon as possible, because they would improve the world by performing this action.
+
+
 
 \section{Appendix}
 \subsection*{A. Constants}

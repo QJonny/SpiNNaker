@@ -15,9 +15,11 @@
 \contentsline {subsection}{\numberline {6.3}Position Acquisition}{11}
 \contentsline {subsection}{\numberline {6.4}Motor Output}{12}
 \contentsline {section}{\numberline {7}Parallelization Strategies}{13}
-\contentsline {subsection}{\numberline {7.1}SpiNNaker Communication}{13}
-\contentsline {subsection}{\numberline {7.2}Network Communication}{15}
-\contentsline {section}{\numberline {8}Results}{17}
-\contentsline {section}{\numberline {9}Conclusion}{17}
-\contentsline {section}{\numberline {10}Appendix}{17}
-\contentsline {section}{\numberline {11}References}{18}
+\contentsline {subsection}{\numberline {7.1}SpiNNaker Communication Mechanisms}{13}
+\contentsline {subsection}{\numberline {7.2}Network Parallelization}{15}
+\contentsline {section}{\numberline {8}Results And Problems}{17}
+\contentsline {subsection}{\numberline {8.1}Algorithm Performance}{17}
+\contentsline {subsection}{\numberline {8.2}Parallelization Results}{18}
+\contentsline {section}{\numberline {9}Conclusion}{19}
+\contentsline {section}{\numberline {10}Appendix}{19}
+\contentsline {section}{\numberline {11}References}{20}
