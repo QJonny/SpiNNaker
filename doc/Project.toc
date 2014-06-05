@@ -1,0 +1,23 @@
+\contentsline {section}{\numberline {1}Project Overview}{2}
+\contentsline {section}{\numberline {2}Control System Theory}{3}
+\contentsline {section}{\numberline {3}Parameters Updating}{4}
+\contentsline {subsection}{\numberline {3.1}Critic System Updating}{4}
+\contentsline {subsection}{\numberline {3.2}Actor System Updating}{4}
+\contentsline {section}{\numberline {4}Neural Networks Structure}{5}
+\contentsline {subsection}{\numberline {4.1}Critic Neural Network Structure}{5}
+\contentsline {subsection}{\numberline {4.2}Actor Neural Network Structure}{6}
+\contentsline {section}{\numberline {5}Mean-Field Populations}{6}
+\contentsline {subsection}{\numberline {5.1}Basic Notions}{6}
+\contentsline {subsection}{\numberline {5.2}Applied MFM}{8}
+\contentsline {section}{\numberline {6}System Implementation}{8}
+\contentsline {subsection}{\numberline {6.1}SpiNNaker Architecture}{9}
+\contentsline {subsection}{\numberline {6.2}Parameters Initialization}{10}
+\contentsline {subsection}{\numberline {6.3}Position Acquisition}{11}
+\contentsline {subsection}{\numberline {6.4}Motor Output}{12}
+\contentsline {section}{\numberline {7}Parallelization Strategies}{13}
+\contentsline {subsection}{\numberline {7.1}SpiNNaker Communication}{13}
+\contentsline {subsection}{\numberline {7.2}Network Communication}{15}
+\contentsline {section}{\numberline {8}Results}{15}
+\contentsline {section}{\numberline {9}Conclusion}{15}
+\contentsline {section}{\numberline {10}Appendix}{15}
+\contentsline {section}{\numberline {11}References}{17}
