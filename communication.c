@@ -28,7 +28,6 @@ void stopDevices() {
 
 
 void sendMotorCommand(uint motor_x, uint motor_y) {
-	//io_printf(IO_STD,"x %d, y %d\n", motor_x, motor_y);
 	spin1_send_mc_packet(MOTORS_KEY, motor_y | (motor_x << 16 ), 1);
 }
 

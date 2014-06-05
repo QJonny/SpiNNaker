@@ -42,7 +42,7 @@
 #define GAMMA 0.01
 #define LAMBDA 1.0//(1.0 - DELTA_TIME/KAPPA) / (1.0 - DELTA_TIME/TAU)
 
-#define LEARNING_RATE_V 0.5
+#define LEARNING_RATE_V 0.6
 // end of Critic network definitions
 
 
@@ -76,7 +76,7 @@ float R_y();
 void updateError(int x_pos, int y_pos, uint sim_time);
 
 
-void init_network(uint chipID, uint coreID, uint noise_seed);
+void init_network(uint noise_seed);
 
 
 // mfm

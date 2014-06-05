@@ -431,7 +431,7 @@ void init_params_() {
 
 	// should comment the previous loop and decomment this line for loading the parameters
 	// Note that the SpiNNaker does not seem to accept a large function as the load_ one.
-	//load_();
+	// load_();
 
 	for(i = 0; i < 4; i++) {
 		pos_buffer[i] = 1.0;
@@ -664,6 +664,8 @@ int move(uint sim_time) {
 		return STATE_BALANCED; // ball balanced
 	}
 	else if(sim_time % RESET_STEP == 0) {
+		// send an impulse from time to time
+		// if the ball is stucked on a place
 		if(v_norm(pos_) > 0.7){
 			sendNormMotorCommand(pos_.x, pos_.y);
 		}
@@ -710,6 +712,9 @@ vector2d noise(){
 	float R = sqrt(-2.0* (-0.693147));
 	float theta = 2.0*PI_*U2;
 
+	// multiplication by 0.5 in order to rescale the noise, so that
+	// the following cut into the range [-1;1] does not eliminate
+	// too much variance
 	vector2d r = v_mul(0.5, vector(R*cos(theta), R*sin(theta)));
 
 	r.x = range(r.x, -1.0, 1.0);

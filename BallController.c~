@@ -35,6 +35,10 @@ void compute_pos(int x_cur, int y_cur, int sim_time)
 {
 	if((pos_computed == 0 || norm(x_pos - x_cur, y_pos - y_cur) < 100)) {
 
+		// this is a very efficient way to average 
+		// over 16 position samples without any sum
+		// or division
+
 		total_sum_x = total_sum_x - x_buffer[curr_index] + x_cur;
 		x_buffer[curr_index] = x_cur;
 		total_sum_y = total_sum_y - y_buffer[curr_index] + y_cur;
@@ -112,7 +116,7 @@ void c_main (void)
 
 
 	// networks init
-	init_network(chipID, coreID, 0);
+	init_network(0);
 
 	
 	// events setting

@@ -23,7 +23,7 @@
 #define MOTOR_DELTA ((MOTOR_MAX - MOTOR_MIN) / 2)
 
 #define MOTOR_X_CENTER	2150
-#define MOTOR_Y_CENTER	2000//1970
+#define MOTOR_Y_CENTER	2000
 
 
 
