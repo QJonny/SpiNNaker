@@ -5,6 +5,9 @@
 #include "common.h"
 #include "communication.h"
 
+
+#define CORE_NB(chipY, chipX, coreID) (32*chipY + 16*chipX + (coreID - 1))
+
 // ball parameters definitions
 #define BALL_POS_Y_MAX 115
 #define BALL_POS_Y_MIN 5
@@ -44,7 +47,9 @@
 
 
 // MFM definitions
-#define V_DECAY 0.5
+#define TAU_M 0.5
+#define BETA 5.0
+#define ALPHA 0.8
 #define N_MFM 64 // number of available populations
 // end of MFM definitions
 
@@ -64,33 +69,40 @@
 
 
 // reward
-float r_pos();
-float R(vector2d speed);
+float r_pos_x();
+float r_pos_y();
+float R_x();
+float R_y();
 void updateError(int x_pos, int y_pos, uint sim_time);
 
 
-void init_network(uint chipID, uint coreID, uint noise_seed);
+void init_network(uint noise_seed);
 
 
 // mfm
-void mfm_(); // unparallelized, used for mean field model
-float phi_MFM(int index);
+void mfm_();
+float phi_MFM_x(int index);
+float phi_MFM_y(int index);
 
+
+// parameters handling
 void save_();
 void load_();
 
 
 
 // critic network
-float V(); // returns the critic network value
+float V_x(); // returns the critic network value along x
+float V_y(); // returns the critic network value along y
 void update_V();
 
 
 // actor network
-int move(uint sim_time); // perform the next movement
+int move(uint sim_time); // performs the next movement
 void update_A();
 
-float sigma();
+float sigma_x();
+float sigma_y();
 vector2d noise();
 
 

@@ -35,6 +35,10 @@ void compute_pos(int x_cur, int y_cur, int sim_time)
 {
 	if((pos_computed == 0 || norm(x_pos - x_cur, y_pos - y_cur) < 100)) {
 
+		// this is a very efficient way to average 
+		// over 16 position samples without any sum
+		// or division
+
 		total_sum_x = total_sum_x - x_buffer[curr_index] + x_cur;
 		x_buffer[curr_index] = x_cur;
 		total_sum_y = total_sum_y - y_buffer[curr_index] + y_cur;
@@ -101,24 +105,18 @@ void c_main (void)
 	coreID = spin1_get_core_id();
 	chipID = spin1_get_chip_id();
 
-	//spin1_application_core_map(NUMBER_OF_XCHIPS, NUMBER_OF_YCHIPS, core_map);
-
-	//io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
+	io_printf(IO_STD,"Starting balancing...\n");
 
 	spin1_set_timer_tick(TICK_TIME);
 	// end of simulation initialization	
 	
 
-	//if(chipID == 0 && coreID == 1) { // master core
-		initIO();
-		startDevices();
-	//}
-
-	// end of events setting
+	initIO();
+	startDevices();
 
 
 	// networks init
-	init_network(chipID, coreID, 0);
+	init_network(0);
 
 	
 	// events setting

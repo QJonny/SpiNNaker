@@ -1,21 +1,18 @@
 # build example x.c with:   make EXAMPLE=x
 
-EXAMPLE=MFM
+EXAMPLE=speed_test
 THUMB=no
 
 
-LIB_DIR = ../../src
+LIB_DIR = ../../../src
 
-INC_DIR = ../../src
-INC_MUSL = ./musl-1.0.0/include
+INC_DIR = ../../../src
 
 
-LIBGCC = ../../../../arm-none-linux-gnueabi/lib/gcc/arm-none-linux-gnueabi/4.8.1/libgcc.a
 LIBSPIN = $(LIB_DIR)/spin1_api_gnulib.o
-MUSL_LIBC = ./musl-1.0.0/lib/libc.a
 
 
-FILES = $(EXAMPLE).c network.c communication.c spin1_math.c hacks.c
+FILES = $(EXAMPLE).c
 
 
 
@@ -26,8 +23,8 @@ OD := arm-none-linux-gnueabi-objdump
 RM := /bin/rm -f
 CAT := /bin/cat
 
-CCFLAGS := -O1 -mthumb-interwork -fno-use-linker-plugin -march=armv5te -std=gnu99 -DDEBUG -I $(INC_MUSL) -I $(INC_DIR)
-LDFLAGS := -T example.lnk -nostartfiles $(LIBSPIN) $(MUSL_LIBC) $(LIBGCC)
+CCFLAGS := -O1 -mthumb-interwork -fno-use-linker-plugin -march=armv5te -std=gnu99 -DDEBUG -I $(INC_DIR)
+LDFLAGS := -T example.lnk -nostdlib -nostartfiles $(LIBSPIN) 
 
 
 
