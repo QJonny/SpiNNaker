@@ -101,24 +101,18 @@ void c_main (void)
 	coreID = spin1_get_core_id();
 	chipID = spin1_get_chip_id();
 
-	//spin1_application_core_map(NUMBER_OF_XCHIPS, NUMBER_OF_YCHIPS, core_map);
-
-	io_printf(IO_STD,"CoreID is %u, ChipID is %u\n",coreID, chipID);
+	io_printf(IO_STD,"Starting balancing...\n");
 
 	spin1_set_timer_tick(TICK_TIME);
 	// end of simulation initialization	
 	
 
-	//if(chipID == 0 && coreID == 1) { // master core
-		initIO();
-		startDevices();
-	//}
-
-	// end of events setting
+	initIO();
+	startDevices();
 
 
 	// networks init
-	init_network(chipID, coreID, 0);
+	init_network(0);
 
 	
 	// events setting

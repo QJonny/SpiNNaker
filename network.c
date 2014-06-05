@@ -14,7 +14,6 @@ float sp_y_term = 0.0;
 
 vector2d center[N_MFM];
 
-// TODO: has to change when parallelized
 float e_x_array[N_MFM] = {0.0};
 float e_y_array[N_MFM] = {0.0};
 float w_V_x_array[N_MFM] = {0.0};
@@ -172,7 +171,7 @@ w_V_y_array[60] = 354.0/1000.0;
 w_V_y_array[61] = 601.0/1000.0;
 w_V_y_array[62] = 663.0/1000.0;
 w_V_y_array[63] = 652.0/1000.0;
-/*w_A_theta_array[0] = -204.0/1000.0;
+w_A_theta_array[0] = -204.0/1000.0;
 w_A_theta_array[1] = -503.0/1000.0;
 w_A_theta_array[2] = -425.0/1000.0;
 w_A_theta_array[3] = -140.0/1000.0;
@@ -330,10 +329,8 @@ void compute_speed(uint sim_time)
 		speed_.x = (pos_.x - old_pos_.x) * INV_DELTA_TIME * INV_SPEED_AVERAGER_STEP * SPEED_RESIZE_FACTOR;
 		speed_.y = (pos_.y - old_pos_.y) * INV_DELTA_TIME * INV_SPEED_AVERAGER_STEP * SPEED_RESIZE_FACTOR;
 
-		sp_x_term =  f_abs(speed_.x);  //(2.0 / PI_) * //atan(fabs(speed_.x));
-		sp_y_term =  f_abs(speed_.y);    //(2.0 / PI_) * //atan(fabs(speed_.y));
-
-		//io_printf(IO_STD,"x %d, tan %d\n", (int)(speed_.x*1000), (int)(atan(f_abs(speed_.x))*1000));
+		sp_x_term =  f_abs(speed_.x);
+		sp_y_term =  f_abs(speed_.y);
 
 		old_pos_.x = pos_.x;
 		old_pos_.y = pos_.y;
@@ -414,10 +411,8 @@ void init_MFM(uint chipID, uint coreID){
 	float x = r*cos(theta);
 	float y = r*sin(theta);
 
-
-	// TODO: has to change when parallelized
-	center[32*chipY + 16*chipX + coreID].x = x;
-	center[32*chipY + 16*chipX + coreID].y = y;
+	center[CORE_NB(chipY, chipX, coreID)].x = x;
+	center[CORE_NB(chipY, chipX, coreID)].y = y;
 }
 
 
@@ -426,15 +421,17 @@ void init_params_() {
 	int i = 0;
 
 	// uniform number in range [-0.1, 0.1]
-	/*for(i = 0; i < N_MFM; i++) {
+	for(i = 0; i < N_MFM; i++) {
 		w_V_x_array[i] = 	(((float)rand() / RAND_MAX) / 5.0) - 0.1; 
 		w_V_y_array[i] = 	(((float)rand() / RAND_MAX) / 5.0) - 0.1; 
 
 		w_A_theta_array[i] = (((float)rand() / RAND_MAX) / 5.0) - 0.1;
 		w_A_psi_array[i] = (((float)rand() / RAND_MAX) / 5.0) - 0.1;
-	}*/
+	}
 
-	load_();
+	// should comment the previous loop and decomment this line for loading the parameters
+	// Note that the SpiNNaker does not seem to accept a large function as the load_ one.
+	//load_();
 
 	for(i = 0; i < 4; i++) {
 		pos_buffer[i] = 1.0;
@@ -444,7 +441,7 @@ void init_params_() {
 
 
 // compute center position for each neuron (outer, has to change when parallelized)
-void init_network(uint chipID, uint coreID, uint noise_seed){
+void init_network(uint noise_seed){
 	pos_ = vector(-1.0, 0.0);
 	old_pos_ = vector(-1.0, 0.0);
 	speed_ = vector(0.0, 0.0);
@@ -452,8 +449,10 @@ void init_network(uint chipID, uint coreID, uint noise_seed){
 
 	srand(noise_seed);
 
-	coreID = 0;
-	int i = 0;
+	// we simulate a parallelization strategy in which every core
+	// has a population (4 chips with 16 cores per chip)
+	uint coreID = 0;
+	uint chipID = 0;
 	uint chipsID[4] = {0, 1, 256, 257}; // 0,0  0,1  1,0  1,1
 	uint chipIndex = 0;
 	
@@ -508,15 +507,13 @@ float IF(float input){
 	
 	float output = 0.0;
 	
-	float thr1 = 0.8;
-	float slope = 5.0;
 	float thr2 = 1.0;
 	
-	if(input < thr1){
+	if(input < ALPHA){
 		output = 0.0;
 	}
 	else{
-		output = slope * (input - thr1);
+		output = BETA * (input - ALPHA);
 	}
 	
 	if(output > thr2){
@@ -537,14 +534,14 @@ void mfm_(){
 
 		float Iext = (2.0 - dist_x) / 2.0;
 
-		float dv = ( -F_x[index] + IF( Iext ) ) * V_DECAY ;
+		float dv = ( -F_x[index] + IF( Iext ) ) * TAU_M;
 
 		F_x[index] += dv;
 
 
 		Iext = (2.0 - dist_y) / 2.0;
 
-		dv = ( -F_y[index] + IF( Iext ) ) * V_DECAY ;
+		dv = ( -F_y[index] + IF( Iext ) ) * TAU_M;
 
 		F_y[index] += dv;
 	}
@@ -582,9 +579,8 @@ void updateError(int x_pos, int y_pos, uint sim_time) {
 
 	old_V_y = curr_V;
 
-	// TODO: (when parallelized) spread new error to every node
 
-	//io_printf(IO_STD,"v %d, error %d\n", (int)(curr_V*1000), (int)(error_y*1000));
+	//io_printf(IO_STD,"error x %d, error y %d\n", (int)(error_x*1000), (int)(error_y*1000));
 }
 
 
@@ -599,7 +595,6 @@ float V_x() {
 		v += w_V_x_array[i] * phi_MFM_x(i);
 	}
 
-	// TODO: (when parallelized) replacer multiplication by received values
 	return v/ N_MFM;
 }
 
@@ -613,14 +608,13 @@ float V_y() {
 		v += w_V_y_array[i] * phi_MFM_y(i);
 	}
 
-	// TODO: (when parallelized) replacer multiplication by received values
 	return v/ N_MFM;
 }
 
 
 
 // Critic network updating
-void update_V() { // TODO: has to change when it will be parallelized
+void update_V() {
 	int i = 0;
 	
 	for(i = 0; i < N_MFM; i++) {
@@ -630,8 +624,6 @@ void update_V() { // TODO: has to change when it will be parallelized
 		e_y_array[i] = LAMBDA*GAMMA*e_y_array[i] + phi_MFM_y(i);
 		w_V_y_array[i] += LEARNING_RATE_V*error_y*e_y_array[i];
 	}
-
-	// TODO: (when parallelized) remove loop and send new values (w_v * phi_V) to master node
 }
 
 
@@ -654,17 +646,12 @@ int move(uint sim_time) {
 
 	theta /= N_MFM;
 	psi /= N_MFM;
-	//float coef = 1.0 / N_MFM;//0.75;
-
 
 	// range: [-1;1]	
 	theta = theta + sigma_x() * n.x;
 	psi = psi + sigma_y() * n.y;
 
 
-
-
-	// TODO: (when parallelized) replacer multiplication by received values 
 	
 	//io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
 
@@ -672,7 +659,7 @@ int move(uint sim_time) {
 	theta = range(theta, -1.0, 1.0);
 	psi = range(psi, -1.0, 1.0);
 
-	/*if(sim_time > 300 && avg_pos < 0.2 && avg_speed < 0.05) {
+	if(sim_time > 300 && avg_pos < 0.2 && avg_speed < 0.05) {
 		sendNormMotorCommand(0.0, 0.0);
 		return STATE_BALANCED; // ball balanced
 	}
@@ -681,9 +668,9 @@ int move(uint sim_time) {
 			sendNormMotorCommand(pos_.x, pos_.y);
 		}
 	}
-	else {*/	
+	else {	
 		sendNormMotorCommand(theta, psi);
-	//}
+	}
 
 
 
@@ -691,7 +678,7 @@ int move(uint sim_time) {
 }
 
 
-void update_A() { // TODO: has to change when it will be parallelized
+void update_A() {
 	int i = 0;
 	n = noise();	
 
@@ -699,8 +686,6 @@ void update_A() { // TODO: has to change when it will be parallelized
 		w_A_theta_array[i] -= LEARNING_RATE_A*error_x*n.x*phi_MFM_x(i);
 		w_A_psi_array[i] -= LEARNING_RATE_A*error_y*n.y*phi_MFM_y(i);
 	}
-
-	// TODO: (when parallelized) remove loop and send new values (w_a * phi_A) to master node
 }
 
 
