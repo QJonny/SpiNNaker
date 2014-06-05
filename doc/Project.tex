@@ -17,6 +17,9 @@
 
 
 \usepackage{graphicx} % Required for the inclusion of images
+\usepackage{multicol}
+
+
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
 
@@ -447,13 +450,58 @@ Then, the multicast tables for the two chips should have such entries:
 								
 // table on chip 1,1
 [ 0xB0000000 - 0xF0000000 - (1 << (3 + 6)) ]
-                              // core
+                                   // core
 \end{verbatim}
 
 
 \subsection{Network Communication}
+This sub-section details the parallelization strategy adopted to speed-up the algorithm. \\
 
+As stated in the previous sections, the plate is discretized so that each neuron population is located at some point on it and has some receptive field.\\
+A good approach toward the parallelization is to place every population on a different core. In addition, a master core would gather all the nodes information and send commands to the motors. Using this strategy, we mimic at 100\% the brain structure, because we would have a population on each core communicating with adjacent populations. The network is composed of a master core located at \textit{(core 1; chip 0,0)}, and 59 slave nodes. Note that on every chip we can actually only use 15 cores and we already use 1 for the master. However, the populations of the 5 missing cores are situated near the plate center, where we have a high population density. Therefore we do not loose much sensitivity on that location.\\
+For every algorithm iteration, the protocol for information exchanging  is the following:
 
+\begin{itemize}
+\item Master node computes the \textit{error} and the new motor commands.
+\item Master node sends new ball position and \textit{error} to all slaves.
+\item Slave nodes perform weight updating.
+\item Slave nodes send new weights (actually weight*\(\phi(x)\)) to master node.
+\end{itemize}
+
+A crucial point is that in order for this stategy to work perfectly, the entire message exchanging phase should take less time than \(\Delta t \), otherwise inconsistencies are introduced. \\
+
+Therefore, optimization is very important in this situation. Indeed, nodes should never send more than one message per iteration, otherwise too much time is spent. The problem is that when using multicast messages, at most only 64 bits of data are available (key + payload). But the master node needs to send 2 floating error values (x and y) and the ball position. Even worse, each slave has to send its own identifier and 4 different floating weights! Even if integer values can be highly optimized, how should one handle floating numbers ?\\
+There is however a way to send all this information using only one message on each side. The system takes advantage of the fact that every floating number (error and weights) lies in the range [-1;1]. It is possible to multiply these numbers by a certain value and convert them to integers, so that they can be well packed. During the conversion we loose only a very small fraction of the floating number, therefore not introducing important errors.\\
+
+The two types of messages are the error (\textit{ERROR\_MSG}) and the updating (\textit{UPD\_MSG}).\\
+
+The error is defined by:
+\begin{verbatim}
+#define ERROR_MSG (uint)(0xA0000000) // mask is 0xF0000000
+\end{verbatim}
+and its format is (key and payload respectively):
+\[
+[ A (4) - 0 (10) - sign (2) - x (8) - y (8)] 
+\]
+
+\[
+[ error_x (16) - error_y (16) ]
+\]
+Two points are worth noting: the first is that the error is multiplied by 10000 and then transformed into an integer, therefore occupying at most 16 bits. The other point is that in order to deal with negative values, two sign bits are introducted, one for each error.\\
+
+The update message is defined by:
+\begin{verbatim}
+#define UPD_MSG (uint)(0x40000000) // mask is 0xC0000000
+\end{verbatim}
+and its format is (key and payload respectively):
+\[
+[ 4 (2) - sign (4) - index (6) - v_x (10) - v_y (10)]
+\]
+
+\[
+[\theta (16) - \psi (16)]
+\]
+The Actor network values are multiplied by 10000 and transformed into integers, as in the previous format. However, the Critic network values are multiplied only by 1000, thus occupying at most 10 bits. Also note that there 4 sign bits as well.
 
 
 \section{Results}
@@ -463,6 +511,8 @@ Then, the multicast tables for the two chips should have such entries:
 \section{Appendix}
 \subsection*{A. Constants}
 The constant values used in the simulation are provided in this appendix.
+
+\begin{multicols}{2}
 \[ 
 \Delta t = 0.1 sec
 \]
@@ -519,6 +569,7 @@ k = 0.5
 \[ 
 \alpha = 0.8
 \]
+\end{multicols}
 
 \subsection*{B. SpiNNaker API Functions}
 In this appendix, the most important API functions are listed.

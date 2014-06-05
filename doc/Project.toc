@@ -17,7 +17,7 @@
 \contentsline {section}{\numberline {7}Parallelization Strategies}{13}
 \contentsline {subsection}{\numberline {7.1}SpiNNaker Communication}{13}
 \contentsline {subsection}{\numberline {7.2}Network Communication}{15}
-\contentsline {section}{\numberline {8}Results}{15}
-\contentsline {section}{\numberline {9}Conclusion}{15}
-\contentsline {section}{\numberline {10}Appendix}{15}
-\contentsline {section}{\numberline {11}References}{17}
+\contentsline {section}{\numberline {8}Results}{17}
+\contentsline {section}{\numberline {9}Conclusion}{17}
+\contentsline {section}{\numberline {10}Appendix}{17}
+\contentsline {section}{\numberline {11}References}{18}
