@@ -538,12 +538,15 @@ There is however the question of whether this particular SpiNNaker unit had some
 \section{Conclusion}
 The ball balancer system works quite decently. Even if not always, it can balance the ball after a certain amount of time, but gets stucked if the ball reaches a certain speed threshold. This is however not so common, due to the fact that the plate angles are never too large, especially at the simulation beginning, where all parameters have random values close to 0.\\
 
-Sadly the parallelization could not be implemented due to performance problems, but this could have been an hardware defect from the SpiNNaker unit. It would however be interesting to investigate the parallel version on another hardware unit, as this approach should theoretically improve the performance.\\
-In addition, other optimization could be performed. 
+Sadly the parallelization could not be fully implemented mainly due to performance problems, but this could have been an hardware defect from the SpiNNaker unit. It would however be interesting to investigate the parallel version on another hardware unit, as this approach should theoretically improve the performance.\\
+In addition, other optimizations could be performed, especially during the slave updates sending. Indeed, the master could be a potential bottleneck of the system because it has to receive 64 updates (without counting all the camera events). A possible solution is to build relay populations (one for each chip), that gather information from their chip nodes, sum it and send to the master.\\ \\
 
 
-Globally, this was an enriching project.\\
+Globally, this was an enriching project. It allowed me to have an understanding of modern reinforcement learning techniques and how to apply them on a real project. It also showed the limitations of such techniques. \\
+The only bad point came from the SpiNNaker unit, which is very difficult to develop on, due both to the almost inexistent available debugging tools and the strange encountered errors as the code size grew up (some of which being very unlogical).\\ \\
 
+
+In conclusion, the system is not perfect and has still to be improved in order to attain the same performance as a more specialized concurrent.
 
 
 \section{Appendix}
@@ -661,6 +664,28 @@ void spin1_start();
 \end{verbatim}
 
 \subsection*{C. How To Use}
+Both the sequential and parallel versions of the application are available, located in the respective folders.\\ \\
+
+In order to run one of them, just attach the SpiNNaker to the pc via an Ethernet cable and run the \textbf{tubotron} (visualization tool) via the following command (note that we assume the command line is located into the SpiNNaker main folder):
+\begin{verbatim}
+cd ./tools
+
+./tubotron -net
+\end{verbatim}
+
+It is sometimes interesting to boot the SpiNNaker before any other operation is applied:
+\begin{verbatim}
+cd ./tools
+
+./boot.sh 192.168.0.11 #the SpiNNaker has this IP address
+\end{verbatim}
+
+Finally, go into one of the version folders and type the following command:
+\begin{verbatim}
+./run
+\end{verbatim}
+It is sometimes useful to run this command 3 times before the code is completely loaded into the hardware device. Note that whereas the sequential version should correctly work, although it compiles the parallel one does not provide any motor output.
+
 
 \section{References}
 \end{document}

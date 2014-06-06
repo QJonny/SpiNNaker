@@ -4,9 +4,9 @@ EXAMPLE=speed_test
 THUMB=no
 
 
-LIB_DIR = ../../../../src
+LIB_DIR = ../../../../src/spin1_api/src
 
-INC_DIR = ../../../../src
+INC_DIR = ../../../../src/spin1_api/src
 
 
 LIBSPIN = $(LIB_DIR)/spin1_api_gnulib.o

@@ -4,15 +4,15 @@ EXAMPLE=MFM
 THUMB=no
 
 
-LIB_DIR = ../../../src
+LIB_DIR = ../../../src/spin1_api/src
 
-INC_DIR = ../../../src
+INC_DIR = ../../../src/spin1_api/src
 INC_MUSL = ../musl-1.0.0/include
 
 
 LIBGCC = ../../../../../arm-none-linux-gnueabi/lib/gcc/arm-none-linux-gnueabi/4.8.1/libgcc.a
 LIBSPIN = $(LIB_DIR)/spin1_api_gnulib.o
-MUSL_LIBC = ./musl-1.0.0/lib/libc.a
+MUSL_LIBC = ../musl-1.0.0/lib/libc.a
 
 
 FILES = $(EXAMPLE).c network.c communication.c spin1_math.c hacks.c
