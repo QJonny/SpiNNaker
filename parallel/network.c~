@@ -166,7 +166,6 @@ void send_err(uint x_pos, uint y_pos) {
 		payload = payload | (int)(error_y*10000.0);
 	}
 
-	//payload = payload | (5000 << 16) | 5000;
 	counter = (counter + 1) % 50;
 	key = key | (counter << 20);
 
@@ -309,7 +308,7 @@ void rec_upd(uint key, uint payload) {
 
 	// updating
 	V_x_array[index] = v_x / 1000.0;
-	V_y_array[index] = v_y / 1000.0;
+	//V_y_array[index] = v_y / 1000.0;
 	A_theta_array[index] = theta / 10000.0;
 	A_psi_array[index] = psi / 10000.0;
 }
@@ -537,12 +536,12 @@ int move(uint sim_time) {
 	float psi = 0.0;
 
 	n = noise();
-/*
+
 	for(i = 0; i < N_MFM; i++) {
 		theta += A_theta_array[i];
 		psi += A_psi_array[i];
 	}
-*/
+
 	theta /= N_MFM;
 	psi /= N_MFM;
 
@@ -551,7 +550,7 @@ int move(uint sim_time) {
 	psi += sigma_y() * n.y;
 
 
-	//io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
+	//io_printf(IO_STD,"avg %d, sp %d\n", (int)(avg_pos*1000), (int)(avg_speed*1000));
 
 	theta = range(theta, -1.0, 1.0);
 	psi = range(psi, -1.0, 1.0);
