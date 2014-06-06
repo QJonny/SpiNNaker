@@ -658,7 +658,7 @@ int move(uint sim_time) {
 	theta = range(theta, -1.0, 1.0);
 	psi = range(psi, -1.0, 1.0);
 
-	if(sim_time > 300 && avg_pos < 0.15 && avg_speed < 0.03) {
+	if(sim_time > 300 && avg_pos < 0.15 && avg_speed < 0.05) {
 		sendNormMotorCommand(0.0, 0.0);
 		return STATE_BALANCED; // ball balanced
 	}

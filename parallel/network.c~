@@ -508,11 +508,11 @@ float V_y() {
 
 // MAGIC BUG: try to decomment the loop 
 // the result is amazing!!
-/*
+
 	for(i = 0; i < N_MFM; i++) {
 		v += 0.0; //V_y_array[i]; do not decomment this portion
 	}
-*/
+
 	return v/ N_MFM;
 }
 
@@ -558,6 +558,10 @@ int move(uint sim_time) {
 
 	theta = range(theta, -1.0, 1.0);
 	psi = range(psi, -1.0, 1.0);
+
+// the system freezes if I decomment these conditions
+// even if they do not give any problem in the sequential
+// version
 /*
 	if(avg_pos < 0.2 && avg_speed < 0.05) {
 		sendNormMotorCommand(0.0, 0.0);
