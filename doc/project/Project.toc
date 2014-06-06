@@ -2,14 +2,14 @@
 \contentsline {section}{\numberline {2}Control System Theory}{3}
 \contentsline {section}{\numberline {3}Parameters Updating}{4}
 \contentsline {subsection}{\numberline {3.1}Critic System Updating}{4}
-\contentsline {subsection}{\numberline {3.2}Actor System Updating}{4}
+\contentsline {subsection}{\numberline {3.2}Actor System Updating}{5}
 \contentsline {section}{\numberline {4}Neural Networks Structure}{5}
 \contentsline {subsection}{\numberline {4.1}Critic Neural Network Structure}{5}
 \contentsline {subsection}{\numberline {4.2}Actor Neural Network Structure}{6}
-\contentsline {section}{\numberline {5}Mean-Field Populations}{6}
-\contentsline {subsection}{\numberline {5.1}Basic Notions}{6}
+\contentsline {section}{\numberline {5}Mean-Field Populations}{7}
+\contentsline {subsection}{\numberline {5.1}Basic Notions}{7}
 \contentsline {subsection}{\numberline {5.2}Applied MFM}{8}
-\contentsline {section}{\numberline {6}System Implementation}{8}
+\contentsline {section}{\numberline {6}System Implementation}{9}
 \contentsline {subsection}{\numberline {6.1}SpiNNaker Architecture}{9}
 \contentsline {subsection}{\numberline {6.2}Parameters Initialization}{10}
 \contentsline {subsection}{\numberline {6.3}Position Acquisition}{11}
@@ -21,5 +21,5 @@
 \contentsline {subsection}{\numberline {8.1}Algorithm Performance}{17}
 \contentsline {subsection}{\numberline {8.2}Parallelization Results}{18}
 \contentsline {section}{\numberline {9}Conclusion}{19}
-\contentsline {section}{\numberline {10}Appendix}{19}
-\contentsline {section}{\numberline {11}References}{21}
+\contentsline {section}{\numberline {10}Appendix}{20}
+\contentsline {section}{\numberline {11}References}{22}

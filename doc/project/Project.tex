@@ -18,7 +18,7 @@
 
 \usepackage{graphicx} % Required for the inclusion of images
 \usepackage{multicol}
-
+\usepackage[affil-it]{authblk}
 
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
@@ -34,7 +34,8 @@
 
 \author{Jonny \textsc{Quarta}} % Author name
 
-%\date{\today} % Date for the report
+\date{\today} % Date for the report
+\affil{Ecole Polytechnique Federale de Lausanne}
 
 \begin{document}
 
@@ -664,7 +665,7 @@ void spin1_start();
 \end{verbatim}
 
 \subsection*{C. How To Use}
-Both the sequential and parallel versions of the application are available, located in the respective folders.\\ \\
+Both the sequential and parallel versions of the application are available, located in the respective folders.\\
 
 In order to run one of them, just attach the SpiNNaker to the pc via an Ethernet cable and run the \textbf{tubotron} (visualization tool) via the following command (note that we assume the command line is located into the SpiNNaker main folder):
 \begin{verbatim}
@@ -684,8 +685,23 @@ Finally, go into one of the version folders and type the following command:
 \begin{verbatim}
 ./run
 \end{verbatim}
-It is sometimes useful to run this command 3 times before the code is completely loaded into the hardware device. Note that whereas the sequential version should correctly work, although it compiles the parallel one does not provide any motor output.
+It is sometimes useful to run this command 3 times before the code is completely loaded into the hardware device. Note that whereas the sequential version should correctly work, although it compiles the parallel one does not provide any motor output.\\
 
+Finally, the project folder is assumed to be situated at the following path:
+\begin{verbatim}
+[SpiNNaker main folder]/projects/
+\end{verbatim}
+Note that the \textit{projects} folder is normally not present and should be created.\\
+All the compilation links reflect this path location. If the user wants to change the project place, he has to modify all the \textit{gnu.make} and \textit{run} files in order to accomodate for this change.
 
 \section{References}
+\begin{enumerate}
+\item K. Doya; \textit{Reinforcement Learning in Continuous Time and Space}; Massachusetts Institute of Technology (2000)
+\item Y. Jiang; \textit{Application of Neural Network in Control
+of a Ball-Beam Balancing System}; Dublin University (1991)
+\item M. Tsodyks, K. Pawelzik, H. Markram; \textit{Neural Networks with Dynamic Synapses}; Massachusetts Institute of Technology (1998)
+\item C. Ero; \textit{Mean field model and statistical properties of a 6 layered neocortical network}; Ecole Polytechnique Federale de Lausanne (2013)
+
+\end{enumerate}
+
 \end{document}
