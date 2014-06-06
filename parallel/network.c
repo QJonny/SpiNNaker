@@ -16,11 +16,11 @@ uint chipID;
 uint coreID;
 
 // master node
-float V_x_array[N_MFM] = {0.0};
-float V_y_array[N_MFM] = {0.0};
+float v_x_ = 0.0;
+float v_y_ = 0.0;
+float theta_ = 0.0;
+float psi_;
 
-float A_theta_array[N_MFM] = {0.0};
-float A_psi_array[N_MFM] = {0.0};
 
 
 // slave nodes
@@ -154,16 +154,16 @@ void send_err(uint x_pos, uint y_pos) {
 
 	if(error_x < 0.0) {
 		key = key | (1 << 17);
-		payload = payload | ((uint)(-error_x*10000.0) << 16);
+		payload = payload | (((int)(-error_x*10000.0)) << 16);
 	} else {
-		payload = payload | ((uint)(error_x*10000.0) << 16);
+		payload = payload | (((int)(error_x*10000.0)) << 16);
 	}
 
 	if(error_y < 0.0) {
 		key = key | (1 << 16);
-		payload = payload | (uint)(-error_y*10000.0);
+		payload = payload | (int)(-error_y*10000.0);
 	} else {
-		payload = payload | (uint)(error_y*10000.0);
+		payload = payload | (int)(error_y*10000.0);
 	}
 
 	counter = (counter + 1) % 50;
@@ -206,7 +206,7 @@ void rec_err(uint key, uint payload, uint sim_time) {
 
 
 
-void send_upd() {/*
+void send_upd() {
 	int chipX = chipID & 0x000000FF;
 	int chipY = chipID >> 8;
 
@@ -225,66 +225,37 @@ void send_upd() {/*
 	psi = range(psi, -1.0, 1.0);
 
 	// coding
-	uint index = (uint)CORE_NB(chipY, chipX, coreID);*/
-
-/*
-	int iV = (int)(v_x * 10000.0);
-	int iTheta = (int)(theta * 10000.0);
-	int iPsi = (int)(psi * 10000.0);
-
-	// check if negative
-	if (iV < 0) {
-		key += (uint)67108864; //1 << 26
-		iV = -iV;
-	}
-
-	if (iTheta < 0) {
-		key += (uint)33554432; // 1 << 25
-		iTheta = -iTheta;
-	}
-
-	if (iPsi < 0) {
-		key += (uint)16777216; // 1 << 24
-		iPsi = -iPsi;
-	}
-	key += index * 65536; // index << 16
-
-	key += (uint)iV;
-
-	payload = ((uint)iTheta << 16) | (uint)iPsi;
-*/
-	//key = UPD_MSG | (signV << 26) | (signTheta << 25) | (signPsi << 24) | (index << 16) | (uint)iV; // does not work...
+	uint index = (uint)CORE_NB(chipY, chipX, coreID);
 
 
-/*
 
 	if(v_y < 0.0) {
 		key = key | (1 << 29);
-		key = key | ((uint)(-v_y*1000.0) << 10);
+		key = key | (((int)(-v_y*1000.0)) << 10);
 	} else {
-		key = key | ((uint)(v_y*1000.0) << 10);
+		key = key | (((int)(v_y*1000.0)) << 10);
 	}
 
 
 	if(v_x < 0.0) {
 		key = key | (1 << 28);
-		key = key | (uint)(-v_x*1000.0);
+		key = key | (int)(-v_x*1000.0);
 	} else {
-		key = key | (uint)(v_x*1000.0);
+		key = key | (int)(v_x*1000.0);
 	}
 
 	if(theta < 0.0) {
 		key = key | (1 << 27);
-		payload = payload | ((uint)(-theta*10000.0) << 16);
+		payload = payload | ((int)(-theta*10000.0) << 16);
 	} else {
-		payload = payload | ((uint)(theta*10000.0) << 16);
+		payload = payload | ((int)(theta*10000.0) << 16);
 	}
 
 	if(psi < 0.0) {
 		key = key | (1 << 26);
-		payload = payload | (uint)(-psi*10000.0);
+		payload = payload | (int)(-psi*10000.0);
 	} else {
-		payload = payload | (uint)(psi*10000.0);
+		payload = payload | (int)(psi*10000.0);
 	}
 	key = key | (index << 20);
 
@@ -292,23 +263,23 @@ void send_upd() {/*
 
 	// sending
 	spin1_send_mc_packet(key, payload, WITH_PAYLOAD);
-*/
+
 }
 
-void rec_upd(uint key, uint payload) {/*
+void rec_upd(uint key, uint payload) {
 	// decoding
 	int iTheta = (payload >> 16);
 	int iPsi = (payload & 0x0000FFFF);
 
 
-	uint iV_x = key & 0x000003FF;
-	uint iV_y = (key >> 10) & 0x000003FF;
-	uint signV_x = (key >> 28) & 0x00000001;
-	uint signV_y = (key >> 29) & 0x00000001;
-	uint signTheta = (key >> 27) & 0x00000001;
-	uint signPsi = (key >> 26) & 0x00000001;
+	int iV_x = key & 0x000003FF;
+	int iV_y = (key >> 10) & 0x000003FF;
+	int signV_x = (key >> 28) & 0x00000001;
+	int signV_y = (key >> 29) & 0x00000001;
+	int signTheta = (key >> 27) & 0x00000001;
+	int signPsi = (key >> 26) & 0x00000001;
 
-	uint index = (key >> 20) & 0x0000003F;
+	int index = (key >> 20) & 0x0000003F;
 
 
 	float v_x = (float)iV_x;
@@ -333,11 +304,13 @@ void rec_upd(uint key, uint payload) {/*
 		psi = -psi;
 	}
 
+	
+
 	// updating
-	V_x_array[index] = v_x;
-	V_y_array[index] = v_y;
-	A_theta_array[index] = theta;
-	A_psi_array[index] = psi;*/
+	v_x_ += v_x;
+	v_y_ += v_y;
+	theta_ += theta;
+	psi_ += psi;
 }
 
 
@@ -416,7 +389,6 @@ void init_network(uint chipIDs, uint coreIDs){
 
 // saving (printing param code)
 void save_() {
-	// e_array
 	io_printf(IO_STD, "if(coreID==%d && chipID==%d){\n", coreID, chipID);
 	io_printf(IO_STD, "\t w_V_x = %d.0/1000.0;\n", (int)(w_V_x*1000));
 
@@ -493,7 +465,7 @@ void updateError(uint x_pos, uint y_pos, uint sim_time) {
 
 	float r = R_x();
 
-	float curr_V = INV_DELTA_TIME * V_x();
+	float curr_V = INV_DELTA_TIME * v_x_ / N_MFM;
 
 	error_x = r + GAMMA*curr_V - old_V_x;
 	error_x = range(error_x, -1.0, 1.0);
@@ -503,41 +475,18 @@ void updateError(uint x_pos, uint y_pos, uint sim_time) {
 	
 	r = R_y();
 	
-	curr_V = INV_DELTA_TIME * V_y();
+	curr_V = INV_DELTA_TIME * v_y_ / N_MFM;
 
 	error_y = r + GAMMA*curr_V - old_V_y;
 	error_y = range(error_y, -1.0, 1.0);
 
 	old_V_y = curr_V;
+
+	v_x_ = 0.0;
+	v_y_ = 0.0;
 }
 
 
-
-
-// V in [0; 1]
-float V_x() {
-	float v = 0.0;
-	int i = 0;
-
-	for(i = 0; i < N_MFM; i++) {
-		v += V_x_array[i];
-	}
-
-	return v/ N_MFM;
-}
-
-
-// V in [0; 1]
-float V_y() {
-	float v = 0.0;
-	int i = 0;
-
-	for(i = 0; i < N_MFM; i++) {
-		v += V_y_array[i];
-	}
-
-	return v/ N_MFM;
-}
 
 
 // Critic network updating
@@ -559,15 +508,13 @@ void update_V() {
 // Actor neural network
 int move(uint sim_time) {
 	int i = 0;
-	float theta = 0.0;
-	float psi = 0.0;
+	float theta = theta_;
+	float psi = psi_;
+	theta_ = 0.0;
+	psi_ = 0.0;
+
 
 	n = noise();
-
-	for(i = 0; i < N_MFM; i++) {
-		theta += A_theta_array[i];
-		psi += A_psi_array[i];
-	}
 
 	theta /= N_MFM;
 	psi /= N_MFM;
@@ -581,7 +528,7 @@ int move(uint sim_time) {
 
 	theta = range(theta, -1.0, 1.0);
 	psi = range(psi, -1.0, 1.0);
-
+/*
 	if(avg_pos < 0.2 && avg_speed < 0.05) {
 		sendNormMotorCommand(0.0, 0.0);
 		return STATE_BALANCED; // ball balanced
@@ -591,9 +538,9 @@ int move(uint sim_time) {
 			sendNormMotorCommand(pos_.x, pos_.y);
 		}
 	}
-	else {	
+	else {	*/
 		sendNormMotorCommand(theta, psi);
-	}
+//	}
 
 
 	return STATE_UNBALANCED;
