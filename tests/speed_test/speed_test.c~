@@ -53,7 +53,6 @@ void update_chip0(uint sim_time, uint none)
 
 void eventNode_chip0(uint key, uint payload){
 	if((key) == ERROR_MSG) {
-		io_printf(IO_STD, "rec err %u\n", spin1_get_simulation_time());
 		uint key = UPD_MSG;
 		spin1_send_mc_packet(key, 0, WITH_PAYLOAD);
 	}
@@ -63,7 +62,12 @@ void eventNode_chip0(uint key, uint payload){
 
 void eventMaster_chip0(uint key, uint payload){
 	if((key) == UPD_MSG) {
-		io_printf(IO_STD, "rec upd %u\n", spin1_get_simulation_time());
+		nb_packets++;
+
+		if(nb_packets == 15) {
+			io_printf(IO_STD, "15 packets received (sim step %u)\n", spin1_get_simulation_time());
+			nb_packets = 0;
+		}
 	}
 }
 
@@ -75,7 +79,7 @@ void eventMaster_chip0(uint key, uint payload){
 void update_chip1(uint sim_time, uint none)
 {
 	int i = 0;
-	io_printf(IO_STD,"sending 4 msg\n");
+	io_printf(IO_STD,"sending 64 msg\n");
 
 	for(i = 0; i < 64; i++) {
 		spin1_send_mc_packet(coreID + 1, 0, WITH_PAYLOAD);
@@ -88,8 +92,7 @@ void update_chip1(uint sim_time, uint none)
 void eventRec_chip1(uint key, uint payload){
 	nb_packets++;
 	if(nb_packets % 64 == 0) {
-		//io_printf(IO_STD, "rec msg %u\n", spin1_get_simulation_time());
-		io_printf(IO_STD, "64 packets received, %u\n", spin1_get_simulation_time());
+		io_printf(IO_STD, "64 packets received (sim step %u)\n", spin1_get_simulation_time());
 	}
 }
 
@@ -120,10 +123,7 @@ void c_main (void)
 
 	if(chipID == 0) { // 0, 0
 		// in this chip, we test master to nodes, then nodes to master
-		// results: too slow!! nodes miss a lot of packets
-		// master does receive only a small fraction of the responses
-		// and this is only on a single chip with only 15 nodes (the total should be 64)!!!
-		// without camera events!!! WHITHOUT ANY OTHER COMPUTATION!!!!!!
+		// results: performance is good
 
 
 		// from master to nodes
@@ -146,12 +146,7 @@ void c_main (void)
 	}	
 	else if(chipID == 1) { // 0, 1
 		// in this chip, we test parallel message sending (core 1 to 2, core 3 to 4 and core 5 to 6, independently)
-		// results: we can see that internode communication is not independent.
-		// if we decomment the code in the condition, nodes will no more receive
-		// all the incoming messages, which are only 4 per update!!!
-		// this is because there is a bottleneck when reading the mc table.
-		// VERY POOR PARALLELIZATION STRATEGY!! nodes communication should be
-		// completely independent, if the purpose is to mimic the brain structure
+		// results: performance good
 
 
 		spin1_set_mc_table_entry(0x2, 	0x2,	 0xFFFFFFFF, CORE(2));

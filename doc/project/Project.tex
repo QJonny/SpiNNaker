@@ -519,28 +519,30 @@ Generally speaking, this system suffers from a generalization problem. The purpo
 \subsection{Parallelization Results}
 Parallelization could not be properly implemented because of some SpiNNaker issues.\\
 
-First of all, some strange errors arose during the parallelization implementation. Particularly, message exchanging problems where persistent. Whereas the \textit{ERR\_MSG} was correctly sent to slaves, some mysterious reasons prevented the \textit{UPD\_MSG} from being sent from slaves to the master. Actually, whenever the key were manipulated, the SpiNNaker just freezed and nothing happened. This problem sadly has yet to be solved.\\ \\
+First of all, some strange errors arose during the parallelization implementation. Particularly, message exchanging problems were persistent. Whereas the \textit{ERR\_MSG} was correctly sent to slaves, some mysterious reasons prevented the \textit{UPD\_MSG} from being fully correctly sent. In particular, it seems that the system blows up as soon as the \textit{y} component of the Critic network is taken into account.\\ \\
 
 The other encountered problem comes from performance. As stated in the previous section, it is crucial for the message exchange phase to complete within the \(\Delta t\) time limit. \\
 In order to check if the SpiNNaker is enough powerfull to overcome this restriction, some speed tests have been performed. \\
-Sadly, the results are really discouraging, as the SpiNNaker reveals to be very slow. \\
+The results are incouraging, as the SpiNNaker reveals to correctly send the given amount of data. \\
 Two tests have been performed. They used a very clean code version without any loaded library or additional computation. Just simple message exchange was verified. The tests were:
 
 \begin{itemize}
-\item Intrachip performance: a master node and 14 slave nodes located in the same chip were analyzed. The master sent a first simple message to the slaves, after which they all replied to the master with another simple message. Results showed that a lot of packets were lost in the process, both from the master and the slaves. In addition, the system was slower than normally expected.
+\item Intrachip performance: a master node and 14 slave nodes located in the same chip were analyzed. The master sent a first simple message to the slaves, after which they all replied to the master with another simple message. Results showed that no packet were lost and performance was good enough. After that, the number of slaves was increased up to 59. Performance was again satisfactory. 
 
-\item Independence communication. The second test analized 3 pairs of cores located inside the same chip. For each pair, a core sent 4 messages per \(\Delta t\) to the other core. However, the pairs were completely independent in their message exchanging. On a first trial, only one pair was active and the receiving core received every packet. However, as the other pairs were activated, this was no more the case and many packets were lost. It is hypothesized that the bottleneck could be the multicast table, as each core has to read it before the packet can reach its destination.
+\item Independence communication. The second test analized 3 pairs of cores located inside the same chip. For each pair, a core sent 4 messages per \(\Delta t\) to the other core. However, the pairs were completely independent in their message exchanging. On a first trial, only one pair was active and the receiving core received every packet. As the other pairs were activated, performance did not decrease.
 \end{itemize}
 
-As stated in the previous examples, performance results are really bad. In addition, the multicast design principle goes totally in the opposite direction with respect to the brain structure, where neurons are totally independent from their neighbours. \\
-There is however the question of whether this particular SpiNNaker unit had some hardware problems, as in any case the number of exchanged packets was too small to possibly induce such noticeable problems.
+It was very important not to call the \textit{io\_printf} function during the tests, otherwise the system would have slow down too much.\\ \\
+
+The previous examples show a good performance, but tests were performed on few cores and without any other computation. \\
+After parallelization was almost completed, some performance tests on the real application were applied. The results showed that the master node is the system bottleneck, since it has to receive too many event. Indeed, some update messages were lost (never more than 10), but this should not too much destabilize the system.
 
 
 \section{Conclusion}
 The ball balancer system works quite decently. Even if not always, it can balance the ball after a certain amount of time, but gets stucked if the ball reaches a certain speed threshold. This is however not so common, due to the fact that the plate angles are never too large, especially at the simulation beginning, where all parameters have random values close to 0.\\
 
-Sadly the parallelization could not be fully implemented mainly due to performance problems, but this could have been an hardware defect from the SpiNNaker unit. It would however be interesting to investigate the parallel version on another hardware unit, as this approach should theoretically improve the performance.\\
-In addition, other optimizations could be performed, especially during the slave updates sending. Indeed, the master could be a potential bottleneck of the system because it has to receive 64 updates (without counting all the camera events). A possible solution is to build relay populations (one for each chip), that gather information from their chip nodes, sum it and send to the master.\\ \\
+Sadly the parallelization could not be fully implemented mainly due to slight performance problems and some mysterious bugs.\\
+However, in order to increase a little bit the performance, other optimizations could be performed, especially during the updates sending phase. As shown, the master is the bottleneck of the system because it has to receive 59 updates (without counting all the camera events). A possible solution is to build relay populations (one for each chip), that gather information from their chip nodes, sum it and send to the master.\\ \\
 
 
 Globally, this was an enriching project. It allowed me to have an understanding of modern reinforcement learning techniques and how to apply them on a real project. It also showed the limitations of such techniques. \\
