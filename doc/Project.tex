@@ -501,10 +501,9 @@ The Actor network values are multiplied by 10000 and transformed into integers, 
 
 
 \section{Results And Problems}
+In this section, the results of the performed simulations are briefly described. Then current unsolved problems are pointed out and possible solutions are mentioned.
 
 \subsection{Algorithm Performance}
-In this section, the results of the performed simulations are briefly described. Then current unsolved problems are pointed out and possible solutions are mentioned.\\
-
 In a general way, the results are more or less satisfactory. At the end of many trials the ball is balanced, but the time the algorithm takes to perform the job is highly variable. \\
 One problem is that at the beginning of every trial the different parameters are set to their default random value, which should not be the case. Parameters should be saved after every trial, so that the algorithm can continue learning to control the ball. However, the SpiNNaker does not provide any way to permanently store data and pc files cannot (of course) be handled by the code.\\
 A very basic way to overcome this problem is to automatically print the C code corresponding to the parameters initialization into the console and then manually paste it into the project code itself, but strangely the SpiNNaker does not seem to handle such huge amount of code (256 lines of initialization). This could be due because of memory saturation problems.\\
@@ -537,7 +536,13 @@ There is however the question of whether this particular SpiNNaker unit had some
 
 
 \section{Conclusion}
-In conclusion, this project was bullshit and really frustrating and I recommend the SpiNNaker creators to just commit suicide as soon as possible, because they would improve the world by performing this action.
+The ball balancer system works quite decently. Even if not always, it can balance the ball after a certain amount of time, but gets stucked if the ball reaches a certain speed threshold. This is however not so common, due to the fact that the plate angles are never too large, especially at the simulation beginning, where all parameters have random values close to 0.\\
+
+Sadly the parallelization could not be implemented due to performance problems, but this could have been an hardware defect from the SpiNNaker unit. It would however be interesting to investigate the parallel version on another hardware unit, as this approach should theoretically improve the performance.\\
+In addition, other optimization could be performed. 
+
+
+Globally, this was an enriching project.\\
 
 
 
@@ -605,7 +610,7 @@ k = 0.5
 \end{multicols}
 
 \subsection*{B. SpiNNaker API Functions}
-In this appendix, the most important API functions are listed.
+In this appendix, the most important used API functions are listed.
 \begin{verbatim}
 
 /*
@@ -655,6 +660,7 @@ Starts the simulation on the node
 void spin1_start();
 \end{verbatim}
 
+\subsection*{C. How To Use}
 
 \section{References}
 \end{document}

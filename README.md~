@@ -1,0 +1,14 @@
+SpiNNaker
+=========
+
+SpiNNaker Master Semester project
+
+SEQUENTIAL VERSION
+
+This version is working,
+but the algorithm takes a long time
+before it converges.
+
+Note that at the beginning, the plate is
+almost not moved (angles too small),
+but increases as the algorithm converges.
