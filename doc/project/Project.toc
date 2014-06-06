@@ -17,9 +17,10 @@
 \contentsline {section}{\numberline {7}Parallelization Strategies}{13}
 \contentsline {subsection}{\numberline {7.1}SpiNNaker Communication Mechanisms}{13}
 \contentsline {subsection}{\numberline {7.2}Network Parallelization}{15}
-\contentsline {section}{\numberline {8}Results And Problems}{17}
+\contentsline {section}{\numberline {8}Results}{17}
 \contentsline {subsection}{\numberline {8.1}Algorithm Performance}{17}
 \contentsline {subsection}{\numberline {8.2}Parallelization Results}{18}
-\contentsline {section}{\numberline {9}Conclusion}{19}
-\contentsline {section}{\numberline {10}Appendix}{20}
-\contentsline {section}{\numberline {11}References}{22}
+\contentsline {section}{\numberline {9}Problems}{19}
+\contentsline {section}{\numberline {10}Conclusion}{20}
+\contentsline {section}{\numberline {11}Appendix}{21}
+\contentsline {section}{\numberline {12}References}{23}

@@ -508,11 +508,11 @@ float V_y() {
 
 // MAGIC BUG: try to decomment the loop 
 // the result is amazing!!
-
+/*
 	for(i = 0; i < N_MFM; i++) {
 		v += 0.0; //V_y_array[i]; do not decomment this portion
 	}
-
+*/
 	return v/ N_MFM;
 }
 

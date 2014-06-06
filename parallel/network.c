@@ -506,8 +506,9 @@ float V_y() {
 	float v = 0.0;
 	int i = 0;
 
-// MAGIC BUG: try to decomment the loop 
-// the result is amazing!!
+// MAGIC BUG: try to decomment the loop
+// the behaviour should be the same
+// but it's not
 /*
 	for(i = 0; i < N_MFM; i++) {
 		v += 0.0; //V_y_array[i]; do not decomment this portion

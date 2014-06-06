@@ -42,7 +42,9 @@ int avg_index = 0;
 
 
 // loading params
-void load_() {/*
+// Note that the SpiNNaker does not seem to accept a large function such as this
+// it does not load the code
+void load_() {
 w_V_x_array[0] = 477.0/1000.0;
 w_V_x_array[1] = 645.0/1000.0;
 w_V_x_array[2] = 730.0/1000.0;
@@ -298,7 +300,7 @@ w_A_psi_array[59] = -361.0/1000.0;
 w_A_psi_array[60] = 835.0/1000.0;
 w_A_psi_array[61] = 989.0/1000.0;
 w_A_psi_array[62] = 768.0/1000.0;
-w_A_psi_array[63] = 830.0/1000.0;*/
+w_A_psi_array[63] = 830.0/1000.0;
 }
 
 
@@ -430,7 +432,6 @@ void init_params_() {
 	}
 
 	// should comment the previous loop and decomment this line for loading the parameters
-	// Note that the SpiNNaker does not seem to accept a large function as the load_ one.
 	// load_();
 
 	for(i = 0; i < 4; i++) {
@@ -658,7 +659,7 @@ int move(uint sim_time) {
 	theta = range(theta, -1.0, 1.0);
 	psi = range(psi, -1.0, 1.0);
 
-	if(sim_time > 300 && avg_pos < 0.15 && avg_speed < 0.05) {
+	if(sim_time > 300 && avg_pos < 0.15 && avg_speed < 0.03) {
 		sendNormMotorCommand(0.0, 0.0);
 		return STATE_BALANCED; // ball balanced
 	}

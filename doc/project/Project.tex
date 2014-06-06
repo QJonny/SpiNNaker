@@ -501,7 +501,7 @@ and its format is (key and payload respectively):
 The Actor network values are multiplied by 10000 and transformed into integers, as in the previous format. However, the Critic network values are multiplied only by 1000, thus occupying at most 10 bits. Also note that there 4 sign bits as well.
 
 
-\section{Results And Problems}
+\section{Results}
 In this section, the results of the performed simulations are briefly described. Then current unsolved problems are pointed out and possible solutions are mentioned.
 
 \subsection{Algorithm Performance}
@@ -532,10 +532,25 @@ Two tests have been performed. They used a very clean code version without any l
 \item Independence communication. The second test analized 3 pairs of cores located inside the same chip. For each pair, a core sent 4 messages per \(\Delta t\) to the other core. However, the pairs were completely independent in their message exchanging. On a first trial, only one pair was active and the receiving core received every packet. As the other pairs were activated, performance did not decrease.
 \end{itemize}
 
-It was very important not to call the \textit{io\_printf} function during the tests, otherwise the system would have slow down too much.\\ \\
+It was very important not to call the \textit{io\_printf} function during the tests, otherwise the performances were highly decreased.\\ \\
 
 The previous examples show a good performance, but tests were performed on few cores and without any other computation. \\
 After parallelization was almost completed, some performance tests on the real application were applied. The results showed that the master node is the system bottleneck, since it has to receive too many event. Indeed, some update messages were lost (never more than 10), but this should not too much destabilize the system.
+
+
+\section{Problems}
+Most of the encountered problems were related to the SpiNNaker utilization. \\
+It turns out to be actually quite difficult to develop on this piece of hardware because of a certain amount of problems:
+\begin{itemize}
+\item There are almost no available debugging tools. If the SpiNNaker encounters logical errors (segmentation fault, division by 0, etc..), no message is given and the system just freezes. It is therefore very difficult to find the problem location.
+\item The system needs a lot of trials before a code can be loaded. The reasons are unclear. Quite often problems are detected in the provided code (even if it compiled well) and cannot be loaded. It is unclear how these problems are detected (no execution before loading has finished!). It takes a little practice time before one can distinguish when the code is not accepted from when the user needs to try another loading.
+\item The \textit{io\_printf} cannot always be used in order to detect problems (as a debugging tool), because sometimes when called the application behaviour is changed.
+\item As the code size grows up (it is actually just an impression), some very mysterious errors randomly happen. Sometimes changing a completely independent code portion (never executed!) can affect the application behaviour. In addition, sometimes writing two codes which should have the same behaviour lead to very different results (an example is given in the parallel version, more precisely in the \textit{V\_y()} function). These errors could be due to a lower problem, probably located in the hardware or lower level software. 
+\item It is very difficult to link external libraries. For the project needs it could be possible to link the standard C library and use its mathematical functions. But aside from that, very few other functions were callable without making the code not loadable anymore (e.g., sprintf).
+\item The parameters saving phase was not feasable. Files or permanent storage cannot be manipulated by the SpiNNaker.
+\end{itemize}
+
+Generally speaking, it is very difficult to reproduce such strange errors because they rely on that particular situation. Sometimes changing code located elsewhere and having nothing to do with the error can correct it.
 
 
 \section{Conclusion}

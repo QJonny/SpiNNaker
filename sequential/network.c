@@ -42,6 +42,8 @@ int avg_index = 0;
 
 
 // loading params
+// Note that the SpiNNaker does not seem to accept a large function such as this
+// it does not load the code
 void load_() {/*
 w_V_x_array[0] = 477.0/1000.0;
 w_V_x_array[1] = 645.0/1000.0;
@@ -430,7 +432,6 @@ void init_params_() {
 	}
 
 	// should comment the previous loop and decomment this line for loading the parameters
-	// Note that the SpiNNaker does not seem to accept a large function as the load_ one.
 	// load_();
 
 	for(i = 0; i < 4; i++) {
