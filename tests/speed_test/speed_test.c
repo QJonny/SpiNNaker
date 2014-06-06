@@ -36,6 +36,7 @@ uint chipID;
 #define ERROR_MSG (uint)(0x20)
 #define UPD_MSG (uint)(0x30)
 
+uint nb_packets = 0;
 
 // chip 0
 void update_chip0(uint sim_time, uint none)
@@ -52,7 +53,7 @@ void update_chip0(uint sim_time, uint none)
 
 void eventNode_chip0(uint key, uint payload){
 	if((key) == ERROR_MSG) {
-		io_printf(IO_STD, "rec err %u\n", spin1_get_simulation_time());
+		//io_printf(IO_STD, "rec err %u\n", spin1_get_simulation_time());
 		uint key = UPD_MSG;
 		spin1_send_mc_packet(key, 0, WITH_PAYLOAD);
 	}
@@ -62,7 +63,12 @@ void eventNode_chip0(uint key, uint payload){
 
 void eventMaster_chip0(uint key, uint payload){
 	if((key) == UPD_MSG) {
-		io_printf(IO_STD, "rec upd %u\n", spin1_get_simulation_time());
+		nb_packets++;
+
+		if(nb_packets == 15) {
+			io_printf(IO_STD, "rec upd %u\n", spin1_get_simulation_time());
+			nb_packets = 0;
+		}
 	}
 }
 
@@ -76,7 +82,7 @@ void update_chip1(uint sim_time, uint none)
 	int i = 0;
 	io_printf(IO_STD,"sending 4 msg\n");
 
-	for(i = 0; i < 4; i++) {
+	for(i = 0; i < 64; i++) {
 		spin1_send_mc_packet(coreID + 1, 0, WITH_PAYLOAD);
 	}
 }
@@ -84,9 +90,12 @@ void update_chip1(uint sim_time, uint none)
 
 
 
-
 void eventRec_chip1(uint key, uint payload){
-	io_printf(IO_STD, "rec msg %u\n", spin1_get_simulation_time());
+	nb_packets++;
+	if(nb_packets % 64 == 0) {
+		//io_printf(IO_STD, "rec msg %u\n", spin1_get_simulation_time());
+		io_printf(IO_STD, "64 packets received, %u\n", spin1_get_simulation_time());
+	}
 }
 
 

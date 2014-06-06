@@ -206,7 +206,7 @@ void rec_err(uint key, uint payload, uint sim_time) {
 
 
 
-void send_upd() {
+void send_upd() {/*
 	int chipX = chipID & 0x000000FF;
 	int chipY = chipID >> 8;
 
@@ -225,7 +225,7 @@ void send_upd() {
 	psi = range(psi, -1.0, 1.0);
 
 	// coding
-	uint index = (uint)CORE_NB(chipY, chipX, coreID);
+	uint index = (uint)CORE_NB(chipY, chipX, coreID);*/
 
 /*
 	int iV = (int)(v_x * 10000.0);
@@ -256,7 +256,7 @@ void send_upd() {
 	//key = UPD_MSG | (signV << 26) | (signTheta << 25) | (signPsi << 24) | (index << 16) | (uint)iV; // does not work...
 
 
-
+/*
 
 	if(v_y < 0.0) {
 		key = key | (1 << 29);
@@ -292,10 +292,10 @@ void send_upd() {
 
 	// sending
 	spin1_send_mc_packet(key, payload, WITH_PAYLOAD);
-	//io_printf(IO_STD, "sent\n");
+*/
 }
 
-void rec_upd(uint key, uint payload) {
+void rec_upd(uint key, uint payload) {/*
 	// decoding
 	int iTheta = (payload >> 16);
 	int iPsi = (payload & 0x0000FFFF);
@@ -312,7 +312,7 @@ void rec_upd(uint key, uint payload) {
 
 
 	float v_x = (float)iV_x;
-	float v_y = (float)iV-y;
+	float v_y = (float)iV_y;
 	float theta = (float)(iTheta);
 	float psi = (float)(iPsi);
 
@@ -337,7 +337,7 @@ void rec_upd(uint key, uint payload) {
 	V_x_array[index] = v_x;
 	V_y_array[index] = v_y;
 	A_theta_array[index] = theta;
-	A_psi_array[index] = psi;
+	A_psi_array[index] = psi;*/
 }
 
 
@@ -490,6 +490,7 @@ float phi_MFM_y() {
 
 void updateError(uint x_pos, uint y_pos, uint sim_time) {
 	normalizeBallParams(x_pos, y_pos, sim_time);
+
 	float r = R_x();
 
 	float curr_V = INV_DELTA_TIME * V_x();
@@ -508,8 +509,6 @@ void updateError(uint x_pos, uint y_pos, uint sim_time) {
 	error_y = range(error_y, -1.0, 1.0);
 
 	old_V_y = curr_V;
-
-	//io_printf(IO_STD,"updating\n");
 }
 
 
@@ -563,6 +562,8 @@ int move(uint sim_time) {
 	float theta = 0.0;
 	float psi = 0.0;
 
+	n = noise();
+
 	for(i = 0; i < N_MFM; i++) {
 		theta += A_theta_array[i];
 		psi += A_psi_array[i];
@@ -577,7 +578,7 @@ int move(uint sim_time) {
 
 
 	//io_printf(IO_STD,"theta %d, psi %d\n", (int)(theta*1000), (int)(psi*1000));
-
+	//io_printf(IO_STD,"avg pos %d, avg speed %d\n", (int)(avg_pos*1000), (int)(avg_speed*1000));
 
 	theta = range(theta, -1.0, 1.0);
 	psi = range(psi, -1.0, 1.0);

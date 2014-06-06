@@ -78,7 +78,7 @@ void update(uint sim_time, uint none)
 
 
 	// save step
-	if(state == STATE_BALANCED || (state != STATE_SAVED && sim_time % SAVE_STEP == 0)) {
+	if(state == STATE_BALANCED || (state != STATE_SAVED && sim_time != 0 && sim_time % SAVE_STEP == 0)) {
 		save_();
 		// TODO: send save message to nodes
 		state = STATE_SAVED;
