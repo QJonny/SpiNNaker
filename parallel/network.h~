@@ -99,8 +99,7 @@ void rec_upd(uint key, uint payload);
 
 
 // critic network
-float V_x(); // returns the critic network value
-float V_y(); // returns the critic network value
+void V(); // returns the critic network value
 void update_V();
 
 

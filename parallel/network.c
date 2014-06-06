@@ -308,7 +308,8 @@ void rec_upd(uint key, uint payload) {
 
 	// updating
 	V_x_array[index] = v_x / 1000.0;
-	//V_y_array[index] = v_y / 1000.0;
+	// MAGIC BUG
+	//V_y_array[index] = v_y / 1000.0; // if I decomment this line, the system blows up even if the array is never used!!!!!
 	A_theta_array[index] = theta / 10000.0;
 	A_psi_array[index] = psi / 10000.0;
 }
@@ -504,9 +505,12 @@ float V_x() {
 float V_y() {
 	float v = 0.0;
 	int i = 0;
+
+// MAGIC BUG: try to decomment the loop 
+// the result is amazing!!
 /*
 	for(i = 0; i < N_MFM; i++) {
-		v += V_y_array[i];
+		v += 0.0; //V_y_array[i]; do not decomment this portion
 	}
 */
 	return v/ N_MFM;
@@ -554,6 +558,10 @@ int move(uint sim_time) {
 
 	theta = range(theta, -1.0, 1.0);
 	psi = range(psi, -1.0, 1.0);
+
+// the system freezes if I decomment these conditions
+// even if they do not give any problem in the sequential
+// version
 /*
 	if(avg_pos < 0.2 && avg_speed < 0.05) {
 		sendNormMotorCommand(0.0, 0.0);
@@ -611,5 +619,4 @@ vector2d noise(){
 
 	return r;
 }
-
 

@@ -79,7 +79,7 @@ void update(uint sim_time, uint none)
 
 	// save step
 	if(state == STATE_BALANCED || (state != STATE_SAVED && sim_time % SAVE_STEP == 0)) {
-		// TODO: send save message to nodes
+		// should send save message to nodes
 		state = STATE_SAVED;
 		spin1_callback_off(TIMER_TICK);
 	}
