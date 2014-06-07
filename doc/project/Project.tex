@@ -44,7 +44,7 @@
 \tableofcontents
 
 \section{Project Overview}
-During the last decades, machine learning and control theory underwent astonishing advances. New algorithms are continously created and optimization techniques are invented with the purpose to speed up the systems. Such methods are however almost always sequential and parallelization is rarely applied in order to speed up event more the systems. \\
+During the last decades, machine learning and control theory underwent astonishing advances. New algorithms are continuously created and optimization techniques are invented with the purpose to speed up the systems. Such methods are however almost always sequential and parallelization is rarely applied in order to speed up even more the systems. \\
 
 The aim of this project is that on a first step reinforcement learning techniques are used on a simple control problem. Then, parallelization strategies are adopted in order to speed up the sequential solution and the two systems are then compared. \\ \\
 
@@ -71,17 +71,17 @@ The first important concept in reinforcement learning is the \textbf{reward}, wh
 
 Therefore, the reward R(x) is calculated as follows:
 \[
-R(x) = r(x) - s(\dot{\theta})
+R(x) = r(x) - s(\dot{x})
 \]
-where r(x) is the component based on the ball position, whereas \(s(\dot{\theta})\) determines the ball speed component. Finally,
+where r(x) is the component based on the ball position, whereas \(s(\dot{x})\) determines the ball speed component. Finally,
 \[
 r(x) = 1 - x
 \]
 and
 \[
-s(\theta) = \theta
+s(\dot{x}) = \dot{x}
 \]
-In order to keep the latter component less important than the position, the speed as been rescaled by a factor of \(\frac{1}{10}\), so that its maximum value never reaches more than 0.3. In this extreme case, s(\(\theta\)) has a maximum value of 0.3, implying that R(x) lies in a range of [-0.3;1].
+In order to keep the latter component less important than the position, the speed as been rescaled by a factor of \(\frac{1}{10}\), so that its maximum value never reaches more than 0.3. In this extreme case, s(\(\dot{x}\)) has a maximum value of 0.3, implying that R(x) lies in a range of [-0.3;1].
 
 
 \section{Parameters Updating}
